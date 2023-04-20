@@ -27,6 +27,7 @@
 ; Rel 0.03 - Added extra background choices to both scripts, also made drop shadow an option
 ; Rel 0.04 - Bugfix to smooth text
 ; Rel 299 - Port to Gimp 2.99.8 and 2.10.30 also compatibility OFF by vitforlinux
+; Rel 299b - added opacity control 
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
@@ -38,16 +39,21 @@
 
 
 (define (script-fu-plastic-or-glass-text 
-                                      text 
-                                      color 
+                                      text
+				      col-pat
+                                      color
+				      pattern
                                       font-in 
                                       font-size
 				      								 justification
                                  letter-spacing
-                                 line-spacing	
+                                 line-spacing
+					grow-text
+					outline
 									  Material
+									  opacity
 									  bkg-type 
-                                      pattern
+                                      bkg-pattern
                                       bkg-color
 							          gradient
 							          gradient-type-in
@@ -104,7 +110,30 @@
     ;(if (< height width) (set! height width))
 	;(if (< width height) (set! width height))
 
-
+	
+;;;; shrink grow text
+(cond ((> grow-text 0)
+	(gimp-selection-none image)
+	(gimp-image-select-item image 2 text-layer)
+	(gimp-selection-grow image (round grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ )
+ ((< grow-text 0)
+        (gimp-selection-none image)
+	(gimp-image-select-item image 2 text-layer)
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-selection-shrink image (- grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ ))
+ 
+  ;;; outline
+ (cond ((> outline 0)
+	(gimp-selection-none image)
+	(gimp-image-select-item image 2 text-layer)
+	(gimp-selection-shrink image (round outline))   
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-image-select-item image 2 text-layer)
+ ))
 
 ;;;;set the text clolor    
     (gimp-image-select-item image 2 text-layer)
@@ -130,7 +159,7 @@
 	(if (> bkg-type 0) (begin
 	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bkg-layer 0 2)))
-	(gimp-context-set-pattern pattern)
+	(gimp-context-set-pattern bkg-pattern)
 	(gimp-context-set-background bkg-color)
 	(gimp-context-set-gradient gradient)
 	(if (= bkg-type 1) 
@@ -189,6 +218,7 @@
 	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer 3 3)
 	(gimp-layer-set-lock-alpha text-layer FALSE)
 
+
 ;;;;create the reflections	
 	(set! reflection1 (car (gimp-layer-copy text-layer TRUE)))
 	(gimp-image-insert-layer image reflection1 0 -1)
@@ -220,10 +250,33 @@
 ;;;;apply the tint	
 	(gimp-image-select-item image 2 selection-channel)
 	(gimp-context-set-foreground color)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
 	(gimp-image-set-active-layer image text-layer)
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 -1)
+	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND) ;QUI!!!
+	(cond
+	((= col-pat 1) 
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	(gimp-context-set-pattern pattern)
+	(gimp-drawable-edit-fill tint-layer FILL-PATTERN))
+	((= col-pat 2) 
+	(gimp-context-set-pattern pattern)
+	(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
+	(gimp-context-set-paint-mode LAYER-MODE-LIGHTEN-ONLY-LEGACY  )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	)
+	((= col-pat 3) 
+	(gimp-context-set-pattern pattern)
+	(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
+	(gimp-context-set-paint-mode LAYER-MODE-OVERLAY  )
+	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	)
+	)
+	
+
 	(gimp-selection-none image)
 
 ;;;;Scale Image to it's original size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -233,12 +286,17 @@
 
 ;;;;create the glass effect	
 	(if (= Material 1) (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
-	
+;;: change opacity text
+
+(cond ((< opacity 100) 
+(gimp-layer-set-opacity text-layer opacity )
+(gimp-layer-set-opacity tint-layer opacity ))
+)
 	(if (= conserve FALSE) (begin
 	(set! text-layer (car (gimp-image-merge-down image tint-layer EXPAND-AS-NECESSARY)))
 	(gimp-drawable-hue-saturation text-layer 0 0 0 26 50)
 	(gimp-image-remove-layer image bump-layer)))
-	(if (= drop-shadow TRUE) (script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) 80 FALSE))
+	(if (= drop-shadow TRUE) (script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) (- opacity 20) FALSE))
 	
 	(if (= conserve FALSE) (begin
 	(if (> bkg-type 0) (set! layer-name (car (gimp-item-get-name bkg-layer)))) 
@@ -261,13 +319,18 @@
   "Oct 2012"
   ""
   SF-TEXT       "Text"    "Plastic\n& Glass"
-  SF-COLOR      "Text color"         '(0 0 255)
+  SF-OPTION "Fill type" '("Color" "Pattern" "Pattern+Color LIGHTEN ONLY" "Pattern+Color OVERLAY")
+  SF-COLOR      "Text Color"         '(0 0 255)
+  SF-PATTERN		"Text Pattern"				"Burlwood"
   SF-FONT       "Font"               "JasmineUPC Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 1)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
+SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
+SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
   SF-OPTION "Material Type" '("Plastic" "Glass")
+  SF-ADJUSTMENT "Opacity" '(100 20 100 1 1 1 0)
   SF-OPTION     "Background Type" '( "None" "Pattern" "Color" "Gradient" "Random Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         '(153 153 153)
@@ -281,10 +344,13 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
 (script-fu-menu-register "script-fu-plastic-or-glass-text" "<Image>/Script-Fu/Logos/")
 
 (define (script-fu-plastic-or-glass image drawable
-                               color
+                               col-pat
+			       color
+			       pattern
 							   Material
+							   opacity
 							   bkg-type 
-                               pattern
+                               bkg-pattern
                                bkg-color
 							   gradient
 							   gradient-type-in
@@ -354,7 +420,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
 	(if (> bkg-type 0) (begin
 	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bkg-layer 2 0)))
-	(gimp-context-set-pattern pattern)
+	(gimp-context-set-pattern bkg-pattern)
 	(gimp-context-set-background bkg-color)
 	(gimp-context-set-gradient gradient)
 	(if (= bkg-type 1) 
@@ -446,17 +512,44 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 -1)
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
+		(cond
+	((= col-pat 1) 
+	(gimp-context-set-pattern pattern)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	(gimp-drawable-edit-fill tint-layer FILL-PATTERN))
+	((= col-pat 2) 
+	(gimp-context-set-pattern pattern)
+	(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
+	(gimp-context-set-paint-mode LAYER-MODE-LIGHTEN-ONLY-LEGACY  )
+	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	)
+	((= col-pat 3) 
+	(gimp-context-set-pattern pattern)
+	(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
+	(gimp-context-set-paint-mode LAYER-MODE-OVERLAY  )
+	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	)
+	)
 	(gimp-selection-none image)	
 
 ;;;;create the glass effect	
-	(if (= Material 1) (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max	
+	(if (= Material 1) (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
 
+;;: change opacity alpha
+;(if (> 100 opacity) (gimp-message "oh no") (gimp-layer-set-opacity text-layer opacity) );max
+;(cond (< opacity 99) (gimp-message "oh no2") (gimp-layer-set-opacity tint-layer opacity))
+(cond ((< opacity 100) 
+(gimp-layer-set-opacity text-layer opacity )
+(gimp-layer-set-opacity tint-layer opacity ))
+)
 ;;;;finish the script	
 	(if (= conserve FALSE) (begin
 	(set! text-layer (car (gimp-image-merge-down image tint-layer EXPAND-AS-NECESSARY)))
 	(gimp-drawable-hue-saturation text-layer 0 0 0 26 50)
 	(gimp-image-remove-layer image bump-layer)))
-	(if (= drop-shadow TRUE) (script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) 80 TRUE))
+	(if (= drop-shadow TRUE) (script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) (- opacity 20) TRUE))
     (gimp-image-select-item image 2 selection-channel)	
 	
 	(if (= conserve FALSE) (begin
@@ -486,8 +579,11 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
   "RGB*"
   SF-IMAGE      "image"      0
   SF-DRAWABLE   "drawable"   0
-  SF-COLOR      "Tint color"         '(0 0 255)
+    SF-OPTION "Fill type" '("Color" "Pattern" "Pattern+Color LIGHTEN ONLY" "Pattern+Color OVERLAY")
+  SF-COLOR      "Tint Color"         '(0 0 255)
+  SF-PATTERN		"Tint Pattern"				"Burlwood"
   SF-OPTION "Material Type" '("Plastic" "Glass")
+  SF-ADJUSTMENT "Opacity" '(100 20 100 1 1 1 0)
   SF-OPTION     "Background Type" '( "None" "Pattern" "Color" "Gradient" "Random Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         '(153 153 153)
