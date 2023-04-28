@@ -50,6 +50,8 @@
                                  line-spacing
 					grow-text
 					outline
+														  modify
+									  modify-adjust
 									  Material
 									  opacity
 									  bkg-type 
@@ -83,6 +85,7 @@
 		 (reflection1 0)
 		 (reflection2 0)
 		 (reflection3 0)
+		 (blur (+ (/ 350 5.8) modify-adjust))
          (tint-layer 0) 
   (justification (cond ((= justification 0) 2)
 						       ((= justification 1) 0)
@@ -134,6 +137,12 @@
 	(gimp-drawable-edit-clear text-layer)
 	(gimp-image-select-item image 2 text-layer)
  ))
+ 
+ ;;;;text modify
+	(if (= modify TRUE) (begin
+	;(gimp-image-set-active-layer image text-layer)
+	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer blur blur)
+	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
 
 ;;;;set the text clolor    
     (gimp-image-select-item image 2 text-layer)
@@ -360,6 +369,8 @@ SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 1)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
 SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
+  SF-TOGGLE     "Modify Text"   FALSE
+  SF-ADJUSTMENT "Modify Adj" '(0 -50 50 1 5 0 0)
   SF-OPTION "Material Type" '("Plastic" "Glass")
   SF-ADJUSTMENT "Opacity" '(100 20 100 1 1 1 0)
   SF-OPTION     "Background Type" '( "None" "Pattern" "Color" "Gradient" "Random Gradient")
