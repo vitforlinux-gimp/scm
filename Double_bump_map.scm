@@ -2,6 +2,7 @@
 ; found at link: http://gimpchat.com/viewtopic.php?f=23&t=12
 ; author: Tin Tran
 ; date: 2014
+; update and extend 2023 vitforlinux
 (define (script-fu-double-bump-map image layer 
               color
 			  pattern
