@@ -27,7 +27,8 @@
 ; Rel 0.03 - Added extra background choices to both scripts, also made drop shadow an option
 ; Rel 0.04 - Bugfix to smooth text
 ; Rel 299 - Port to Gimp 2.99.8 and 2.10.30 also compatibility OFF by vitforlinux
-; Rel 299b - added opacity control 
+; Rel 299b - added opacity control
+; Rel 299c fixed image/layer size with letter-spacing/line-spacing>40
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
@@ -137,7 +138,7 @@
 	(gimp-drawable-edit-clear text-layer)
 	(gimp-image-select-item image 2 text-layer)
  ))
- 
+ (gimp-image-resize-to-layers image)
  ;;;;text modify
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
@@ -147,7 +148,7 @@
 ;;;;set the text clolor    
     (gimp-image-select-item image 2 text-layer)
 	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
-
+	(gimp-layer-resize-to-image-size text-layer)
 ;;;;create selection-channel (gimp-image-select-item image 2 selection-channel)
     (gimp-selection-save image)
 	(set! selection-channel (car (gimp-image-get-active-drawable image)))	
@@ -263,6 +264,7 @@
 	(gimp-image-set-active-layer image text-layer)
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 -1)
+    	(gimp-layer-resize-to-image-size tint-layer)
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND) ;QUI!!!
 	(cond
 	((= col-pat 1) 
