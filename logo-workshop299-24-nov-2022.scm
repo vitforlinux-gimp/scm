@@ -131,6 +131,7 @@
   (gimp-item-set-name fill-layer "Fill")                                 ; Name fill layer
 ;
 ; Fill case structure (0-logo color fill, 1-current pattern, 2-current gradient) 
+(gimp-context-set-paint-mode 0)
 ;
     (cond ((= fill-style 0)
             (gimp-context-set-foreground logo-color)            ; Set logo color

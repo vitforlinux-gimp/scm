@@ -218,6 +218,7 @@
 ;
 ; Fill style case structure 
 ;
+(gimp-context-set-paint-mode 0)
     (if (= fill-style 0)
         (begin  
             (gimp-context-set-foreground logo-color)            ; Set logo color
