@@ -11,7 +11,7 @@
 
 
 
-(define (script-fu-old-style-logo text size font justification letter-spacing line-spacing text-color use-gradient? text-gradient cut-color bg-color second shadow vignette conserve)
+(define (script-fu-old-style-logo text size font justification letter-spacing line-spacing text-color use-gradient?  text-gradient cut-color bg-color second worn shadow vignette conserve)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text 10 TRUE size PIXELS font)))
 	 (width (car (gimp-drawable-width text-layer)))
@@ -21,6 +21,7 @@
 	 (shadow-layer (car (gimp-layer-new img width height RGBA-IMAGE "Shadow" 100 LAYER-MODE-MULTIPLY-LEGACY)))
 	 (cut-ofs (+ (/ size 100) 1))
 	 (shadow-ofs (+ (/ size 50) 1))
+	 (textmask)
 	 (old-fg (car (gimp-context-get-foreground)))
 	 (old-bg (car (gimp-context-get-background)))
          (old-grad (car (gimp-context-get-gradient)))
@@ -40,6 +41,17 @@
       (gimp-text-layer-set-letter-spacing text-layer letter-spacing)  ; Set Letter Spacing
    (gimp-text-layer-set-justification text-layer justification) ; Text Justification 
    (gimp-text-layer-set-line-spacing text-layer line-spacing)      ; Set Line Spacing
+   
+            (if (= worn TRUE)
+	(begin
+   (define textmask (car (gimp-layer-create-mask text-layer ADD-MASK-WHITE)))
+   (gimp-layer-add-mask text-layer textmask)
+
+	 (plug-in-solid-noise 1 img textmask FALSE TRUE 0 1 4 4)
+	 		(gimp-drawable-brightness-contrast textmask 0.9 0.9 )
+			(plug-in-gauss-iir TRUE img textmask 6 TRUE TRUE)
+))
+
 
 
          (gimp-text-layer-set-letter-spacing cut-layer letter-spacing)  ; Set Letter Spacing
@@ -83,6 +95,8 @@
       (gimp-item-transform-translate text-layer (-(round (/ size 50))) (-(round (/ size 50))))
     (gimp-item-transform-translate shadow-layer 1 1)
     (gimp-layer-resize-to-image-size cut-layer)
+    
+    
     (if (= second 1)
     (begin
     (gimp-image-select-item img 2 text-layer)
@@ -107,12 +121,29 @@
     ;(gimp-selection-invert img)
     (gimp-drawable-edit-clear text-layer)
     
-
-    
-    )
-    )
+   
+    ))
     
         (if (= second 2)
+    (begin
+    (gimp-image-select-item img 2 text-layer)
+    
+   ; (gimp-context-set-gradient (caadr (gimp-gradients-get-list "")))
+   (gimp-selection-shrink img (round (/ size 33)) )
+   (gimp-drawable-edit-clear text-layer)
+    (gimp-context-set-background text-color)
+     (gimp-context-set-foreground bg-color )
+(gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1))
+  (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
+    (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 0 (round (/ size 33)))
+    (gimp-by-color-select text-layer bg-color 127 2 TRUE FALSE 0 FALSE)
+    (gimp-layer-set-lock-alpha text-layer FALSE)
+    (gimp-drawable-edit-clear text-layer)
+    
+   
+    ))
+    
+        (if (= second 3)
     (begin
     (gimp-image-select-item img 2 text-layer)
    (gimp-selection-shrink img (round (/ size 20)) )
@@ -182,7 +213,8 @@
                     SF-GRADIENT "Gradient"         "Tropical Colors"
 		    SF-COLOR    "Cut Color"        '(66 3 122)
 		    SF-COLOR    "Background Color" '(255 255 255)
-		    SF-OPTION   "Style"     '("Default" "Lined" "Light")
+		    SF-OPTION   "Style"     '("Default" "Lined" "Lined slim" "Light")
+		    SF-TOGGLE   "Fake worn"     FALSE
 		    SF-TOGGLE   "Use Shadow"     FALSE
 		    SF-TOGGLE   "Use Vignette"     TRUE
 		    SF-TOGGLE   "Merge Layers"     TRUE
