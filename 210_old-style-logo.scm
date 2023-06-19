@@ -11,7 +11,7 @@
 
 
 
-(define (script-fu-old-style-logo text size font justification letter-spacing line-spacing text-color use-gradient?  text-gradient cut-color bg-color second worn shadow vignette conserve)
+(define (script-fu-old-style-logo text size font justification letter-spacing line-spacing text-color  use-second-col? text-color2 use-gradient?  text-gradient cut-color bg-color second 45deg worn shadow vignette conserve)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text 10 TRUE size PIXELS font)))
 	 (width (car (gimp-drawable-width text-layer)))
@@ -58,6 +58,8 @@
    (gimp-text-layer-set-justification cut-layer justification) ; Text Justification 
    (gimp-text-layer-set-line-spacing cut-layer line-spacing)      ; Set Line Spacing
    
+   (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
+   
    (gimp-layer-resize-to-image-size cut-layer)
     (gimp-context-set-background cut-color)
     (gimp-layer-set-lock-alpha cut-layer TRUE)
@@ -96,7 +98,7 @@
     (gimp-item-transform-translate shadow-layer 1 1)
     (gimp-layer-resize-to-image-size cut-layer)
     
-    
+    ;lined
     (if (= second 1)
     (begin
     (gimp-image-select-item img 2 text-layer)
@@ -105,7 +107,7 @@
    (gimp-selection-shrink img (round (/ size 20)) )
    (gimp-drawable-edit-clear text-layer)
     (gimp-context-set-background text-color)
-     (gimp-context-set-foreground bg-color )
+     (gimp-context-set-foreground text-color2 )
   ; (gimp-context-set-gradient "Da pp a sf (bordi netti)")
  ; (gimp-context-set-gradient _"FG to BG (Hardedge)")
   ;(gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0)) 
@@ -115,15 +117,16 @@
   ;(gimp-context-set-gradient "Abstract 1")
  ; (gimp-context-set-paint-mode LAYER-MODE-COLOR-ERASE-LEGACY)
   (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
-    (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 0 (round (/ size 20)))
-    (gimp-by-color-select text-layer bg-color 127 2 TRUE FALSE 0 FALSE)
+  (if (= 45deg TRUE)     (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 (round (/ size 20)) (round (/ size 20)))
+    (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 0 (round (/ size 20))))
+    (gimp-by-color-select text-layer text-color2 127 2 FALSE FALSE 0 FALSE)
     (gimp-layer-set-lock-alpha text-layer FALSE)
     ;(gimp-selection-invert img)
-    (gimp-drawable-edit-clear text-layer)
+    (if (= use-second-col? FALSE) (gimp-drawable-edit-clear text-layer))
     
    
     ))
-    
+    ;lined slim
         (if (= second 2)
     (begin
     (gimp-image-select-item img 2 text-layer)
@@ -132,27 +135,29 @@
    (gimp-selection-shrink img (round (/ size 33)) )
    (gimp-drawable-edit-clear text-layer)
     (gimp-context-set-background text-color)
-     (gimp-context-set-foreground bg-color )
+     (gimp-context-set-foreground text-color2 )
 (gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1))
   (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
-    (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 0 (round (/ size 33)))
-    (gimp-by-color-select text-layer bg-color 127 2 TRUE FALSE 0 FALSE)
+      (if (= 45deg TRUE)     (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 (round (/ size 33)) (round (/ size 33)))
+    (gimp-drawable-edit-gradient-fill text-layer 0 0 TRUE 1 0 TRUE 0 0 0 (round (/ size 33))))
+    (gimp-by-color-select text-layer text-color2 127 2 FALSE FALSE 0 FALSE)
     (gimp-layer-set-lock-alpha text-layer FALSE)
-    (gimp-drawable-edit-clear text-layer)
+  (if (= use-second-col? FALSE) (gimp-drawable-edit-clear text-layer))
     
    
     ))
-    
+    ;light
         (if (= second 3)
     (begin
     (gimp-image-select-item img 2 text-layer)
    (gimp-selection-shrink img (round (/ size 20)) )
-   (gimp-drawable-edit-clear text-layer)
+  ; (gimp-drawable-edit-clear text-layer)
     (gimp-context-set-background text-color)
-     (gimp-context-set-foreground bg-color )
+     (gimp-context-set-foreground text-color2 )
   (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
     (gimp-layer-set-lock-alpha text-layer FALSE)
-    (gimp-drawable-edit-clear text-layer)
+ (if (= use-second-col? FALSE) (gimp-drawable-edit-clear text-layer))
+  (if (= use-second-col? TRUE) (gimp-drawable-edit-fill text-layer FILL-FOREGROUND))
     )
     )
             (if (= use-gradient? TRUE)
@@ -162,9 +167,13 @@
 (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 	  (gimp-context-set-gradient text-gradient)
 	 ; (gimp-blend text-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-RADIAL 100 20 REPEAT-NONE FALSE 0 0 0 0 0 0 width height)
+	   (if (= use-second-col? TRUE) (gimp-by-color-select text-layer text-color 127 2 TRUE FALSE 0 FALSE))
 	(gimp-drawable-edit-gradient-fill text-layer 2 20 REPEAT-NONE FALSE 0.0 FALSE 0 0 width height)
 	))
-    
+	(gimp-selection-none img)
+   ; (gimp-layer-set-lock-alpha text-layer FALSE)
+   ; (plug-in-gauss-rle2 0 img text-layer 1 1 )
+   ; (plug-in-oilify 0 img text-layer 2 1)
     (if (= vignette TRUE)
 (begin
             (gimp-image-select-ellipse
@@ -208,12 +217,15 @@
 			SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 			SF-ADJUSTMENT _"Letter Spacing"        '(5 -50 50 1 5 0 0)
                     SF-ADJUSTMENT _"Line Spacing"          '(0 -300 300 1 10 0 0)
-		    SF-COLOR    "Text Color"       '(66 3 122)
+		    SF-COLOR    "Text fill Color"       '(66 3 122)
+		     SF-TOGGLE   "Use second fill color "     FALSE
+		     SF-COLOR    "Second fill Color"       '(255 184 43)
                     SF-TOGGLE   "Use Gradient"     FALSE
                     SF-GRADIENT "Gradient"         "Tropical Colors"
 		    SF-COLOR    "Cut Color"        '(66 3 122)
 		    SF-COLOR    "Background Color" '(255 255 255)
 		    SF-OPTION   "Style"     '("Default" "Lined" "Lined slim" "Light")
+		    SF-TOGGLE   "Use lines 45 degrees"     FALSE
 		    SF-TOGGLE   "Fake worn"     FALSE
 		    SF-TOGGLE   "Use Shadow"     FALSE
 		    SF-TOGGLE   "Use Vignette"     TRUE
