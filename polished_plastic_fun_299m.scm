@@ -322,6 +322,7 @@
 		(gimp-context-push)
 
 	;;;;;; filling back with background
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
 			(gimp-context-set-background fond-color)
 		(gimp-selection-none img)
 		(fun-util-image-resize-from-layer img basetext)
