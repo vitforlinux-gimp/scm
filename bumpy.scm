@@ -59,6 +59,8 @@
 		)
 
 		(gimp-context-push)
+			(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+
 
 		; filling back with background
 		(gimp-context-set-background '(255 255 255))
