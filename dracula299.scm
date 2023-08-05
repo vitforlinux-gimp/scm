@@ -63,7 +63,9 @@
     (define bloodLayer (car(gimp-layer-new theImage 10 10 RGBA-IMAGE _"Blood Layer" 100 LAYER-MODE-NORMAL-LEGACY)) )
     (define backLayer(car(gimp-layer-new theImage 10 10 RGBA-IMAGE _"Background" 100 LAYER-MODE-NORMAL-LEGACY)) )
     
-    (gimp-context-set-background BackgroundColor )
+   	(gimp-context-push)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+   (gimp-context-set-background BackgroundColor )
     (gimp-context-set-foreground FillColor)
    (gimp-image-insert-layer theImage backLayer 0 0)
    (gimp-image-insert-layer theImage bloodLayer 0 0) 
@@ -122,7 +124,7 @@
 
     (gimp-context-set-foreground oldFore)
     (gimp-context-set-background oldBack)
-
+(gimp-context-pop)
     (gimp-display-new theImage)
 )
 
