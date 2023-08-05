@@ -827,7 +827,7 @@
 
         (set! bump-layer (car (gimp-layer-new-from-drawable basetext img))) ; New patten layer
         (gimp-context-set-pattern pattern)                             ; Make bump pattern active         
-        (gimp-drawable-fill bump-layer 4)                                     ; Fill with pattern
+        (gimp-drawable-fill bump-layer FILL-PATTERN)                                     ; Fill with pattern
 ;
 ; Call bump map procedure (pattern bump)
 ;
