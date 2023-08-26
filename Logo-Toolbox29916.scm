@@ -89,10 +89,13 @@
 
 
 ; Define the apply logo toolbox procedure
-;
+; Fix code for gimp 2.99.6 working in 2.10
+(cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
+(cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+(cond ((not (defined? 'gimp-image-get-base-type)) (define gimp-image-get-base-type gimp-image-base-type)))
 
+; Fix code for gimp 2.10 working in 2.99.16
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
-
 
 (define (apply-logo-toolbox  img
                              logo-layer
@@ -894,13 +897,14 @@
   (let* (
           (alpha2logo 1) ; 0 - Text mode , 1 - Alpha mode
         )
+	(gimp-layer-resize-to-image-size layer)
     (if (= create-new TRUE)
 	    (begin(gimp-image-undo-group-start image)
 		
 ; star layer to new image - add MrQ ----------------------------------------------------------
 			(let*	(
 				(active_layer (car (gimp-image-get-active-layer image)))
-				(image-type (car (gimp-image-base-type image)))
+				(image-type (car (gimp-image-get-base-type image)))
 				(width (car (gimp-drawable-get-width active_layer)))
 				(height (car (gimp-drawable-get-height active_layer)))
 				(new-image 0)
@@ -924,10 +928,11 @@
 	)	
 	(if (= create-new FALSE)
 		(begin
-			;(gimp-context-push)               ; Push context onto stack
+			(gimp-context-push)               ; Push context onto stack
 			(gimp-image-undo-group-start image) ; Begin undo group
 			(apply-logo-toolbox image layer fill-style logo-color blend-shape rev-blend glass-depth bevel-amt bevel-2x stroke-color stroke-width stroke-offset bump-style bump-pattern bump-depth extru-type extru-depth extru-direction extru-overlay background-fill bg-pattern shadow-style shadow-blur keep-selection feather-amt alpha2logo)
 			(gimp-image-undo-group-end image) ; End undo group
+			(gimp-context-pop)               ; Push context onto stack
 		)
     )
 
@@ -1061,7 +1066,7 @@
   (gimp-text-layer-set-base-direction logo-layer direction)
 
 ;
-; Call the logo toolbox main procedure 
+; Call the logo toolbox main procedure  with text
 ;
   (apply-logo-toolbox img logo-layer fill-style logo-color blend-shape rev-blend glass-depth bevel-amt bevel-2x stroke-color stroke-width stroke-offset bump-style bump-pattern bump-depth extru-type extru-depth extru-direction extru-overlay background-fill bg-pattern shadow-style shadow-blur keep-selection feather-amt alpha2logo)
 

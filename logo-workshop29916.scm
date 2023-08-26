@@ -321,8 +321,8 @@
 ;
 ; Drop logo layer to bottom
 ;
-    (gimp-image-lower-layer-to-bottom img logo-layer) ; layer to botton
-    (gimp-drawable-set-visible logo-layer FALSE)      ; Toggle layer off
+    (gimp-image-lower-item-to-bottom img logo-layer) ; layer to botton
+    (gimp-item-set-visible logo-layer FALSE)      ; Toggle layer off
     (gimp-image-set-active-layer img logo-layer)      ; Make it active 
 
 
