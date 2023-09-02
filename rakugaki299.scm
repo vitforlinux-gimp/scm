@@ -11,10 +11,12 @@
 
 (define (script-fu-rakugaki299 image drawable randpoint brush)
 
-(let* ((old-brush (car (gimp-context-get-brush)))
-       (old-fg (car (gimp-context-get-foreground)))
-       (width (car (gimp-drawable-get-width drawable)))
-       (height (car (gimp-drawable-get-height drawable)))
+(let* (
+       
+       ;(width (gimp-drawable-get-width drawable))
+       ;(height (gimp-drawable-get-height drawable))
+       			(width (car (gimp-drawable-get-width drawable)))
+			(height (car (gimp-drawable-get-height drawable)))
        (point 4)
        (count 1)
        (random-color)
@@ -22,9 +24,13 @@
        (r 0)(g 0)(b 0)
        (xa 0)(ya 0))
        
-
-   (gimp-image-undo-group-start image)
-   (gimp-context-set-brush (car brush))
+(gimp-context-push)
+  ; (gimp-image-undo-group-start image)
+   		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (gimp-context-set-brush (car  brush)) 
+  (gimp-context-set-brush   brush)	)
+ 
 		(gimp-context-set-gradient-reverse TRUE)
    (while (<= count randpoint)
       (set! r (rand 255))
@@ -43,9 +49,8 @@
       (gimp-paintbrush-default drawable point segment)
       (set! count (+ count 1)) )
 
-   (gimp-context-set-foreground old-fg)
-   (gimp-context-set-brush old-brush)	
-   (gimp-image-undo-group-end image)
+   ;(gimp-image-undo-group-end image)
+   (gimp-context-pop)
    (gimp-displays-flush) ))
 
 (script-fu-register "script-fu-rakugaki299"
