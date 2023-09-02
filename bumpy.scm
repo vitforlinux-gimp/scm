@@ -45,6 +45,8 @@
 		boolripplev
 		bnoise
 		bplasma
+		colored
+		bcolor
 	)
 
 	(let* 
@@ -59,7 +61,7 @@
 		)
 
 		(gimp-context-push)
-			(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 
 
 		; filling back with background
@@ -172,7 +174,8 @@
 
 		(gimp-image-raise-item img fond)
 		(gimp-image-raise-item img fond)
-
+(if (= colored TRUE) (begin 	(gimp-context-set-paint-mode LAYER-MODE-MULTIPLY)	(gimp-context-set-foreground bcolor)
+		(gimp-drawable-edit-fill fond FILL-FOREGROUND) ) )
 		(gimp-context-pop)
 
 	)
@@ -190,11 +193,13 @@
 		boolripplev
 		bnoise
 		bplasma
+		colored
+		bcolor
 	)
 
 	(begin
 		(gimp-image-undo-disable img)
-		(apply-bumpy-logo-effect img text-layer text-color boolrippleh boolripplev bnoise bplasma)
+		(apply-bumpy-logo-effect img text-layer text-color boolrippleh boolripplev bnoise bplasma colored bcolor)
 		(gimp-image-undo-enable img)
 		(gimp-displays-flush)
 	)
@@ -217,6 +222,8 @@
 	SF-TOGGLE	"Ripple Vert."  TRUE
 	SF-TOGGLE 	"Back Noise" TRUE
 	SF-TOGGLE 	"Back Plasma." TRUE
+	SF-TOGGLE 	"Background colored" FALSE
+	 SF-COLOR      "Background  color"         '(255 104 0) 
 )
 
 (script-fu-menu-register 
@@ -227,19 +234,30 @@
 (define
 	(
 		script-fu-bumpy-logo
-		font
 		text
+		font
+		size
+		justify
+		letter-spacing
+		line-spacing
+			 grow-text
+									  outline
 		text-color
 		boolrippleh
 		boolripplev
 		bnoise
 		bplasma
-		size
+		colored
+		bcolor
+		
 	)
   
 	(let*
 		(
 			(img (car (gimp-image-new 256 256 RGB)))	; nouvelle image -> img
+			(justify (cond ((= justify 0) 2)
+		        ((= justify 1) 0)
+			((= justify 2) 1)))
 			(border (/ size 4))
 			(text-layer (car (gimp-text-fontname img -1 0 0 text border TRUE size PIXELS font)))
 			(width (car (gimp-drawable-get-width text-layer)))
@@ -247,9 +265,41 @@
 		)
     
 		(gimp-image-undo-disable img)
+		(gimp-context-push)
+		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 		(gimp-item-set-name text-layer text)
-		(apply-bumpy-logo-effect img text-layer text-color boolrippleh boolripplev bnoise bplasma)
+		(gimp-text-layer-set-justification text-layer justify)
+		(gimp-text-layer-set-letter-spacing text-layer letter-spacing)
+		(gimp-text-layer-set-line-spacing text-layer line-spacing)
+		
+		  (gimp-image-resize-to-layers img)
+		;;;;;; SHRINK/GROW text
+(cond ((> grow-text 0)
+	(gimp-selection-none img)
+	(gimp-image-select-item img 2 text-layer)
+	(gimp-selection-grow img (round grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ )
+ ((< grow-text 0)
+        (gimp-selection-none img)
+	(gimp-image-select-item img 2 text-layer)
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-selection-shrink img (- grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ ))
+ 
+  ;;; outline
+ (cond ((> outline 0)
+	(gimp-selection-none img)
+	(gimp-image-select-item img 2 text-layer)
+	(gimp-selection-shrink img (round outline))   
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-image-select-item img 2 text-layer)
+ ))
+		
+		(apply-bumpy-logo-effect img text-layer text-color boolrippleh boolripplev bnoise bplasma colored bcolor)
 		(gimp-image-undo-enable img)
+		(gimp-context-pop)
 		(gimp-display-new img)    
     )
 )
@@ -263,14 +313,23 @@
 	"Denis Bodor"
 	"03/31/2005"
 	""
-	SF-FONT "Font Name" "Blippo Heavy"
 	SF-TEXT "Enter your text" "BUMPY"
+	SF-FONT "Font Name" "Blippo Heavy"
+	SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 1)
+	SF-OPTION "Justify" '("Centered" "Left" "Right")
+	SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
+	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
+	      SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -40 40 1 10 0 0)
+  SF-ADJUSTMENT _"Outline"          '(0 0 40 1 10 0 0)
 	SF-COLOR "Text Color" '(200 200 40)
 	SF-TOGGLE "Ripple Horiz." TRUE
 	SF-TOGGLE "Ripple Vert." TRUE
 	SF-TOGGLE "Back Noise" TRUE
 	SF-TOGGLE "Back Plasma." TRUE
-	SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 1))
+	SF-TOGGLE "Background colored" FALSE
+	SF-COLOR   "Background  color"         '(255 104 0) 
+	
+	)
 
 (script-fu-menu-register 
 	"script-fu-bumpy-logo"
