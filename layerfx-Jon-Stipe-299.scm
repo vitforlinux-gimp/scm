@@ -1249,7 +1249,7 @@
 		    SF-TOGGLE		"Layer knocks out Drop Shadow"	FALSE
 		    SF-TOGGLE		"Merge with layer"		FALSE)
 (script-fu-menu-register "script-fu-layerfx-drop-shadow" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-drop-shadow" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-drop-shadow" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-inner-shadow"
 		    "Inner Shadow..."
@@ -1272,7 +1272,7 @@
 		    SF-ADJUSTMENT	"Offset Distance"	'(5 0 30000 1 10 1 1)
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-inner-shadow" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-inner-shadow" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-inner-shadow" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-outer-glow"
 		    "Outer Glow..."
@@ -1293,7 +1293,7 @@
 		    SF-TOGGLE		"Layer knocks out Outer Glow"	FALSE
 		    SF-TOGGLE		"Merge with layer"		FALSE)
 (script-fu-menu-register "script-fu-layerfx-outer-glow" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-outer-glow" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-outer-glow" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-inner-glow"
 		    "Inner Glow..."
@@ -1314,7 +1314,7 @@
 		    SF-ADJUSTMENT	"Size"			'(5 0 999 1 10 1 1)
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-inner-glow" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-inner-glow" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-inner-glow" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-bevel-emboss"
 		    "Bevel and Emboss..."
@@ -1343,7 +1343,7 @@
 		    SF-TOGGLE		"Invert"		FALSE
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-bevel-emboss" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-bevel-emboss" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-bevel-emboss" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-satin"
 		    "Satin..."
@@ -1364,7 +1364,7 @@
 		    SF-TOGGLE		"Invert"		TRUE
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-satin" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-satin" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-satin" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-stroke"
 		    "Stroke..."
@@ -1382,7 +1382,7 @@
 		    SF-ADJUSTMENT	"Position (1 = inside, 99 = outside)"	'(50 1 99 1 10 1 0)
 		    SF-TOGGLE		"Merge with layer"			FALSE)
 (script-fu-menu-register "script-fu-layerfx-stroke" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-stroke" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-stroke" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-color-overlay"
 		    "Color Overlay..."
@@ -1398,7 +1398,7 @@
 		    SF-OPTION		"Blending Mode"		'("Normal" "Dissolve" "Multiply" "Divide" "Screen" "Overlay" "Dodge" "Burn" "Hard Light" "Soft Light" "Grain Extract" "Grain Merge" "Difference" "Addition" "Subtract" "Darken Only" "Lighten Only" "Hue" "Saturation" "Color" "Value")
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-color-overlay" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-color-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-color-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-gradient-overlay"
 		    "Gradient Overlay..."
@@ -1421,7 +1421,7 @@
 		    SF-ADJUSTMENT	"Gradient Width"	'(10 0 262144 1 10 1 1)
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-gradient-overlay" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-gradient-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-gradient-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
 
 (script-fu-register "script-fu-layerfx-pattern-overlay"
 		    "Pattern Overlay..."
@@ -1437,4 +1437,4 @@
 		    SF-OPTION		"Blending Mode"		'("Normal" "Dissolve" "Multiply" "Divide" "Screen" "Overlay" "Dodge" "Burn" "Hard Light" "Soft Light" "Grain Extract" "Grain Merge" "Difference" "Addition" "Subtract" "Darken Only" "Lighten Only" "Hue" "Saturation" "Color" "Value")
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-pattern-overlay" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-pattern-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-pattern-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")

@@ -294,4 +294,4 @@
 		    SF-OPTION		"Blending Mode"		'("Normal" "Dissolve" "Multiply" "Divide" "Screen" "Overlay" "Dodge" "Burn" "Hard Light" "Soft Light" "Grain Extract" "Grain Merge" "Difference" "Addition" "Subtract" "Darken Only" "Lighten Only" "Hue" "Saturation" "Color" "Value")
 		    SF-TOGGLE		"Merge with layer"	FALSE)
 (script-fu-menu-register "script-fu-layerfx-material-overlay" "<Image>/Layer/Layer Effects By Jon Stipe 299/")
-(script-fu-menu-register "script-fu-layerfx-material-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
+;(script-fu-menu-register "script-fu-layerfx-material-overlay" "<Layers>/Layer Effects By Jon Stipe 299/")
