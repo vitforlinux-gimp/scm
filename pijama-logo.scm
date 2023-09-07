@@ -1,3 +1,7 @@
+; Fix code for gimp 2.99.6 working in 2.10
+(cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
+(cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+  
   (script-fu-register
             "script-fu-pijama-logo"                        ;function name
             "Pijama logo"                                  ;menu label
@@ -76,7 +80,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
       (gimp-image-insert-layer theImage theLayer 0 0)
       (gimp-context-set-background '(255 255 255) )
       (gimp-context-set-foreground inTextColor)
-      (gimp-drawable-fill theLayer BACKGROUND-FILL)
+      (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
                     (car
                           (gimp-text-fontname
@@ -100,8 +104,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-context-set-paint-mode 0)
 
 
-      (set! theImageWidth   (car (gimp-drawable-width  theText) ) )
-      (set! theImageHeight  (car (gimp-drawable-height theText) ) )
+      (set! theImageWidth   (car (gimp-drawable-get-width  theText) ) )
+      (set! theImageHeight  (car (gimp-drawable-get-height theText) ) )
       (set! theBuffer (* theImageHeight (/ inBufferAmount 100) ) )
       (set! theImageHeight (+ theImageHeight theBuffer theBuffer) )
       (set! theImageWidth  (+ theImageWidth  theBuffer theBuffer) )
