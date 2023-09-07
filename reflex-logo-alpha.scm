@@ -52,9 +52,13 @@
 (plug-in-gauss-rle2 1 image blur-layer (/ area 70) (/ area 70))
 
 (gimp-context-set-gradient gradient)
-(gimp-edit-blend fond-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 (+ image-height displace))
+;(gimp-edit-blend fond-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 (+ image-height displace))
+		      (gimp-drawable-edit-gradient-fill fond-layer  GRADIENT-LINEAR 0 0 100 0 0 0 0 0 (+ image-height displace)) ; Fill with gradient
+
 (gimp-item-set-visible fond-layer FALSE)
-(gimp-edit-blend horizon-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 image-height)
+;(gimp-edit-blend horizon-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 image-height)
+		      (gimp-drawable-edit-gradient-fill horizon-layer  GRADIENT-LINEAR 0 0 100 0 0 0 0 0 image-height) ; Fill with gradient
+
 (gimp-item-set-name horizon-layer "Reflex")
 (set! adjust (* displace 2))
 (plug-in-displace 1 image horizon-layer (/ area (- 70 adjust)) (/ area (- 70 adjust)) TRUE TRUE blur-layer blur-layer 1)
@@ -65,9 +69,11 @@
 (plug-in-gauss-rle2 1 image bump-layer 1 1)
 (gimp-image-remove-layer image blur-layer)
 (gimp-context-set-gradient "Three bars sin")
+
 (plug-in-gradmap 1 image bump-layer)
 
-(gimp-selection-layer-alpha drawable)
+;(gimp-selection-layer-alpha drawable)
+(gimp-image-select-item image 2 drawable)
 (if (> area 200)
     (gimp-selection-grow image (/ area 160))
     (gimp-selection-grow image 1))
@@ -188,7 +194,7 @@
 
 	(if (= merge FALSE)
 		(begin 
-	      (gimp-drawable-edit-fill text-layer WHITE-FILL)
+	      (gimp-drawable-edit-fill text-layer FILL-WHITE)
 	      (gimp-item-set-name text-layer "Background")
 		)
 	)
