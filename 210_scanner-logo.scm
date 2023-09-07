@@ -22,12 +22,15 @@
 ;;
 ;; RCS: $Id: scanner-logo.scm,v 1.3 2000/06/26 01:01:47 benkovsk Exp $
 
+; Fix code for gimp 2.99.6 working in 2.10
+(cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
+(cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
 (define (script-fu-scanner-logo text size font text-color use-gradient? text-gradient cut-color bg-color)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text 10 TRUE size PIXELS font)))
-	 (width (car (gimp-drawable-width text-layer)))
-	 (height (car (gimp-drawable-height text-layer)))
+	 (width (car (gimp-drawable-get-width text-layer)))
+	 (height (car (gimp-drawable-get-height text-layer)))
 	 (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	 (cut-layer (car (gimp-layer-copy text-layer TRUE)))
 	 (shadow-layer (car (gimp-layer-new img width height RGBA-IMAGE "Shadow" 100 LAYER-MODE-MULTIPLY-LEGACY)))
