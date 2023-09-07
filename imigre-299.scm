@@ -39,6 +39,7 @@
         )
 
     (gimp-context-push)
+    (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 
     (gimp-image-undo-disable img)
     (gimp-image-undo-disable distortion-img)
