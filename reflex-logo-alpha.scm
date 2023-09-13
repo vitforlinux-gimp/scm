@@ -7,6 +7,9 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
+(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
+
+
 (define (apply-reflex-logo image drawable gradient displace merge)
  
 	(let* (
@@ -70,7 +73,10 @@
 (gimp-image-remove-layer image blur-layer)
 (gimp-context-set-gradient "Three bars sin")
 
-(plug-in-gradmap 1 image bump-layer)
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (plug-in-gradmap 1 image bump-layer)
+  (plug-in-gradmap 1 image 1 (vector bump-layer))	)
+
 
 ;(gimp-selection-layer-alpha drawable)
 (gimp-image-select-item image 2 drawable)
@@ -107,7 +113,7 @@
 (define (script-fu-reflex-logo-alpha image drawable gradient displace merge)
 
 	(let* (
-		(drawable (car (gimp-image-get-active-drawable image)))
+		(drawable (car (gimp-image-get-selected-drawables image)))
 		(var-select 0)
 		(canal 0)
 		(old-fg 0) )
@@ -146,7 +152,7 @@
 		)
 
 		(if (= merge TRUE)
-			(gimp-image-merge-down image (car (gimp-image-get-active-drawable image)) 0)
+			(gimp-image-merge-down image (car (gimp-image-get-selected-drawables image)) 0)
 			(gimp-image-remove-layer image drawable))
 
         (gimp-context-set-foreground old-fg)
@@ -179,12 +185,20 @@
 ;; script pour <toolbox> 
 ;; ------------------------
 
-(define (script-fu-reflex-logo text size font gradient displace merge)
+(define (script-fu-reflex-logo text size font justification letter-spacing line-spacing gradient displace merge)
 
   (let* (
 	(image (car (gimp-image-new 256 256 RGB)))
 	(bg-layer (car (gimp-layer-new image 256 256 RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	 (justification (cond ((= justification 0) 2)
+						       ((= justification 1) 0)
+						       ((= justification 2) 1)
+						       ((= justification 3) 3)))	
 	(text-layer (car (gimp-text-fontname image -1 0 0 text 10 TRUE size PIXELS font))))
+	
+	   (gimp-text-layer-set-justification  text-layer  justification) ; Text Justification (Rev Value)
+	(gimp-text-layer-set-letter-spacing text-layer letter-spacing)  ; Set Letter Spacing
+	(gimp-text-layer-set-line-spacing text-layer line-spacing)      ; Set Line Spacing    
 
 	(gimp-image-undo-disable image)
 
@@ -214,6 +228,9 @@
         SF-TEXT     _"Text"               "Reflex"
         SF-ADJUSTMENT _"Font size (pixels)" '(200 2 1000 1 10 0 1)
         SF-FONT       _"Font"               "Liberation Mono Bold"
+	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
+	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
+	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
         SF-GRADIENT    "Gradient"           "Horizon 2"
         SF-ADJUSTMENT  "Shift amount"           '(10 1 20 1 10 0 0)
         SF-TOGGLE      "Flatten"        FALSE
