@@ -13,7 +13,7 @@
 
 ; Define the function:
 
-(define (script-fu-chris-slabtext inText inFont inFontSize tcolor tgrad ttexture
+(define (script-fu-chris-slabtext inText inFont inFontSize justification letter-spacing line-spacing tcolor tgrad ttexture
                                   inDistressText inDistressSlab inGilt inTextColor
                                   inTextOpacity inBufferAmount inFollowShape
                                   inWoodLook btype inBGColor bgrad bpat)
@@ -28,6 +28,10 @@
        (theText 0)
        (theImageWidthz 0)
        (theImageHeightz 0)
+       	  (justification (cond ((= justification 0) 2)
+						       ((= justification 1) 0)
+						       ((= justification 2) 1)
+						       ((= justification 3) 3)))
        )
 
 
@@ -50,6 +54,7 @@
           (gimp-context-set-foreground '(0 0 0) )
 
           (gimp-selection-all theImage)
+	  
           (gimp-drawable-edit-clear theTextLayer)
           (gimp-selection-none theImage)
 
@@ -59,6 +64,9 @@
 ;2.4â¸ïœtheImageWidthzÅAtheImageHeightz
           (set! theImageWidthz  (car (gimp-drawable-get-width  theText) ) )
           (set! theImageHeightz (car (gimp-drawable-get-height theText) ) )
+	      (gimp-text-layer-set-letter-spacing theText letter-spacing)  ; Set Letter Spacing
+   (gimp-text-layer-set-justification theText justification) ; Text Justification (Rev Value) 
+   (gimp-text-layer-set-line-spacing theText line-spacing)      ; Set Line Spacing    
 
           (gimp-image-resize theImage theImageWidthz theImageHeightz 0 0)
           (gimp-layer-resize theTextLayer theImageWidthz theImageHeightz 0 0)
@@ -87,6 +95,9 @@
     SF-TEXT      "Text String" "Dr.Dee"
     SF-FONT        "Font" "Comic Sans MS"
     SF-ADJUSTMENT _"Font Size(px)"   '(120 2 1000 1 2 0 1)
+    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
+    SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
+SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
     SF-COLOR       "Text Color"      '(190 190 0)
     SF-GRADIENT    "Gradient"        "Golden"
     SF-PATTERN     "Texture"         "Pine?"
