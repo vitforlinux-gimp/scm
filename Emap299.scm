@@ -190,7 +190,7 @@
     )
   ) 
 (script-fu-register "script-fu-emap299-logo"
-  "Emap Logo 210"
+  "Emap Logo 299"
   "The default font is from https://www.dafontfree.net/pt-banana-split-normal/f64465.htm"
   "Graechan"
   "Graechan - http://gimpchat.com"
