@@ -118,10 +118,9 @@
             "Egg Melt"                                  ;menu label
             "Create an upside down egg effect on a tablecloth"              ;description
             "Vitforlinux"                             ;author
-            "copyright 1997, Michael Terry;\
-              2009, the GIMP Documentation Team"        ;copyright notice
+            "copyright 2023, vitforlinux"        ;copyright notice
             "October 10, 2023"                          ;date created
-            "Create an image with Egg effect text on a tablecloth."                              ;image type that the script works on
+            ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Egg\nMelt"   ;a string variable
             SF-FONT        "Font"          "Franks Thin"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
