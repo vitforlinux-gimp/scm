@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Will Wood"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY"))
 
 
@@ -275,6 +275,15 @@
 	      (plug-in-oilify 1 image fond 20 0) 
 			))
 			
+		(define (material-pijama fond image gradient)  			(begin
+(gimp-context-set-gradient gradient)
+ (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
+ (gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE FALSE 0.0 FALSE 0 0 90 45)
+ (gimp-drawable-posterize fond 3)
+
+
+			))
+			
 
 		(define  (material-leopard-old fond image) (begin
 				          (gimp-selection-none image)    (material-bovination fond image)
@@ -502,7 +511,7 @@
 				(plug-in-solid-noise 0 img fond 1 0 (random 65535) 2 n1 n2)
 				(plug-in-alienmap2 1 img fond 1 0 1 0 15 0 1 0 0 1)
 				(plug-in-alienmap2 1 img fond 1 0 1 0 0.1 0 1 0 1 1)
-				(gimp-hue-saturation fond 0 0 30 -40)
+				(gimp-drawable-hue-saturation fond 0 0 30 -40 0)
 				(plug-in-wind 1 img fond 1 3 1 0 0)
 		 (plug-in-oilify 1 img fond 2 0)
 			))
@@ -577,7 +586,6 @@
 				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
 				(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)	
 			))
-
 ;;;;;;;			
 ;;;;;;;EFFECTS END
 ;;;;;;;
@@ -609,6 +617,8 @@
 		back-gradient
 		 back-gradient-type
 		 blendir
+		 vignette
+		 vignette-color
 		 applyMasks
 		
 
@@ -838,6 +848,8 @@
 	(if (= backtype 25) 
 (material-emap fond img back-gradient))
 	(if (= backtype 26) 
+(material-pijama fond img back-gradient))
+	(if (= backtype 27) 
  (material-willwood fond img 9 1))
 
 		(if (= effect-back 1) ;Blur
@@ -1072,8 +1084,10 @@
 (material-squares basetext img color color2)
 		)
 	(if (= type 25) 
-(material-emap basetext img gradient)) 
+(material-emap basetext img gradient))
 	(if (= type 26) 
+(material-pijama basetext img gradient))
+	(if (= type 27) 
  (material-willwood basetext img 9 1))
 	
 		; Adding light effect on edge
@@ -1255,6 +1269,24 @@
 			(gimp-layer-set-opacity refl (round (/ opacity 2)))
 		)
 		
+		    (if (= vignette TRUE)
+(begin
+            (gimp-image-select-ellipse
+            img
+            CHANNEL-OP-REPLACE
+            0
+	    0
+            (car (gimp-image-get-width img))
+           (car (gimp-image-get-height img))
+        )
+	(gimp-selection-invert img)
+    (gimp-selection-feather img (round (/ (car (gimp-image-get-width img)) 5 )))
+    (gimp-context-set-opacity 50)
+	(gimp-context-set-background vignette-color)
+    (gimp-drawable-edit-fill fond FILL-BACKGROUND)
+    		(gimp-selection-none img)
+))
+		
 		(if (= applyMasks TRUE) (begin
     		(gimp-layer-remove-mask border 0)
 		(gimp-layer-remove-mask olight 0)
@@ -1295,12 +1327,14 @@
 		back-gradient
 									          back-gradient-type
 							          blendir
+		vignette
+		vignette-color
 		applyMasks
 		)
 	(begin
 		(gimp-image-undo-disable img)
 		(gimp-layer-resize-to-image-size text-layer)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
 		(gimp-image-undo-enable img)
 		(gimp-displays-flush)
 	)
@@ -1341,6 +1375,8 @@
   SF-GRADIENT   "Back Gradient" "Abstract 3"
     SF-ENUM "Back  Gradient Mode" '("GradientType" "gradient-linear")
   SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
+  SF-TOGGLE  "Apply Vignette"    FALSE
+  	SF-COLOR		"Vignette Color"	'(0 0 0)
   SF-TOGGLE  "Apply Masks"    TRUE
 )
 
@@ -1384,6 +1420,8 @@
 		back-gradient
 											          back-gradient-type
 							          blendir
+		vignette
+		vignette-color
 		applyMasks
 	)
   
@@ -1440,7 +1478,7 @@
 
 		(gimp-image-undo-disable img)
 		(gimp-item-set-name text-layer text)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction  backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction  backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
 
 		;(plug-in-waves 1 img text-layer 100 180 50 0 FALSE)
 		(gimp-image-undo-enable img)
@@ -1488,6 +1526,8 @@
 	SF-GRADIENT   "Back Gradient" "Abstract 3"
 	  SF-ENUM "Back Gradient Mode" '("GradientType" "gradient-linear")
   SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
+    SF-TOGGLE  "Apply Vignette"    FALSE
+    	SF-COLOR		"Vignette Color"			'(0 0 0)
     SF-TOGGLE  "Apply Masks"    TRUE
 
 ) 
