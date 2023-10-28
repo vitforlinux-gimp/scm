@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY"))
 
 
