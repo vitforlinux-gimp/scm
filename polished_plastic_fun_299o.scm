@@ -509,8 +509,8 @@
 	))
 	(define  (material-willwood fond img n1 n2) (begin
 				(plug-in-solid-noise 0 img fond 1 0 (random 65535) 2 n1 n2)
-				;(plug-in-alienmap2 1 img fond 1 0 1 0 15 0 1 FALSE FALSE TRUE)
-				;(plug-in-alienmap2 1 img fond 1 0 1 0 0.1 0 1 FALSE TRUE TRUE)
+				(plug-in-alienmap2 1 img fond 1 0 1 0 15 0 1 FALSE FALSE TRUE)
+				(plug-in-alienmap2 1 img fond 1 0 1 0 0.1 0 1 FALSE TRUE TRUE)
 				(gimp-drawable-hue-saturation fond 0 0 30 -40 0)
 				(plug-in-wind 1 img fond 1 3 1 0 0)
 		 (plug-in-oilify 1 img fond 2 0)
