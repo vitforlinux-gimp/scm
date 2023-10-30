@@ -29,8 +29,8 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only"))
-(define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood"))
+(define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass"))
 
 
 ; Fix code for gimp 2.99.6 working in 2.10
@@ -509,8 +509,8 @@
 	))
 	(define  (material-willwood fond img n1 n2) (begin
 				(plug-in-solid-noise 0 img fond 1 0 (random 65535) 2 n1 n2)
-				(plug-in-alienmap2 1 img fond 1 0 1 0 15 0 1 0 0 1)
-				(plug-in-alienmap2 1 img fond 1 0 1 0 0.1 0 1 0 1 1)
+				;(plug-in-alienmap2 1 img fond 1 0 1 0 15 0 1 FALSE FALSE TRUE)
+				;(plug-in-alienmap2 1 img fond 1 0 1 0 0.1 0 1 FALSE TRUE TRUE)
 				(gimp-drawable-hue-saturation fond 0 0 30 -40 0)
 				(plug-in-wind 1 img fond 1 3 1 0 0)
 		 (plug-in-oilify 1 img fond 2 0)
@@ -586,6 +586,25 @@
 				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
 				(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)	
 			))
+			
+	(define  (effect-stain-glass fond image) (begin
+			(plug-in-mosaic 1 image fond ; mosaic drawing
+20 ;tsize
+4
+1 ;tspc
+0.65
+1
+135
+0.2
+1
+1
+1
+0
+0)
+
+
+			))
+
 ;;;;;;;			
 ;;;;;;;EFFECTS END
 ;;;;;;;
@@ -887,6 +906,9 @@
 		)
 		(if (= effect-back 12)
 		(effect-desat-color fond img fond-color 2) 
+		)
+		(if (= effect-back 13)
+		(effect-stain-glass fond img)
 		)
 		; composite text and channel
 		(gimp-image-select-item img 0 basetext)
@@ -1262,6 +1284,9 @@
 		)
 		(if (= effect-fill 12)
 		(effect-desat-color basetext img color 2) 
+		)
+		(if (= effect-fill 13)
+		(effect-stain-glass basetext img)
 		)
     		(if (< opacity 100)  ;Transparent
 			(gimp-layer-set-opacity basetext opacity)
