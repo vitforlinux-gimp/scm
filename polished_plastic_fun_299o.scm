@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass"))
 
 
@@ -515,6 +515,31 @@
 				(plug-in-wind 1 img fond 1 3 1 0 0)
 		 (plug-in-oilify 1 img fond 2 0)
 			))
+			
+	(define (material-steampunk-brass img fond color n1) (begin
+			(if (= n1 0) 
+(gimp-context-set-foreground '(232 204 0) )
+		(gimp-context-set-foreground color )	
+		)	
+	
+	(gimp-context-set-paint-mode  LAYER-MODE-MULTIPLY-LEGACY)
+ (plug-in-solid-noise 0 img fond 0 0 (random 65535) 1 16 4)
+   (gimp-drawable-edit-fill fond FILL-FOREGROUND)
+   (gimp-drawable-hue-saturation fond 0 0 0 100 0)
+     (gimp-drawable-hue-saturation fond 0 0 0 100 0)
+     (gimp-context-set-paint-mode  LAYER-MODE-NORMAL-LEGACY)
+	) )
+		(define (material-grunge-green img fond color n1) (begin 
+       (plug-in-plasma 1 img fond 0 1.0) (gimp-drawable-desaturate fond 4)
+      (plug-in-noisify 1 img fond 1 0.2 0.2 0.2 0)
+      (gimp-context-set-paint-mode  LAYER-MODE-MULTIPLY-LEGACY)
+      			(if (= n1 0) 
+     (gimp-context-set-background '(0 96 4) )
+		(gimp-context-set-background color )	
+		)
+      (gimp-drawable-edit-fill fond FILL-BACKGROUND)
+     (gimp-context-set-paint-mode  LAYER-MODE-NORMAL-LEGACY)
+	) )
 ;;;;;;;
 ;;;;;;;MATERIAL END
 ;;;;;;;
@@ -616,6 +641,7 @@
 		border-color
 		 border-size
 		refl-color
+		refl-opacity
 		refl-dir
 		shadow-color
 		type
@@ -870,6 +896,14 @@
 (material-pijama fond img back-gradient))
 	(if (= backtype 27) 
  (material-willwood fond img 9 1))
+ 	(if (= backtype 28) 
+ (material-steampunk-brass img fond fond-color 0))
+  	(if (= backtype 29) 
+ (material-steampunk-brass img fond fond-color 1))
+  	(if (= backtype 30) 
+ (material-grunge-green img fond fond-color 0))
+   	(if (= backtype 31) 
+ (material-grunge-green img fond fond-color 1))
 
 		(if (= effect-back 1) ;Blur
 		(effect-blur fond img)			; Blur effect
@@ -1111,6 +1145,14 @@
 (material-pijama basetext img gradient))
 	(if (= type 27) 
  (material-willwood basetext img 9 1))
+ 	(if (= type 28) 
+  (material-steampunk-brass img basetext color 0))
+   	(if (= type 29) 
+  (material-steampunk-brass img basetext color 1))
+   	(if (= type 30) 
+  (material-grunge-green img basetext color 0))
+     	(if (= type 31) 
+  (material-grunge-green img basetext color 1))
 	
 		; Adding light effect on edge
 		(gimp-selection-none img)
@@ -1194,6 +1236,7 @@
 			(/ width 2)
 			(* height 0.05)
 		)
+		(gimp-layer-set-opacity refl refl-opacity)
 		(gimp-image-select-item img 0 chantext)
 		;(define reflmask (car (gimp-layer-create-mask refl ADD-MASK-SELECTION)))
 		;(gimp-layer-add-mask refl reflmask)
@@ -1332,6 +1375,7 @@
 		border-color
 		 border-size
 		refl-color
+		refl-opacity
 		refl-dir
 		shadow-color
 		type
@@ -1359,7 +1403,7 @@
 	(begin
 		(gimp-image-undo-disable img)
 		(gimp-layer-resize-to-image-size text-layer)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
 		(gimp-image-undo-enable img)
 		(gimp-displays-flush)
 	)
@@ -1380,6 +1424,7 @@
 	SF-COLOR		"Border Color"	'(0 0 0)
 	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 0)
 	SF-COLOR		"Refl Color"	'(255 255 255)
+	SF-ADJUSTMENT "Refl Opacity" '(70 0 100 1 1 0 0)
 	SF-OPTION  	"Refl Direction"    '("Up" "Down")
 	SF-COLOR		"Shadow Color"	'(50 50 50)
 	SF-OPTION		"Fill with"		list-fill-ppf-dir
@@ -1424,6 +1469,7 @@
 		border-color
 		border-size
 		refl-color
+		refl-opacity
 		refl-dir
 		shadow-color
 		
@@ -1503,7 +1549,7 @@
 
 		(gimp-image-undo-disable img)
 		(gimp-item-set-name text-layer text)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction  backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction  backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
 
 		;(plug-in-waves 1 img text-layer 100 180 50 0 FALSE)
 		(gimp-image-undo-enable img)
@@ -1531,6 +1577,7 @@
 	SF-COLOR		"Border Color"			'(0 0 0)
 	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 0)
 	SF-COLOR		"Refl Color"	'(255 255 255)
+	SF-ADJUSTMENT "Refl Opacity" '(70 0 100 1 1 0 0)
 	SF-OPTION  	"Refl Direction"    '("Up" "Down")
 	SF-COLOR		"Shadow Color"	'(50 50 50)
 	SF-OPTION		"Fill with"				list-fill-ppf-dir
