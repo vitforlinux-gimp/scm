@@ -38,12 +38,12 @@
 		(gimp-image-undo-group-start image)                   ;undo-group in one step
 
 
-		(set! image-width (car (gimp-image-width image)))
-		(set! image-height (car (gimp-image-height image)))
+		(set! image-width (car (gimp-image-get-width image)))
+		(set! image-height (car (gimp-image-get-height image)))
 		;START
 		(gimp-layer-resize-to-image-size layer)
 		(gimp-image-select-item image CHANNEL-OP-REPLACE layer)
-		(gimp-edit-fill layer WHITE-FILL)
+		(gimp-drawable-edit-fill layer FILL-WHITE)
 
 		;grow selection, invert, the create vector path
 		(gimp-selection-grow image grow-distance)
@@ -64,11 +64,11 @@
 											
 		;creates new colored layer to bump map
 		(set! color-layer (car (gimp-layer-new image image-width image-height
-							   RGBA-IMAGE "Color" 100 COLOR-MODE)))  ;creates layer
-							   	(if (= no-pattern 0) (gimp-layer-set-mode color-layer NORMAL-MODE)) 
+							   RGBA-IMAGE "Color" 100 LAYER-MODE-HSL-COLOR-LEGACY )))  ;creates layer
+							   	(if (= no-pattern 0) (gimp-layer-set-mode color-layer LAYER-MODE-NORMAL-LEGACY)) 
 		;creates new pattern layer to bump map as well
 		(set! pattern-layer (car (gimp-layer-new image image-width image-height
-							   RGBA-IMAGE "Pattern" 100 NORMAL-MODE)))  ;creates layer
+							   RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))  ;creates layer
 		;insert above current layer  
 		(gimp-image-insert-layer image color-layer 0 (car (gimp-image-get-item-position image layer)))
 		(gimp-image-insert-layer image pattern-layer 0 (car (gimp-image-get-item-position image layer)))
@@ -77,13 +77,13 @@
 		;(gimp-image-set-active-layer image color-layer)
 		(gimp-selection-all image)
 		(gimp-context-set-foreground color)
-		(gimp-edit-fill color-layer FOREGROUND-FILL)
+		(gimp-drawable-edit-fill color-layer FILL-FOREGROUND)
 		
 		;fill pattern layer with pattern
 		;(gimp-image-set-active-layer image pattern-layer)
 		(gimp-selection-all image)
 		(gimp-context-set-pattern pattern)
-		(gimp-edit-fill pattern-layer PATTERN-FILL)
+		(gimp-drawable-edit-fill pattern-layer FILL-PATTERN)
 			
 		
 		;perform bump map 1st time (color layer)
@@ -115,11 +115,15 @@
 
 		;cut out color layer using previously created path
 		(gimp-image-select-item image CHANNEL-OP-REPLACE current-vector)
-		(gimp-edit-cut color-layer)
+				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (gimp-edit-cut  color-layer)
+		(gimp-edit-cut 1 (vector color-layer)) )
 		(gimp-selection-none image)
 		;cur out pattern layer using previously created path
 		(gimp-image-select-item image CHANNEL-OP-REPLACE current-vector)
-		(gimp-edit-cut pattern-layer)
+						 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (gimp-edit-cut  pattern-layer)
+		(gimp-edit-cut 1 (vector pattern-layer)) )
 		(gimp-selection-none image)
 		
 		;delete current-vector
@@ -278,7 +282,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
       (gimp-image-insert-layer theImage theLayer 0 0)
       (gimp-context-set-background bgcolor )
       (gimp-context-set-foreground color)
-      (gimp-drawable-fill theLayer BACKGROUND-FILL)
+      (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
                     (car
                           (gimp-text-fontname
@@ -291,8 +295,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
                           inFont)
                       )
         )
-      (set! theImageWidth   (car (gimp-drawable-width  theText) ) )
-      (set! theImageHeight  (car (gimp-drawable-height theText) ) )
+      (set! theImageWidth   (car (gimp-drawable-get-width  theText) ) )
+      (set! theImageHeight  (car (gimp-drawable-get-height theText) ) )
       (set! theBuffer (* theImageHeight (/ inBufferAmount 100) ) )
       (set! theImageHeight (+ theImageHeight theBuffer theBuffer) )
       (set! theImageWidth (+ theImageWidth theBuffer theBuffer) )
