@@ -30,7 +30,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
 (define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color"))
-(define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass"))
+(define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass" "Glitter"))
 
 
 ; Fix code for gimp 2.99.6 working in 2.10
@@ -629,6 +629,11 @@
 
 
 			))
+		(define  (effect-glitter fond image) (begin
+				 ;(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
+				 (plug-in-rgb-noise 1 image fond  FALSE FALSE 0.6 0.6 0.6 0)
+				 (plug-in-cubism 1 image fond 1 5 0)               ; Add cubism effect
+			))
 
 ;;;;;;;			
 ;;;;;;;EFFECTS END
@@ -943,6 +948,9 @@
 		)
 		(if (= effect-back 13)
 		(effect-stain-glass fond img)
+		)
+		(if (= effect-back 14)
+		(effect-glitter fond img)
 		)
 		; composite text and channel
 		(gimp-image-select-item img 0 basetext)
@@ -1330,6 +1338,9 @@
 		)
 		(if (= effect-fill 13)
 		(effect-stain-glass basetext img)
+		)
+		(if (= effect-fill 14)
+		(effect-glitter basetext img)
 		)
     		(if (< opacity 100)  ;Transparent
 			(gimp-layer-set-opacity basetext opacity)
