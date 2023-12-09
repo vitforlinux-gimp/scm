@@ -165,6 +165,11 @@
           (gimp-layer-set-lock-alpha fill-layer TRUE)
              (plug-in-plasma 1 img fill-layer (rand 999999999) effect-depth) ; Add plasma
           )
+	  ((= effect-style 9)
+              ; (plug-in-oilify 1 img fill-layer effect-depth 0)              ; Add olify effect
+	      				 (plug-in-rgb-noise 1 img fill-layer  FALSE FALSE 0.6 0.6 0.6 0)
+				 (plug-in-cubism 1 img fill-layer 1 5 0)               ; Add cubism effect
+          )
     )
 ;
 ; bevel (only if bevel-amt depth is > 0) 
@@ -354,7 +359,7 @@
                     SF-ADJUSTMENT _"Shadow Offset X"      '(-6 -99 99 1 1 0 1)
                     SF-ADJUSTMENT _"Shadow Offset Y"      '(4 -99 99 1 1 0 1)
                     SF-ADJUSTMENT _"Shadow Opacity"       '(25 0 100 1 1 0 1)
-                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill")
+                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill")
                     SF-PATTERN    _"Added Effect Pattern" "Bricks"
                     SF-ADJUSTMENT _"Added Effect Depth"   '(7 0 50 1 1 0 1))
 
@@ -459,7 +464,7 @@
                     SF-ADJUSTMENT _"Shadow Offset X"      '(-6 -99 99 1 1 0 1)
                     SF-ADJUSTMENT _"Shadow Offset Y"      '(4 -99 99 1 1 0 1)
                     SF-ADJUSTMENT _"Shadow Opacity"       '(25 0 100 1 1 0 1)
-                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill")
+                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill")
                     SF-PATTERN    _"Added Effect Pattern" "Bricks"
                     SF-ADJUSTMENT _"Added Effect Depth"   '(7 0 50 1 1 0 1))
 
