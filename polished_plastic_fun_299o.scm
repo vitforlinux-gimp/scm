@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes" "Stripes 45"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass" "Glitter"))
 
 
@@ -540,6 +540,18 @@
       (gimp-drawable-edit-fill fond FILL-BACKGROUND)
      (gimp-context-set-paint-mode  LAYER-MODE-NORMAL-LEGACY)
 	) )
+	
+		(define (material-stripes img fond color color2 45deg size) (begin
+			    (gimp-context-set-background color2)
+		(gimp-context-set-foreground color )	
+				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+		(gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1)) 
+		(gimp-context-set-gradient (list-ref (car (gimp-gradients-get-list "")) 1)) )
+		  (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
+      (if (= 45deg TRUE)     (gimp-drawable-edit-gradient-fill fond 0 0 TRUE 1 0 TRUE 0 0 (round size) (round  size ))
+    (gimp-drawable-edit-gradient-fill fond 0 0 TRUE 1 0 TRUE 0 0 0 (round size)))
+		)
+		)
 ;;;;;;;
 ;;;;;;;MATERIAL END
 ;;;;;;;
@@ -909,6 +921,10 @@
  (material-grunge-green img fond fond-color 0))
    	(if (= backtype 31) 
  (material-grunge-green img fond fond-color 1))
+ (if (= backtype 32) 
+(material-stripes img fond fond-color fond-color2 FALSE 20))
+ (if (= backtype 33) 
+(material-stripes img fond fond-color fond-color2 TRUE 20))
 
 		(if (= effect-back 1) ;Blur
 		(effect-blur fond img)			; Blur effect
@@ -1161,6 +1177,10 @@
   (material-grunge-green img basetext color 0))
      	(if (= type 31) 
   (material-grunge-green img basetext color 1))
+   (if (= type 32) 
+(material-stripes img basetext color color2 FALSE 20))
+   (if (= type 33) 
+(material-stripes img basetext color color2 TRUE 20))
 	
 		; Adding light effect on edge
 		(gimp-selection-none img)
