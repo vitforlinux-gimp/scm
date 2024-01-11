@@ -602,8 +602,14 @@
   (gimp-image-undo-disable img)                ; Disallow undo 
   ;(gimp-image-resize-to-layers img)
   
-    
-    		    (cond ((= back-type 0)
+ ;   
+ 
+;
+; Call the logo effect procedure 
+;
+  (apply-logo-workshop-plus-299b16 img logo-layer fill-style logo-color logo-pattern logo-gradient logo-gradient-rvs bevel-amt stroke-type stroke-color stroke-pattern stroke-gradient stroke-gradient-rvs stroke-width shadow-color shadowx shadowy shadow-opacity effect-style effect-pattern effect-depth alpha2logo)
+(gimp-selection-all img)   		   
+		   (cond ((= back-type 0)
             (gimp-context-set-foreground back-color)            ; Set logo color
             ;(gimp-drawable-edit-bucket-fill bg-layer 0  0 0)  ; Fill with color
 	    (gimp-drawable-edit-fill bg-layer FILL-FOREGROUND)
@@ -622,11 +628,6 @@
 		      (gimp-drawable-edit-gradient-fill bg-layer GRADIENT-LINEAR 0 0 100 0 0 0 0 0 (car (gimp-drawable-get-height bg-layer))) ; Fill with gradient
           )
     )
-;
-; Call the logo effect procedure 
-;
-  (apply-logo-workshop-plus-299b16 img logo-layer fill-style logo-color logo-pattern logo-gradient logo-gradient-rvs bevel-amt stroke-type stroke-color stroke-pattern stroke-gradient stroke-gradient-rvs stroke-width shadow-color shadowx shadowy shadow-opacity effect-style effect-pattern effect-depth alpha2logo)
-
     (gimp-image-remove-layer img logo-layer)        ; Delete the logo layer (stroke color dup in this case)
     (gimp-image-set-active-layer img text-layer)    ; Make text layer active 
 
