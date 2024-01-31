@@ -218,6 +218,9 @@
 		(plug-in-cubism 1 img fill-layer 1 5 0)               ; Add cubism effect
           )
     )
+          (gimp-image-select-item img 2 stroke-layer)
+      (gimp-drawable-edit-clear logo-layer)
+      (gimp-image-select-item img 2 logo-layer); a little trick for gt-bevel
 ;
 ; bevel (only if bevel-amt depth is > 0) 
 ;
