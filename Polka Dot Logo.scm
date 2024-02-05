@@ -288,7 +288,7 @@
     
 ;;;;Scale Image to it's original size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (if (= conserve FALSE) (begin
-	(set! text-layer (car (gimp-image-merge-visible-layers image EXPAND-AS-NECESSARY)))
+	(set! text-layer (car (gimp-image-merge-visible-layers image CLIP-TO-IMAGE)))
 	(gimp-image-remove-channel image selection-channel)	
 	)) ;endif
 	(gimp-image-scale-full image final-width final-height 3)
