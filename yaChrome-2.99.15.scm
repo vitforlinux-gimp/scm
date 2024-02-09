@@ -1,7 +1,7 @@
 
 ; samj 20230120 modifications for gimp-2.99.15 (new API)
 ; lines 184 to 190 here is the problem...
-; you can test script-fu-ya-chrome-logo with console messages
+; you can test script-fu-ya-chrome-logo-29915 with console messages
 
 
 
@@ -123,7 +123,7 @@
     ) ;end cond
 ) ;end add layer procedure
 ;
-(define (script-fu-ya-chrome-logo 
+(define (script-fu-ya-chrome-logo-29915 
                                       text
 									  justify
 									  letter-spacing
@@ -213,7 +213,7 @@
 
 ;;;;start of script;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (gimp-image-undo-group-start image)
-	(script-fu-ya-chrome image text-layer
+	(script-fu-ya-chrome-29915 image text-layer
 					metal
 					colorize
 					metal-finish
@@ -234,8 +234,8 @@
 	
     )
   ) 
-(script-fu-register "script-fu-ya-chrome-logo"
-  "ya Chrome Logo"
+(script-fu-register "script-fu-ya-chrome-logo-29915"
+  "ya Chrome Logo 2.99.15"
   "Create an image with a text layer over a pattern layer"
   "Graechan"
   "Failed update and change name Vitforlinux"
@@ -259,9 +259,9 @@
   SF-OPTION		"Blend Direction" 		list-blend-dir
   
   )
-(script-fu-menu-register "script-fu-ya-chrome-logo" "<Image>/Script-Fu/Logos/")
+(script-fu-menu-register "script-fu-ya-chrome-logo-29915" "<Image>/Script-Fu/Logos/")
 ;
- (define (script-fu-ya-chrome image drawable
+ (define (script-fu-ya-chrome-29915 image drawable
                                        metal
 				       colorize
 				       metal-finish
@@ -488,7 +488,7 @@
  )
 ) 
 
-(script-fu-register "script-fu-ya-chrome"        		    
+(script-fu-register "script-fu-ya-chrome-29915"        		    
   "ya Chrome Alpha"
   "chrome any object with transparent background "
   "Graechan"
@@ -509,7 +509,7 @@
   SF-OPTION		"Blend Direction" 		list-blend-dir
 )
 
-(script-fu-menu-register "script-fu-ya-chrome" "<Image>/Script-Fu/Alpha-to-Logo/")
+(script-fu-menu-register "script-fu-ya-chrome-29915" "<Image>/Script-Fu/Alpha-to-Logo/")
 
 
  
