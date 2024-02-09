@@ -183,16 +183,11 @@
 	(gimp-context-set-background '(255 255 255))
 
 ;;;;adjust text 
-    (cond ((not(defined? 'gimp-image-set-selected-layers) )
-
+  
 	(gimp-text-layer-set-justification text-layer justify)
 	(gimp-text-layer-set-letter-spacing text-layer letter-spacing)
 	(gimp-text-layer-set-line-spacing text-layer line-spacing)
 	
-)
-(else ( gimp-message "OH! Justify and spacing not working in 2.99.12/14"))
-)
-
 
 ;;;;set the new width and height	
     (set! width (car (gimp-drawable-get-width text-layer)))
@@ -489,7 +484,7 @@
 ) 
 
 (script-fu-register "script-fu-ya-chrome-29915"        		    
-  "ya Chrome Alpha"
+  "ya Chrome 2.99.15 Alpha"
   "chrome any object with transparent background "
   "Graechan"
   "Failed update and change name Vitforlinux"
