@@ -683,7 +683,7 @@
 	"2010-12-28"
 	""
 	SF-COLOR "Couleur du fond / Background color " '(255 255 255)
-	SF-TEXT "Texte / Text " "GIMP"
+	SF-TEXT "Texte / Text " "Sweet Candy"
 	SF-FONT "Police / Font " "URW Bookman Semi-Bold Italic" ; Serif Bold Italic
 	SF-ADJUSTMENT "Taille Police / Font Size [pixels] " '(300 12 480 1 10 0 1) 
 			                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
@@ -691,7 +691,7 @@
                     SF-ADJUSTMENT _"Line Spacing"          '(-5 -300 300 1 10 0 1)
 	SF-ADJUSTMENT "Flou Texte / Text Blur [%] " '(12 1 20 1 10 0 1) 
 	SF-ADJUSTMENT "Inclinaison Bandes / Stripes Angle [degres] " '(30 -180 180 1 10 0 0) 
-	SF-ADJUSTMENT "Espacement Bandes / Stripes Spacing [1/1000] " '(20 10 100 1 10 0 0) 
+	SF-ADJUSTMENT "Espacement Bandes / Stripes Spacing [1/1000] " '(35 10 100 1 10 0 0) 
 	SF-COLOR "Couleur 1 Bandes / Stripes color 1 " '(255 255 255)
 	SF-COLOR "Couleur 2 Bandes / Stripes color 2 " '(255 0 0)
 	SF-ADJUSTMENT "Nettete Bandes / Stripes Sharpness " '(1 0 10 1 10 0 0) 
