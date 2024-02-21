@@ -284,7 +284,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
       (gimp-context-set-foreground color)
       (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
-                    (car
+       (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+                          (car
                           (gimp-text-fontname
                           theImage theLayer
                           0 0
@@ -294,6 +295,16 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
                           inFontSize PIXELS
                           inFont)
                       )
+                    (car
+                          (gimp-text-font
+                          theImage theLayer
+                          0 0
+                          inText
+                          0
+                          TRUE
+                          inFontSize 
+                          inFont)
+                      ))
         )
       (set! theImageWidth   (car (gimp-drawable-get-width  theText) ) )
       (set! theImageHeight  (car (gimp-drawable-get-height theText) ) )
