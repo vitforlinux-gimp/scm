@@ -34,6 +34,8 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+(cond ((not (defined? 'gimp-text-get-extents-fontname)) (define (gimp-text-get-extents-fontname efn1 efn2 PIXELS efn3) (gimp-text-get-extents-font efn1 efn2 efn3))))
 
 (define (script-fu-comix-text-bubble299 image drawable
                                 text-in 
@@ -58,8 +60,8 @@
         (image-layer (car (gimp-image-get-active-layer image)))
 		(offx 0)
         (offy 0)
-		(text (if (> (string-length text-in) 0) text-in "Img"))
-		(font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		(text  text-in )
+		(font font-in )
         (width (+ (car (gimp-text-get-extents-fontname text font-size PIXELS font)) (+ (/ font-size 2) add-width)))
 		(height (+ (cadr (gimp-text-get-extents-fontname text font-size PIXELS font)) (+ (/ font-size 2) add-height)))
 		(border (/ font-size 2))
