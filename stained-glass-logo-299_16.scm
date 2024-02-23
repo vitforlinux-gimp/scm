@@ -8,6 +8,8 @@
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
 (define (apply-super-logos04-effect image logo-layer tsize tspc random blur offset sf ft-color bg-color lwidth bgmosaic flatten)
 (let* (
 (bump-layer 0)
@@ -104,11 +106,15 @@ sf
 ; (gimp-context-set-dynamics "Dynamics Off")
 (gimp-context-set-dynamics "Pressure Opacity")
 ;(gimp-context-enable-dynamics FALSE)
+         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
 (gimp-context-set-brush "2. Hardness 100")
+(gimp-context-set-brush (car (gimp-brush-get-by-name "2. Hardness 100"))))
 (gimp-context-set-brush-size lwidth)
 (gimp-context-set-brush-spacing 0.1)
 ;(gimp-path-stroke-current image)
- (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-vectors-by-name image "Path")))	
+  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+ (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-active-vectors image)))
+ (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-vectors-by-name image "Path")))	)
  
 (set!  outline-layer (car(gimp-layer-copy path-layer 1)))
 (gimp-image-insert-layer image outline-layer 0 0)
@@ -146,7 +152,7 @@ sf
 			;REPEAT-NONE
 			;FALSE
 			;FALSE
-			100
+			1
 			0
 			0 ;FALSE
 width
@@ -207,7 +213,7 @@ height
 "copyright 2006, RETOUCH-SCRIPT" ;copyright notice
 "Nov 01, 2006" ;date created
 ""
-SF-STRING "Text" "GIMP 2.99.16"
+SF-STRING "Text" "GIMP 2.99.18"
 SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
 SF-FONT "Font" "Sans Bold"
 SF-ADJUSTMENT "Tile size" '(20 5 100 1 10 0 0)
