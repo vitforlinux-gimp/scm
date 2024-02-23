@@ -3,7 +3,7 @@
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
-; Fix code for gimp 2.10 working in 2.99.16
+
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
 
@@ -118,11 +118,12 @@
             "Egg Melt"                                  ;menu label
             "Create an upside down egg effect on a tablecloth"              ;description
             "Vitforlinux"                             ;author
-            "copyright 2023, vitforlinux"        ;copyright notice
+            "copyright 1997, Michael Terry;\
+              2009, the GIMP Documentation Team"        ;copyright notice
             "October 10, 2023"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Egg\nMelt"   ;a string variable
-            SF-FONT        "Font"          "Franks Thin"    ;a font variable
+            SF-FONT        "Font"          "Franks Regular"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 152 0)     ;color variable
 	     	     SF-COLOR       "Color2"         '(255 255 255)    ;color variable
@@ -198,7 +199,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
       (gimp-context-set-foreground inTextColor)
       (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
-                    (car
+      		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		                    (car
                           (gimp-text-fontname
                           theImage theLayer
                           0 0
@@ -208,6 +210,17 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                           inFontSize PIXELS
                           inFont)
                       )
+	
+                    (car
+                          (gimp-text-font
+                          theImage theLayer
+                          0 0
+                          inText
+                          0
+                          TRUE
+                          inFontSize
+                          inFont)
+                      ))
         )
 		;(gimp-context-push)
 		      (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY  )
@@ -273,7 +286,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 (gimp-selection-none theImage)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1))
-  (gimp-context-set-gradient (list-ref (car (gimp-gradients-get-list "")) 1))	)
+  (gimp-context-set-gradient (car (gimp-gradient-get-by-name (list-ref (car (gimp-gradients-get-list "")) 4))) )	)
     (gimp-context-set-background bg-color2)
      (gimp-context-set-foreground bg-color )
   (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
