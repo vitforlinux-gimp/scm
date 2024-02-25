@@ -38,6 +38,21 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
+
+(cond ((not (defined? 'gimp-context-set-pattern-ng)) (define (gimp-context-set-pattern-ng value) 
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-pattern value)
+				(gimp-context-set-pattern (car (gimp-pattern-get-by-name value)))
+				))))
+
+(cond ((not (defined? 'gimp-context-set-gradient-ng)) (define (gimp-context-set-gradient-ng value) 
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient value)
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
+				))))
+
 
 (define (fun-util-image-resize-from-layer image layer)
   (let* (
@@ -51,7 +66,7 @@
   )
 )
 		(define  (material-carbon fond) (begin
-				(gimp-context-set-pattern "Parque #3")
+						 (gimp-context-set-pattern-ng "Parque #3")
 				(gimp-drawable-fill fond FILL-PATTERN)
 				(gimp-drawable-desaturate fond 1)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
@@ -162,7 +177,9 @@
 				    
 			))
 		(define  (material-alubrushed fond image) (begin
-				(gimp-context-set-pattern "Blue Squares")
+
+						 (gimp-context-set-pattern-ng "Blue Squares")
+				
 				(gimp-drawable-fill fond FILL-PATTERN)
 				(gimp-drawable-desaturate fond 1)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
@@ -175,7 +192,11 @@
 			))
 		(define  (material-alubrushed-light fond image) (begin
 				;(gimp-context-set-gradient "Flare Rays Size 1")
-				(gimp-context-set-gradient "Rounded edge")
+			;	(gimp-context-set-gradient-ng "Rounded edge")
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Rounded edge")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Rounded Edge")))
+				)
 				(gimp-context-set-gradient-repeat-mode 0)
 				(gimp-drawable-edit-gradient-fill 
 			fond
@@ -187,7 +208,7 @@
 			;REPEAT-NONE
 			;FALSE
 			;FALSE
-			100
+			1
 			0
 			0 ;FALSE
 			0
@@ -206,7 +227,11 @@
 			))
 			
 					(define  (material-blue-jeans fond image col-opt) (begin
-				(gimp-context-set-gradient "Rounded edge")
+			;	(gimp-context-set-gradient-ng "Rounded edge")
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Rounded edge")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Rounded Edge")))
+				)
 				(gimp-context-set-gradient-repeat-mode 1)
 				(gimp-drawable-edit-gradient-fill 
 			fond
@@ -218,7 +243,7 @@
 			;REPEAT-NONE
 			;FALSE
 			;FALSE
-			100
+			1
 			0
 			0 ;FALSE
 			0
@@ -278,7 +303,7 @@
 		(define (material-pijama fond image gradient)  			(begin
 (gimp-context-set-gradient gradient)
  (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
- (gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE FALSE 0.0 FALSE 0 0 90 45)
+ (gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE 1 0.0 FALSE 0 0 90 45)
  (gimp-drawable-posterize fond 3)
 
 
@@ -421,7 +446,7 @@
 			;REPEAT-NONE
 			;FALSE
 			;FALSE
-			100
+			1
 			0
 			0 ;FALSE
 			47
@@ -546,7 +571,7 @@
 		(gimp-context-set-foreground color )	
 				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 		(gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1)) 
-		(gimp-context-set-gradient (list-ref (car (gimp-gradients-get-list "")) 1)) )
+		(gimp-context-set-gradient (car (gimp-gradient-get-by-name(list-ref (car (gimp-gradients-get-list "")) 4)))) )
 		  (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
         (cond ((= 45deg 0)
 		(gimp-drawable-edit-gradient-fill fond 0 0 TRUE 1 0 TRUE 0 0 0 (round size))
@@ -1084,7 +1109,7 @@
 					gradient-type ;0 ;GRADIENT-LINEAR	; gradient type
 					0				; opacity
 					0				; offset
-					100 				;
+					1 				;
 					0				; 
 					0 ; FALSE			; dithering
 					x1				; x1
@@ -1268,7 +1293,7 @@
 			;REPEAT-NONE
 			;FALSE
 			;FALSE
-			100
+			1
 			0
 			0 ;FALSE
 			(/ width 2)
