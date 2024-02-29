@@ -77,6 +77,8 @@
 ;  3/10/2023 Small changes to have backward compatibility with Gimp 2.10 and make it work without creating a brush and removing it (not possible on 2.99.16) (vitforlinux).
 ;
 ;               Replaced call of gimp-image-set-active layer with call of gimp-image-set-selected-layers
+;  29/2/2024 fixes for Gimp 2.99.18... work with errors, last version with backwards compatibility with 2.10 (vitforlinux)
+;
 ;
 ;              programmer_ceds A T yahoo D O T co D O T uk
 ;
