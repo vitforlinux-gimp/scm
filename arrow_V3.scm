@@ -13,13 +13,13 @@
 ; GNU General Public License for more details.
 ;
 ; If you use this script and/or like it the author would be happy to
-; receive a postcard from you: 
+; receive a postcard from you:
 ;
 ; You should have received a copy of the GNU General Public License
 ; along with this program; if not, write to the Free Software
 ; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ;
-; Versionhistory:
+; Version history:
 ;   11/10/2009 first release
 ;   11/15/2009 Added fixed brush width and double headed error, removed bug 1) one-point-paths, 2) horizontal paths
 ;   11/16/2009 Fixed image type restriction string
@@ -96,7 +96,7 @@
 (define minor_version_no 0)
 (define release_no 0)
 
-(define 
+(define
     (script-fu-help-1Arrow
         inPointToX
         inPointToY
@@ -111,7 +111,7 @@
     )
     (let*
         (
-        ; calculate absolute angle of both wings in image from relative angle 
+        ; calculate absolute angle of both wings in image from relative angle
         ; between wings and arrow-tail and absolute angle of arrow-tail
         (theArrowAngle (if (= (- inPointToY inPointFromY) 0)
             (/ pi (if (< (- inPointToX inPointFromX) 0) 2 -2))
@@ -139,7 +139,7 @@
         (gimp-context-set-paint-mode LAYER-MODE-NORMAL)
 
         ; collect points for arrow-tail and draw them
-; Now draw the arrow tail along the path in the higher level function rather than a straight line here     
+; Now draw the arrow tail along the path in the higher level function rather than a straight line here
         ; accordingly for left wing
         (aset points 0 inPointToX)               (aset points 1 inPointToY)
         (aset points 2 theLeftWingEndPointX)     (aset points 3 theLeftWingEndPointY)
@@ -153,7 +153,7 @@
         (if (= FullHead 1) (begin
             ; calculate intersection of connection between the wings end points and arrow tail
             ; shrink distance between this point and arrow head if MiddlePoint < 100
-            (set! theMiddleWingEndPointX (+ inPointToX 
+            (set! theMiddleWingEndPointX (+ inPointToX
                                             (* (/ MiddlePoint 100) (- (/ (+ theLeftWingEndPointX theRightWingEndPointX) 2) inPointToX))
                                          ))
             (set! theMiddleWingEndPointY (+ inPointToY
@@ -198,8 +198,8 @@
 ;				(75% fills more of the head than 25%)
 ;		num_points = the number of points to use to construct the wings (3..99) (excludes the tip of the arrow)
 ;		P0_end = 1 if the arrow is to be drawn at the P0 end of the path, = 0 for the P3 end
-;		
-(define 
+;
+(define
     (Draw_Curved_Wing_Arrow
         P0x P0y P1x P1y P2x P2y P3x P3y
 		t
@@ -261,7 +261,7 @@
 				(aset points2 0 P3x)						; ... and the other
 				(aset points2 1 P3y)
 			)
-		)	; end - if 
+		)	; end - if
 
 		; set the middle part of notch points based on t_middle_point in case the head has to be filled
 
@@ -273,7 +273,7 @@
 		(gimp-context-set-opacity 100.0)
 		(set! PreviousPaintMode (car (gimp-context-get-paint-mode)))
         (gimp-context-set-paint-mode LAYER-MODE-NORMAL)
-    
+
 		(set! count 1)
 		(set! points_index 2)
 		(while (<= count num_points)
@@ -432,8 +432,8 @@
 	(set! derivative (* t_squared (* term1 3)))
 	(set! derivative (+ derivative (* t (* term2 2))))
 	(set! derivative (+ derivative term3))
-	
-	(list 
+
+	(list
 		result
 		derivative
 	)
@@ -536,12 +536,12 @@
 
             ; create new layer if asked to do so
             (if (= useNewLayer 1) (begin
-                (set! drawable (car (gimp-layer-new image (car (gimp-image-get-width     image))
+                 (set! drawable (car (gimp-layer-new image (car (gimp-image-get-width     image))
                                                           (car (gimp-image-get-height    image))
                                                           (+ 1 (* 2 (car (gimp-image-get-base-type image))))
                                                           "Arrow" 100 LAYER-MODE-NORMAL )))
                 (gimp-image-insert-layer image drawable 0 -1)
-                ; set new layer completely transparent
+                 ; set new layer completely transparent
                 (gimp-layer-add-mask drawable (car (gimp-layer-create-mask drawable ADD-MASK-BLACK)))
                 (gimp-layer-remove-mask drawable MASK-APPLY)
             ))
@@ -587,7 +587,7 @@
             (set! inPoint_1Y    (aref theStrokePoints 3))
             (set! inPoint_2X    (aref theStrokePoints (- theNumPoints 4)))		; for the arrow at the end of the path
             (set! inPoint_2Y    (aref theStrokePoints (- theNumPoints 3)))
-   
+
             ; calculate length of arrows depending on the length of the whole arrow
 			(set! theArrowLength	(car (gimp-vectors-stroke-get-length theActiveVector 1 3.0)))
             (if (= WingLengthType FACTOR_RELATIVE_TO_PATH_LENGTH)
@@ -612,7 +612,10 @@
 ;       toolbox brush radius is then restored afterwards
 ;
 
-            (gimp-context-set-brush brushName)
+           
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (gimp-context-set-brush brushName)
+		 (gimp-context-set-brush (car(gimp-brush-get-by-name brushName)))	)
 
             ; set radius of brush according to length of arrow or to a set value
             (if (= BrushThicknessType FACTOR_RELATIVE_TO_PATH_LENGTH)
@@ -652,7 +655,7 @@
 				(set! adjustment (/ adjustment 2))
 				(set! i (+ i 1.0))
 			)	; end - while
- 
+
 			(if (or (= useFirstPointArrowAsHead 1) (= useDoubleHeadArrow 1))
 				(if (= CurvedArrowhead 1)
 					(begin
@@ -750,7 +753,8 @@
                 ;(gimp-image-set-selected-layers image 1 layers_list)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 		(gimp-image-set-active-layer image oldLayer)
-		(gimp-image-set-selected-layers image 1 (vector oldLayer))	)
+		(gimp-image-set-selected-layers image 1 (vector oldLayer))	
+)
                 
             ))
             (gimp-displays-flush)
@@ -773,19 +777,20 @@
     "*"
     SF-IMAGE       "The image"   0
     SF-DRAWABLE    "The drawable"   0
-    SF-ADJUSTMENT  "Length of wings (LoW)" '(20.0 1 500 1 10 1 1)
-    SF-OPTION      "Length of wings type"            (list "LoW Pixels" "Path length divided by LoW value")
-    SF-ADJUSTMENT  "Angle between arrow and wing in degrees" '(25 5 85 5 15 0 1)
-    SF-TOGGLE      "Fill head of arrow?" TRUE
-    SF-ADJUSTMENT  "Percentage size of notch of arrow head\n(only valid if head of arrow is filled)" '(75 0 100 1 10 0 1)
-    SF-ADJUSTMENT  "Brush thickness (BT)" '(6 1 500 1 10 0 1)
-    SF-OPTION      "Brush thickness type"            (list "BT Pixels" "Path length divided by BT value")
-    SF-TOGGLE      "Use first path point as arrow head?\n(if not the last path point of is used as arrow head)" TRUE
-    SF-TOGGLE      "Delete path after arrow is drawn?" TRUE
-    SF-TOGGLE      "Use new layer for arrow?" TRUE
-    SF-TOGGLE      "Draw double headed arrow?" FALSE
-    SF-TOGGLE      "Curved arrow wings? (only for curved paths)" FALSE
-    SF-ADJUSTMENT  "Points for curved arrow wing (2 to 99)" '(20 2 99 1 10 0 1)
+;SF-ONE-DRAWABLE
+    SF-ADJUSTMENT  "Length of _wings (LoW)" '(20.0 1 500 1 10 1 1)
+    SF-OPTION      "Length of wings _type"            (list "LoW Pixels" "Path length divided by LoW value")
+    SF-ADJUSTMENT  "_Angle between arrow and wing in degrees" '(25 5 85 5 15 0 1)
+    SF-TOGGLE      "_Fill head of arrow?" TRUE
+    SF-ADJUSTMENT  "_Percentage size of notch of arrow head\n(only valid if head of arrow is filled)" '(75 0 100 1 10 0 1)
+    SF-ADJUSTMENT  "_Brush thickness (BT)" '(6 1 500 1 10 0 1)
+    SF-OPTION      "Brush thic_kness type"            (list "BT Pixels" "Path length divided by BT value")
+    SF-TOGGLE      "_Use first path point as arrow head?\n(if not the last path point of is used as arrow head)" TRUE
+    SF-TOGGLE      "_Delete path after arrow is drawn?" TRUE
+    SF-TOGGLE      "Use _new layer for arrow?" TRUE
+    SF-TOGGLE      "Draw double _headed arrow?" FALSE
+    SF-TOGGLE      "Cur_ved arrow wings? (only for curved paths)" FALSE
+    SF-ADJUSTMENT  "Points for curved arrow win_g (2 to 99)" '(20 2 99 1 10 0 1)
 )
-(script-fu-menu-register "script-fu-draw-arrowV3" "<Image>/Tools/Arrow...")
+(script-fu-menu-register "script-fu-draw-arrowV3" "<Image>/Tools/ArrowV3...")
 
