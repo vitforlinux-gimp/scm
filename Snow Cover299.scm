@@ -38,6 +38,9 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
+
 ;
 ; Gradients blend direction list
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
@@ -183,7 +186,7 @@
          (offy 0)
          (image (car (gimp-image-new 100 100 RGB)))
          (border (/ font-size 4))
-		 (font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		 (font font-in)
          (text-layer (car (gimp-text-fontname image -1 0 0 text border TRUE font-size PIXELS font)))
          (width (car (gimp-drawable-get-width text-layer)))
          (height (car (gimp-drawable-get-height text-layer)))
@@ -312,7 +315,9 @@
 	
 		
 ;;;;resize the text-layer
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 	(gimp-image-set-active-layer image text-layer)
+	(gimp-image-set-selected-layers image 1 (vector text-layer)))
 	(script-fu-snow-cover299-alpha image 
                           text-layer
                           depth
