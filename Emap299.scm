@@ -34,6 +34,9 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
+
 ; Include layer Procedure
 (define (include-layer image newlayer oldlayer stack)	;stack 0=above 1=below
 	(cond ((defined? 'gimp-image-get-item-position) ;test for 2.8 compatability
@@ -93,7 +96,7 @@
   (let* (
          (image (car (gimp-image-new 256 256 RGB)))         
          (border (/ font-size 4))
-		 (font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		 (font font-in)
          (size-layer (car (gimp-text-fontname image -1 0 0 text border TRUE font-size PIXELS font)))
          (final-width (car (gimp-drawable-get-width size-layer)))
          (final-height (car (gimp-drawable-get-height size-layer)))
@@ -343,18 +346,20 @@
 	 
 	(else
 		(plug-in-lighting
-				1 
-	    	image              ; IMAGE
-		1
-		(vector layer )             ; DRAWABLE
-		 bump-channel     ; BUMP MAP  (set to valid drawable)
+				1  ;ok
+	    	image              ; IMAGE ok
+		1    ;ok
+		(vector layer )             ; DRAWABLE ok
+		 bump-channel     ; BUMP MAP  (set to valid drawable)ok
 		bkg-layer          ; ENVIRONMENT MAP  (set to 0 if disabled)
-		FALSE              ; ENABLE BUMPMAPPING
-		TRUE               ; ENABLE ENVMAPPING
-		2                  ; TYPE OF MAPPING (0=linear,1=log, 2=sinusoidal, 3=spherical)
-		1                  ; TYPE OF LIGHTSOURCE (0=point,1=directional,3=spot,4=none) 
+		FALSE              ; ENABLE BUMPMAPPING ok
+		TRUE               ; ENABLE ENVMAPPING ok
+		"bumpmap-sinusoidal"		; TYPE OF MAPPING (0=linear,1=log, 2=sinusoidal, 3=spherical)
+		
+		1                 ; TYPE OF LIGHTSOURCE (0=point,1=directional,3=spot,4=none) 
+		"light-directional"	
 		'(255 255 255)     ; LIGHTSOURCE COLOR
-		-1.63                 ; LIGHTSOURCE POS X
+		1.63                 ; LIGHTSOURCE POS X
 		-1.25                 ; LIGHTSOURCE POS Y
 		1                  ; LIGHTSOURCE POS Z
 		-1                 ; LIGHTSOURCE DIR X
@@ -364,7 +369,7 @@
 		0.50               ; DIFFUSE INTENSITY (BRIGHT)0.50
 		 bright                 ; DIFFUSE REFLECTIVITY (INTENSITY)1 GUARDA QUI !!
 		shine               ; SPECULAR REFLECTIVITY (SHINY)0.50
-		polish                  ; HIGHLIGHT (POLISHED)27
+		0.55 ;polish                  ; HIGHLIGHT (POLISHED)27
 		TRUE               ; ANTIALIASING
 		FALSE              ; CREATE NEW IMAGE
 		FALSE)	           ; MAKE BACKGROUND TRANSPARENT
@@ -402,8 +407,8 @@
 	      				(gimp-drawable-edit-gradient-fill bkg-layer blend-direction 
 					0				; opacity
 					0				; offset
-					100 				;
-					0				; 
+					1 				;
+					1				; 
 					0 
 					0 0 (/ width 2) (/ height 2)
 				)
@@ -419,9 +424,9 @@
 	(gimp-image-remove-channel image bump-channel)
 	(gimp-image-remove-channel image selection-channel)
 	)) ;endif
-    (cond ((= ver 2.8) (gimp-item-set-name layer (string-append layer-name "\n" emap-gradient)))
-	(else (gimp-item-set-name layer (string-append layer-name "\n" emap-gradient)))
-    ) ;endcond
+  ;  (cond ((= ver 2.8) (gimp-item-set-name layer (string-append layer-name "\n" emap-gradient)))
+	;(else (gimp-item-set-name layer (string-append layer-name "\n" emap-gradient)))
+   ; ) ;endcond
 	(if (and (= conserve FALSE) (= alpha FALSE)) (gimp-layer-flatten layer))	
 	
 	(gimp-displays-flush)
@@ -643,10 +648,10 @@
 	;LAYER-MODE-NORMAL-LEGACY
 	blend-shape
 	;100
-	0
-	REPEAT-NONE
+	1
+	1
 	;back-reverse
-	FALSE 
+	1
 	;3
 	0.2
 	TRUE
