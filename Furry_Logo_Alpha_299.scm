@@ -37,6 +37,8 @@
 ;Fix code for 2.10 work in 2.99.12
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
 
 (define (script-fu-furry-logo 
                                       img-width
@@ -66,7 +68,7 @@
          (offy 0)
          (image (car (gimp-image-new img-width img-height RGB)))
          (border (/ font-size 3))
-		 (font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		 (font  font-in )
          (layer (car (gimp-text-fontname image -1 0 0 text border TRUE font-size PIXELS font)))
          (text-width (car (gimp-drawable-get-width layer)))
          (text-height (car (gimp-drawable-get-height layer)))
@@ -147,7 +149,7 @@
 	(if (= bkg-type 1) (gimp-drawable-fill bkg-layer FILL-PATTERN))		
     (if (= bkg-type 3) (gimp-drawable-fill bkg-layer FILL-BACKGROUND))	
     (if (= bkg-type 2) ;(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height)
-(gimp-drawable-edit-gradient-fill bkg-layer  GRADIENT-LINEAR 0 0 100 0 0 0 0 width height) ; Fill with gradient
+(gimp-drawable-edit-gradient-fill bkg-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 width height) ; Fill with gradient
 
 )));; GRADIENT-LINEAR ; GRADIENT-CONICAL-SYMMETRIC
               
