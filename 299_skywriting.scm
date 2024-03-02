@@ -3,7 +3,9 @@
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
-              
+
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
 ; Define the function:
 
 (define (script-fu-skywriting inText inSize inFont  justification letter-spacing line-spacing grow-text outline color foption scolor grad pat)
@@ -231,7 +233,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
   (cond((= foption 1)
     (gimp-context-set-gradient grad)
    ; (gimp-edit-blend bgLayer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY 0 100 20 REPEAT-NONE FALSE FALSE 0 0 FALSE 0 0 0 height)
-   				      (gimp-drawable-edit-gradient-fill bgLayer GRADIENT-LINEAR 0 0 100 0 0 0 0 0 height) ; Fill with gradient
+   				      (gimp-drawable-edit-gradient-fill bgLayer GRADIENT-LINEAR 0 0 1 0 0 0 0 0 height) ; Fill with gradient
 
     )
     ((= foption 2)
