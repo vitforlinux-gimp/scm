@@ -9,6 +9,8 @@
 
 (cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
 
 (define (apply-reflex-logo image drawable gradient displace merge)
  
@@ -26,7 +28,7 @@
 
 		(white-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE "Blur" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(text-layer (car (gimp-layer-new-from-drawable drawable image)))
-		(fond-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE (string-append gradient) 100 LAYER-MODE-NORMAL-LEGACY)))
+		(fond-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE "GRAD" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(horizon-layer (car (gimp-layer-new-from-drawable fond-layer image)))
 		(bump-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE "Edge" 100 LAYER-MODE-OVERLAY-LEGACY)))
 		(blur-layer 0)
@@ -56,11 +58,11 @@
 
 (gimp-context-set-gradient gradient)
 ;(gimp-edit-blend fond-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 (+ image-height displace))
-		      (gimp-drawable-edit-gradient-fill fond-layer  GRADIENT-LINEAR 0 0 100 0 0 0 0 0 (+ image-height displace)) ; Fill with gradient
+		      (gimp-drawable-edit-gradient-fill fond-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ image-height displace)) ; Fill with gradient
 
 (gimp-item-set-visible fond-layer FALSE)
 ;(gimp-edit-blend horizon-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 image-height)
-		      (gimp-drawable-edit-gradient-fill horizon-layer  GRADIENT-LINEAR 0 0 100 0 0 0 0 0 image-height) ; Fill with gradient
+		      (gimp-drawable-edit-gradient-fill horizon-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 image-height) ; Fill with gradient
 
 (gimp-item-set-name horizon-layer "Reflex")
 (set! adjust (* displace 2))
@@ -71,7 +73,12 @@
 (plug-in-bump-map 1 image bump-layer blur-layer 135 27 7 0 0 0 0 TRUE TRUE 2)
 (plug-in-gauss-rle2 1 image bump-layer 1 1)
 (gimp-image-remove-layer image blur-layer)
-(gimp-context-set-gradient "Three bars sin")
+;(gimp-context-set-gradient "Three bars sin")
+
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Three bars sin")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Three Bars Sin")))
+				)
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (plug-in-gradmap 1 image bump-layer)
@@ -113,7 +120,9 @@
 (define (script-fu-reflex-logo-alpha image drawable gradient displace merge)
 
 	(let* (
-		(drawable (car (gimp-image-get-selected-drawables image)))
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+		(drawable (car (gimp-image-get-active-drawable image)))
+		(drawable (aref (cadr (gimp-image-get-selected-drawables image)) 0)))
 		(var-select 0)
 		(canal 0)
 		(old-fg 0) )
@@ -136,9 +145,9 @@
 		(set! drawable (car (gimp-layer-copy drawable TRUE)))
 		(gimp-layer-set-mode drawable LAYER-MODE-NORMAL-LEGACY)
 		(gimp-image-insert-layer image drawable 0 -1)
-		(gimp-layer-set-preserve-trans drawable TRUE)
+		(gimp-layer-set-lock-alpha drawable TRUE)
 		(gimp-drawable-edit-fill drawable FILL-FOREGROUND)
-		(gimp-layer-set-preserve-trans drawable FALSE)
+		(gimp-layer-set-lock-alpha drawable FALSE)
 
 		(apply-reflex-logo image drawable gradient displace merge)
     		
@@ -146,7 +155,7 @@
 			(begin 
 			)
 			(begin 
-				(gimp-selection-load canal)
+				(gimp-image-select-item image 2 canal)
 				(gimp-image-remove-channel image canal)
 			)
 		)
