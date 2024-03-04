@@ -51,6 +51,10 @@
 
 ;
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+(cond ((not (defined? 'gimp-text-get-extents-fontname)) (define (gimp-text-get-extents-fontname efn1 efn2 PIXELS efn3) (gimp-text-get-extents-font efn1 efn2 efn3))))
+
+
 (define (
 				script-fu-sweet-candy-text299mod
 				Couleur_du_fond
@@ -95,7 +99,8 @@
 			(old_gradient (car (gimp-context-get-gradient)))
 
 			; caractéristiques de la surface occupée par le texte
-			(fond_texte (gimp-text-get-extents-fontname Texte Taille_Police 0 Police))		
+			(fond_texte (gimp-text-get-extents-fontname Texte Taille_Police 0 Police))
+
 
 			; largeur de la future image sans Contour
 			(width (car fond_texte)) 
@@ -213,13 +218,17 @@
 				
 				; déterminer la taille des la brosse Circle Fuzzy en fonction de la Police
 				
-				(gimp-context-set-brush "2. Hardness 025") ; 5*5
+				;(gimp-context-set-brush "2. Hardness 025") ; 5*5
+				         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+(gimp-context-set-brush "2. Hardness 025")
+(gimp-context-set-brush (car (gimp-brush-get-by-name "2. Hardness 025"))))
+
 				(gimp-context-set-brush-size 4)
 
 				(if (> Taille_Police 90) ; 70
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (05)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 3)
 					)
 				) ; 7*7
@@ -228,7 +237,7 @@
 				(if (> Taille_Police 110) ; 90
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (07)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 7)
 					)
 				) ;  9*9
@@ -237,7 +246,7 @@
 				(if (> Taille_Police 130) ; 110
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (09)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 9)
 					)
 				) ; 11*11
@@ -246,7 +255,7 @@
 				(if (> Taille_Police 150) ; 130 
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (11)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 11)
 					)
 				) ; 13*13
@@ -255,7 +264,8 @@
 				(if (> Taille_Police 170) ; 150
 					(begin				
 						;(gimp-context-set-brush "Circle Fuzzy (13)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
+			
 						(gimp-context-set-brush-size 13)
 					)
 				) ; 15*15
@@ -264,7 +274,7 @@
 				(if (> Taille_Police 190) ; 170
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (15)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 15)
 					)
 				) ; 17*17
@@ -273,7 +283,7 @@
 				(if (> Taille_Police 210) ; 190
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (17)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 17)
 					)
 				) ; 19*19
@@ -282,7 +292,7 @@
 				(if (> Taille_Police 230) ; 210 
 					(begin
 						;(gimp-context-set-brush "Circle Fuzzy (19)")
-						(gimp-context-set-brush "2. Hardness 025")
+						;(gimp-context-set-brush "2. Hardness 025")
 						(gimp-context-set-brush-size 19)
 					)
 				) ; 21*21
