@@ -1,3 +1,8 @@
+; Fix code for gimp 2.99.6 working in 2.10
+(cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
+(cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+
+
 ; 3D Extrusion - Release V2.4 
 ;
 ; This script extrudes the image or selection in a given layer 
@@ -94,7 +99,7 @@
 ; 
 
   (gimp-context-push)                               ; Push context onto stack
-  ;(gimp-image-undo-group-start img)                 ; Begin undo group
+  (gimp-image-undo-group-start img)                 ; Begin undo group
 
 ;
 ;           Define GIMP 2.8.x Layer Group Procedures That Do Not Exists In GIMP 2.6.x
@@ -316,7 +321,7 @@
 ;
 ; Clean up
 ;
-  ;(gimp-image-undo-group-end img) ; End undo group
+  (gimp-image-undo-group-end img) ; End undo group
   (gimp-context-pop)              ; Pop context off stack
   (gimp-displays-flush)           ; Flush changes to display
 
