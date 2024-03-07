@@ -5,11 +5,13 @@
 ;
 ; Christopher Gutteridge, cjg@ecs.soton.ac.uk
 ;
-; Update/fix for Gimp 2.10.32 and 2.99.16 vitforlinux
+; Update/fix for Gimp 2.10.32 and 2.99.16/18 vitforlinux
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 ; Define the function:
 
@@ -59,7 +61,7 @@
           (gimp-selection-none theImage)
 
 ;          (set! theText (car (gimp-text theImage theTextLayer 0 0 inText 0 TRUE inFontSize PIXELS "misc" "fixed" "medium" "r" "semicondensed" "c" "*" "8")))
-(set! theText (car (gimp-text-fontname theImage theTextLayer 0 0 inText 0 TRUE inFontSize PIXELS inFont)))
+(set! theText (car (gimp-text-fontname theImage theTextLayer 0 0 inText (+ 50 inBufferAmount) TRUE inFontSize PIXELS inFont)))
 
 ;2.4â¸ïœtheImageWidthzÅAtheImageHeightz
           (set! theImageWidthz  (car (gimp-drawable-get-width  theText) ) )
@@ -147,6 +149,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
         (set! theSourceLayer inSourceLayer)
 
           ;(plug-in-autocrop TRUE theImage theSourceLayer)
+	  	  (gimp-layer-resize-to-image-size inSourceLayer)
+
 
           (set! theImageWidth  (car (gimp-drawable-get-width  inSourceLayer) ) )
           (set! theImageHeight (car (gimp-drawable-get-height inSourceLayer) ) )
@@ -158,19 +162,21 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
 (gimp-image-undo-group-start theImage)
 
-          (gimp-image-resize theImage theImageWidth theImageHeight 0 0)
-          ;(gimp-layer-resize theSourceLayer theImageWidth theImageHeight 0 0)
+        ;  (gimp-image-resize theImage theImageWidth theImageHeight 0 0)
+         ; (gimp-layer-resize theSourceLayer theImageWidth theImageHeight 0 0)
 
-          (gimp-layer-set-offsets theSourceLayer (/ theInc 2) (/  theInc 2))
+         ; (gimp-layer-set-offsets theSourceLayer (/ theInc 2) (/  theInc 2))
           (gimp-image-select-item theImage 2 theSourceLayer)
 
           (gimp-drawable-edit-clear theSourceLayer)
           (gimp-selection-invert theImage)
           (gimp-drawable-edit-clear theSourceLayer)
           (gimp-selection-invert theImage)
+	;  (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
 	  (if (= inDistress TRUE) 
 	      (script-fu-distress-selection theImage theSourceLayer 127 2 1.5 2 TRUE TRUE)
               (plug-in-gauss-iir TRUE theImage theSourceLayer 1 TRUE TRUE) 
+	     ; (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
           )
           (gimp-context-set-background '(255 255 255) )
           (gimp-context-set-foreground '(0 0 0) )
@@ -232,7 +238,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-selection-none theImage)
 	  
           (if (* (/ inFontSize 120) 8) (plug-in-gauss-iir TRUE theImage theShadowLayer (* (/ inFontSize 120) 8) TRUE TRUE))	;changed
-          (plug-in-autocrop TRUE theImage theShadowLayer)
+          ;(plug-in-autocrop TRUE theImage theShadowLayer)
 
 	  (set! thePaintMask (car(gimp-layer-create-mask thePaintLayer ADD-MASK-ALPHA)))
 	  (gimp-layer-add-mask thePaintLayer thePaintMask)
@@ -256,7 +262,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 		(gimp-drawable-edit-clear thenewLayer)					;;í«â¡
 		(gimp-image-select-item theImage 2 theSourceLayer)			;;í«â¡
                 ;(gimp-blend thenewLayer BLEND-CUSTOM LAYER-MODE-LIGHTEN-ONLY-LEGACY 0 100 0 REPEAT-NONE FALSE 0 0 0 TRUE 0 0 theImageWidth theImageHeight)
-				      (gimp-drawable-edit-gradient-fill thenewLayer GRADIENT-LINEAR 0 0 100 0 0 0 0  theImageWidth theImageHeight) ; Fill with gradient
+				      (gimp-drawable-edit-gradient-fill thenewLayer GRADIENT-LINEAR 0 0 1 0 0 0 0  theImageWidth theImageHeight) ; Fill with gradient
 		(gimp-layer-set-mode thenewLayer LAYER-MODE-LIGHTEN-ONLY-LEGACY)
 ;;;;;		(gimp-edit-blend thenewLayer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-LINEAR 100 20 REPEAT-NONE FALSE FALSE 0 0 FALSE 
 ;;;;;	0 0 theImageWidth theImageHeight)
@@ -289,8 +295,11 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-layer-set-opacity thePaintLayer (if (= inGilt TRUE) 97 inPaintOpacity))
           (set! thePattLayer2 (car(gimp-image-merge-visible-layers theImage 0)))	;2.4â¸ïœ
 	  (gimp-item-set-visible theShadowLayer TRUE)
+	  
+	            (gimp-selection-none theImage)
 
-	  (plug-in-bump-map TRUE theImage thePattLayer2 theBumpLayer2 135 45 (+ (* (/ inFontSize 120) 2) 1) 0 0 0 0.50 TRUE TRUE 1 )
+	(plug-in-bump-map TRUE theImage thePattLayer2 theBumpLayer2 135 45 (+ (* (/ inFontSize 120) 2) 1) 0 0 0 0.50 TRUE TRUE 1 )
+	;(plug-in-bump-map TRUE theImage thePattLayer2 theBumpLayer2 135 45 60 0 0 0 0.50 TRUE TRUE 1 )
 
           (gimp-image-remove-layer theImage theBumpLayer2)
 ;	  (if (= inBG TRUE)
@@ -302,7 +311,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
                  (gimp-drawable-edit-fill theBackground FILL-BACKGROUND)
   (cond((= btype 1)
     (gimp-context-set-gradient bgrad)
-    (gimp-edit-blend theBackground BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY 0 100 20 REPEAT-NONE FALSE FALSE 0 0 FALSE 0 0 theImageWidth theImageHeight)
+    ;(gimp-edit-blend theBackground BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY 0 1 20 REPEAT-NONE FALSE FALSE 0 0 FALSE 0 0 theImageWidth theImageHeight) QUI!!
+(gimp-drawable-edit-gradient-fill theBackground GRADIENT-LINEAR 0 0 1 0 0 0 0  theImageWidth theImageHeight) ; Fill with gradient
+
     )
     ((= btype 2)
        (gimp-image-select-item theImage 2 theBackground)
@@ -325,6 +336,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
           (gimp-image-clean-all theImage)
           (gimp-selection-none theImage)
+	  (gimp-layer-resize-to-image-size theBackground)
 (gimp-context-pop)
 (gimp-image-undo-group-end theImage)
           (gimp-displays-flush)         ;âÊëúÇçXêVÇ∑ÇÈÇΩÇﬂ
