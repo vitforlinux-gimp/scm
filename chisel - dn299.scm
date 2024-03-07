@@ -57,7 +57,7 @@
     ;  it begins here
     (gimp-context-push)
     (gimp-image-undo-group-start img)
-	
+	 (gimp-layer-resize-to-image-size inLayer)
 	;save selection or select all if no selection
 	(if (= varNoSelection TRUE)
 	  (if (= (car (gimp-drawable-has-alpha inLayer)) TRUE)  ;check for alpha
