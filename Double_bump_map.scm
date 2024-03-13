@@ -184,7 +184,7 @@
   SF-IMAGE      "Image" 0                   
   SF-DRAWABLE   "Layer" 0
   SF-COLOR      "Solid Color"          '(0 129 229)
-  SF-PATTERN    "Pattern" (car (gimp-context-get-pattern))
+  SF-PATTERN    "Pattern" "Blue Squares"
   SF-TOGGLE     "Use Pattern instead of solid color" TRUE
   SF-ADJUSTMENT "Grow Distance(from border to cut)" '(2 0 100 1 10 0 0)
   SF-ADJUSTMENT "Bump Map Blur Radius"             '(3 0 100 1 10 0 0)
@@ -223,7 +223,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 	  SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	      SF-COLOR      "Solid Color"          '(0 129 229)
-  SF-PATTERN    "Pattern" (car (gimp-context-get-pattern))
+  SF-PATTERN    "Pattern" "Blue Squares"
   SF-TOGGLE     "Use Pattern instead of solid color" TRUE
   SF-COLOR      "Background Color"          '(255 255 255)
   SF-ADJUSTMENT "Grow Distance(from border to cut)" '(2 0 100 1 10 0 0)
