@@ -9,6 +9,10 @@
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sfbrush '("Pencil Scratch" 1.0 20 0))
+  (define sfbrush "Pencil Scratch")	)
+
 (define (script-fu-rakugaki-plus299 image drawable randpoint brush brush-size rotation rsize ctype color gradient)
 
 (let* (
@@ -69,7 +73,7 @@ _"Rakugaki-PLUS (Graffiti) 299..."
                     SF-IMAGE      "Image"       0
                     SF-DRAWABLE   "Drawable"    0
                     SF-ADJUSTMENT "Power"  '(30 1 1000 1 10 0 1)
-                    SF-BRUSH      "Brush"            '("Pencil Scratch" 1.0 20 0)
+                    SF-BRUSH      "Brush"            sfbrush
 SF-ADJUSTMENT "Brush Max Size" '(35 1 1000 1 5 0 0)		    
 		      SF-TOGGLE	"Random rotation?"			FALSE
 		      SF-TOGGLE	"Random size?"			FALSE
