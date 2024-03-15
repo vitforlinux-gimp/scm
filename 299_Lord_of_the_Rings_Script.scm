@@ -367,7 +367,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
       SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -40 40 1 10 0 0)
         SF-ADJUSTMENT _"Outline"          '(0 0 40 1 10 0 0)      
-	SF-OPTION     "mode"               '(_"color" _"gradient" _"pattern" "gradmap")
+	SF-OPTION     "mode"               '(_"color" _"gradient" _"pattern")
 	SF-COLOR      "Color"     	  '(213 206 95)
 	SF-GRADIENT   "Gradient"           "Wood 1"
 	SF-PATTERN    "Pattern"            "Burlwood"
