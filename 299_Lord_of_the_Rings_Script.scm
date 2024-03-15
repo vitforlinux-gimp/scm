@@ -239,12 +239,16 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 
 (script-fu-menu-register "script-fu-lotr299-text" "<Image>/Script-Fu/AlphaToLogo/")
 ;;text
-(define (script-fu-lotr299-text-text text size font md color mgrad mtex blendStyle addShadow offsetX offsetY blurRadius shadowColor 
+(define (script-fu-lotr299-text-text text size font justification letter-spacing line-spacing grow-text outline md color mgrad mtex blendStyle addShadow offsetX offsetY blurRadius shadowColor 
 		opacity bg-md bg-color1 bggrad bgpat)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
 
 ;;text
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text 20 TRUE size PIXELS font)))
+	 	  (justification (cond ((= justification 0) 2)
+						       ((= justification 1) 0)
+						       ((= justification 2) 1)
+						       ((= justification 3) 3)))	
 ;;width height
 	 (width (car (gimp-drawable-get-width text-layer)))
 	 (height (car (gimp-drawable-get-height text-layer)))
@@ -261,6 +265,33 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 
 ;;
     (gimp-context-set-foreground color)
+       	      (gimp-text-layer-set-letter-spacing text-layer letter-spacing)  ; Set Letter Spacing
+   (gimp-text-layer-set-justification text-layer justification) ; Text Justification (Rev Value) 
+   (gimp-text-layer-set-line-spacing text-layer line-spacing)      ; Set Line Spacing  
+
+   ;;;;;; SHRINK/GROW text
+(cond ((> grow-text 0)
+	(gimp-selection-none img)
+	(gimp-image-select-item img 2 text-layer)
+	(gimp-selection-grow img (round grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ )
+ ((< grow-text 0)
+        (gimp-selection-none img)
+	(gimp-image-select-item img 2 text-layer)
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-selection-shrink img (- grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ ))
+   ;;; outline
+ (cond ((> outline 0)
+	(gimp-selection-none img)
+	(gimp-image-select-item img 2 text-layer)
+	(gimp-selection-shrink img (round outline))   
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-image-select-item img 2 text-layer)
+ ))
+(gimp-selection-none img)
     (gimp-layer-set-lock-alpha text-layer TRUE)
     (gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
     (cond((= md 1)
@@ -331,7 +362,12 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 	SF-TEXT   "Text String"		"Lord of the Rings"
 	SF-ADJUSTMENT "Font Size (pixels)"	'(120 2 1000 1 10 0 1)
 	SF-FONT     "Font"			"Bodoni MT"
-	SF-OPTION     "mode"               '(_"color" _"gradient" _"pattern")
+	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
+	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
+	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
+      SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -40 40 1 10 0 0)
+        SF-ADJUSTMENT _"Outline"          '(0 0 40 1 10 0 0)      
+	SF-OPTION     "mode"               '(_"color" _"gradient" _"pattern" "gradmap")
 	SF-COLOR      "Color"     	  '(213 206 95)
 	SF-GRADIENT   "Gradient"           "Wood 1"
 	SF-PATTERN    "Pattern"            "Burlwood"
