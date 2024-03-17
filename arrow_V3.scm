@@ -772,7 +772,7 @@
 (script-fu-register
     "script-fu-draw-arrowV3"
     "ArrowV3"
-    _"Draw a nearly arbitrary arrow in your image" 
+    "Draw a nearly arbitrary arrow in your image" 
     "Berengar W. Lehr <B-Ranger@web.de>"
     "2009, Berengar W. Lehr / MPG@IDIR, UH Jena, Germany."
     "19th November 2009"
@@ -780,19 +780,19 @@
     SF-IMAGE       "The image"   0
     SF-DRAWABLE    "The drawable"   0
 ;SF-ONE-DRAWABLE
-    SF-ADJUSTMENT  "Length of _wings (LoW)" '(20.0 1 500 1 10 1 1)
-    SF-OPTION      "Length of wings _type"            (list "LoW Pixels" "Path length divided by LoW value")
-    SF-ADJUSTMENT  "_Angle between arrow and wing in degrees" '(25 5 85 5 15 0 1)
-    SF-TOGGLE      "_Fill head of arrow?" TRUE
-    SF-ADJUSTMENT  "_Percentage size of notch of arrow head\n(only valid if head of arrow is filled)" '(75 0 100 1 10 0 1)
-    SF-ADJUSTMENT  "_Brush thickness (BT)" '(6 1 500 1 10 0 1)
-    SF-OPTION      "Brush thic_kness type"            (list "BT Pixels" "Path length divided by BT value")
-    SF-TOGGLE      "_Use first path point as arrow head?\n(if not the last path point of is used as arrow head)" TRUE
-    SF-TOGGLE      "_Delete path after arrow is drawn?" TRUE
-    SF-TOGGLE      "Use _new layer for arrow?" TRUE
-    SF-TOGGLE      "Draw double _headed arrow?" FALSE
-    SF-TOGGLE      "Cur_ved arrow wings? (only for curved paths)" FALSE
-    SF-ADJUSTMENT  "Points for curved arrow win_g (2 to 99)" '(20 2 99 1 10 0 1)
-)
+    SF-ADJUSTMENT  "Length of wings (LoW)" '(20.0 1 500 1 10 1 1)
+    SF-OPTION      "Length of wings type"            (list "LoW Pixels" "Path length divided by LoW value")
+    SF-ADJUSTMENT  "Angle between arrow and wing in degrees" '(25 5 85 5 15 0 1)
+    SF-TOGGLE      "Fill head of arrow?" TRUE
+    SF-ADJUSTMENT  "Percentage size of notch of arrow head\n(only valid if head of arrow is filled)" '(75 0 100 1 10 0 1)
+    SF-ADJUSTMENT  "Brush thickness (BT)" '(6 1 500 1 10 0 1)
+    SF-OPTION      "Brush thickness type"            (list "BT Pixels" "Path length divided by BT value")
+    SF-TOGGLE      "Use first path point as arrow head?\n(if not the last path point of is used as arrow head)" TRUE
+    SF-TOGGLE      "Delete path after arrow is drawn?" TRUE
+    SF-TOGGLE      "Use new layer for arrow?" TRUE
+    SF-TOGGLE      "Draw double headed arrow?" FALSE
+    SF-TOGGLE      "Curved arrow wings? (only for curved paths)" FALSE
+    SF-ADJUSTMENT  "Points for curved arrow wing (2 to 99)" '(20 2 99 1 10 0 1)
+    )
 (script-fu-menu-register "script-fu-draw-arrowV3" "<Image>/Tools/ArrowV3...")
 
