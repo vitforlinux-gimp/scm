@@ -308,7 +308,7 @@
 	(set! y1 (/ height 2))))
 	;(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY gradient-type 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE x1 y1 x2 y2)
 	(gimp-context-set-gradient-reverse reverse)
-	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type 0 0 100 0 0 x1 y1 x2 y2)
+	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type 0 0 1 0 0 x1 y1 x2 y2)
 	)
 	) ;endif
     
