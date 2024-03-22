@@ -37,6 +37,8 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+;(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 
 (define (script-fu-plastic-or-glass-text 
@@ -67,7 +69,7 @@
   (let* (
          (image (car (gimp-image-new 256 256 RGB)))         
          (border (round (/ font-size (/ 10 border-inc))))
-		 (font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		 (font font-in )
          (size-layer (car (gimp-text-fontname image -1 0 0 text border TRUE font-size PIXELS font)))
          (final-width (car (gimp-drawable-get-width size-layer)))
          (final-height (car (gimp-drawable-get-height size-layer)))
@@ -142,6 +144,9 @@
  ;;;;text modify
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)  
 	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer blur blur)
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
 
@@ -151,13 +156,20 @@
 	(gimp-layer-resize-to-image-size text-layer)
 ;;;;create selection-channel (gimp-image-select-item image 2 selection-channel)
     (gimp-selection-save image)
-	(set! selection-channel (car (gimp-image-get-active-drawable image)))	
+;	(set! selection-channel (car (gimp-image-get-selected-drawables image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! selection-channel (car (gimp-image-get-active-drawable image)))
+	)
+)	
 	(gimp-channel-set-opacity selection-channel 100)	
 	(gimp-item-set-name selection-channel "selection-channel")
-    (gimp-image-set-active-layer image text-layer)	
+    ;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)    
 	(gimp-selection-none image)
 	
-;;;;create the bump-layer
+;;;;create the bump-layerplastic-or-glass
     (set! bump-layer (car (gimp-layer-copy text-layer TRUE)))
 	(gimp-image-insert-layer image bump-layer -1 0)
 	(gimp-item-set-name bump-layer "Bump Layer")
@@ -175,11 +187,13 @@
 	(if (= bkg-type 1) 
 	(begin
 	(gimp-drawable-fill bkg-layer FILL-PATTERN)
-	(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_pattern" "_" pattern))))		
+	;(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_pattern" "_" pattern))
+	))		
     (if (= bkg-type 2) 
 	(begin
 	(gimp-drawable-fill bkg-layer FILL-BACKGROUND)	
-    (gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_color"))))
+    ;(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_color"))
+    ))
 	(if (= bkg-type 3) 
 	(begin
 	(gimp-selection-none image)
@@ -195,18 +209,19 @@
 				(( equal? gradient-type-in 1 ) "GRADIENT-SHAPEBURST-SPHERICAL")
 				(( equal? gradient-type-in 2 ) "GRADIENT-SHAPEBURST-DIMPLED")))			
 	;(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY gradient-type-blend 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height)
-	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type-blend 0 REPEAT-NONE FALSE 0.2 TRUE 0 0 width height)
-	(gimp-item-set-name bkg-layer (string-append gradient "_" gradient-type-name))))
+	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type-blend 0 REPEAT-NONE 1 0.2 TRUE 0 0 width height)
+	;(gimp-item-set-name bkg-layer (string-append gradient "_" gradient-type-name))
+	))
 ;;;;create the random gradients
 	(if (= bkg-type 4)
     (begin
 	(gimp-selection-none image)
 	(gimp-drawable-fill bkg-layer FILL-BACKGROUND)
-	(set! random_gradient (list-ref (cadr (gimp-gradients-get-list "")) (round (random (car (gimp-gradients-get-list ""))))))
+	;(set! random_gradient (list-ref (cadr (gimp-gradients-get-list "")) (round (random (car (gimp-gradients-get-list ""))))))
     (set! gradient-type (+ 6 (random 3)))
-	(gimp-context-set-gradient random_gradient)
+	;(gimp-context-set-gradient random_gradient)
 	;(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY gradient-type 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height)
-	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type 0 REPEAT-NONE FALSE 0.2 TRUE 0 0 width height)
+	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type 0 REPEAT-NONE 1 0.2 TRUE 0 0 width height)
 	
 	(set! gradient-type-name
 			(cond 
@@ -214,14 +229,17 @@
 				(( equal? gradient-type 7 ) "GRADIENT-SHAPEBURST-SPHERICAL")
 				(( equal? gradient-type 8 ) "GRADIENT-SHAPEBURST-DIMPLED")))
 				
-	(set! name-string (string-append (car (gimp-item-get-name bkg-layer)) "- Gradient " random_gradient))
-	(gimp-item-set-name bkg-layer name-string)
+	;(set! name-string (string-append (car (gimp-item-get-name bkg-layer)) "- Gradient " random_gradient))
+	;(gimp-item-set-name bkg-layer name-string)
 	;(gimp-item-set-name bkg-layer (string-append gradient "_" gradient-type-name))
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))))
 
 ;;;;prepare the text-layer
-	(gimp-image-set-active-layer image text-layer)
+	;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)  
 	(gimp-drawable-colorize-hsl text-layer 180 0 70)
 	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)
 	(gimp-layer-set-lock-alpha text-layer TRUE)
@@ -255,13 +273,19 @@
 	(plug-in-colortoalpha 1 image reflection3 '(0 0 0))
 	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection3 15 15)
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
-	(gimp-layer-set-opacity reflection3 70)
+	;(gimp-layer-set-opacity reflection3 70)
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+(gimp-layer-set-opacity reflection3 70)	
+      (begin (gimp-layer-set-opacity reflection3 50)	 (gimp-layer-set-mode reflection3 LAYER-MODE-OVERLAY ))  )
 
 ;;;;apply the tint	
 	(gimp-image-select-item image 2 selection-channel)
 	(gimp-context-set-foreground color)
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
-	(gimp-image-set-active-layer image text-layer)
+	;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)  
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 -1)
     	(gimp-layer-resize-to-image-size tint-layer)
@@ -345,8 +369,9 @@
 	(set! text-layer (car (gimp-image-merge-visible-layers image EXPAND-AS-NECESSARY)))
 	(gimp-item-set-name text-layer layer-name)
 	(if (= bkg-type 4) (begin
-	(set! name-string (string-append (car (gimp-item-get-name text-layer)) "- Gradient " random_gradient))	
-	(gimp-item-set-name text-layer name-string)))))
+	;(set! name-string (string-append (car (gimp-item-get-name text-layer)) "- Gradient " random_gradient))	
+	;(gimp-item-set-name text-layer name-string)
+	))))
 	
 	(gimp-context-pop)
     (gimp-display-new image)
@@ -446,10 +471,17 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	
 ;;;;create selection-channel (gimp-image-select-item image 2 selection-channel)
     (gimp-selection-save image)
-	(set! selection-channel (car (gimp-image-get-active-drawable image)))	
+;	(set! selection-channel (car (gimp-image-get-selected-drawables image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! selection-channel (car (gimp-image-get-active-drawable image)))
+	)
+)	
 	(gimp-channel-set-opacity selection-channel 100)	
 	(gimp-item-set-name selection-channel "selection-channel")
-    (gimp-image-set-active-layer image text-layer)	
+    ;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)      
 	(gimp-selection-none image)	
 ;;;;begin the script;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 ;;;;create the bump-layer
@@ -470,11 +502,13 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(if (= bkg-type 1) 
 	(begin
 	(gimp-drawable-fill bkg-layer FILL-PATTERN)
-	(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_pattern" "_" pattern))))		
+	;(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_pattern" "_" pattern))
+	))		
     (if (= bkg-type 2) 
 	(begin
 	(gimp-drawable-fill bkg-layer FILL-BACKGROUND)	
-    (gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_color"))))
+    ;(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_color"))
+    ))
 	(if (= bkg-type 3) 
 	(begin
 	(gimp-selection-none image)
@@ -491,7 +525,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 				(( equal? gradient-type-in 2 ) "GRADIENT-SHAPEBURST-DIMPLED")))			
 	(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY gradient-type-blend 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height)
 	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type-blend 0 REPEAT-NONE FALSE 0.2 TRUE 0 0 width height)
-	(gimp-item-set-name bkg-layer (string-append gradient "_" gradient-type-name))))
+	;(gimp-item-set-name bkg-layer (string-append gradient "_" gradient-type-name))
+	))
 ;;;;create the random gradients
 	(if (= bkg-type 4)
     (begin
@@ -508,13 +543,16 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 				(( equal? gradient-type 7 ) "GRADIENT-SHAPEBURST-SPHERICAL")
 				(( equal? gradient-type 8 ) "GRADIENT-SHAPEBURST-DIMPLED")))
 				
-	(set! name-string (string-append (car (gimp-item-get-name bkg-layer)) "- Gradient " random_gradient "- Shape " gradient-type-name))
-	(gimp-item-set-name bkg-layer name-string)
+	;(set! name-string (string-append (car (gimp-item-get-name bkg-layer)) "- Gradient " random_gradient "- Shape " gradient-type-name))
+	;(gimp-item-set-name bkg-layer name-string)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))))
 	
 ;;;;prepare the text-layer
-	(gimp-image-set-active-layer image text-layer)
+	;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)  
 	(gimp-drawable-colorize-hsl text-layer 180 0 70)
 	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)
 	(gimp-layer-set-lock-alpha text-layer TRUE)
@@ -547,12 +585,18 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(plug-in-colortoalpha 1 image reflection3 '(0 0 0))
 	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection3 15 15)
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
-	(gimp-layer-set-opacity reflection3 70)	
+	;(gimp-layer-set-opacity reflection3 70)	
+	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+(gimp-layer-set-opacity reflection3 70)	
+      (begin (gimp-layer-set-opacity reflection3 50)	 (gimp-layer-set-mode reflection3 LAYER-MODE-OVERLAY ))	   ) 
 
 ;;;;apply the tint	
 	(gimp-image-select-item image 2 selection-channel)
 	(gimp-context-set-foreground color)
-	(gimp-image-set-active-layer image text-layer)
+	;(gimp-image-set-active-layer image text-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(else (gimp-image-set-active-layer image text-layer))
+)  
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 -1)
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
@@ -632,8 +676,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(set! text-layer (car (gimp-image-merge-visible-layers image EXPAND-AS-NECESSARY)))
 	(gimp-item-set-name text-layer layer-name)
 	(if (= bkg-type 4) (begin
-	(set! name-string (string-append (car (gimp-item-get-name text-layer)) "- Gradient " random_gradient "- Shape " gradient-type-name))	
-	(gimp-item-set-name text-layer name-string)))))
+	;(set! name-string (string-append (car (gimp-item-get-name text-layer)) "- Gradient " random_gradient "- Shape " gradient-type-name))	
+	;(gimp-item-set-name text-layer name-string)
+	))))
 	(if (= keep-selection FALSE) (gimp-selection-none image))
 	(gimp-image-remove-channel image selection-channel)
 	(if (and (= conserve FALSE) (= alpha FALSE) (gimp-layer-flatten text-layer)))	
