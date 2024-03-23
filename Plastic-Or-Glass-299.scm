@@ -430,7 +430,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 							   )							  
 
  (let* (
-        (image-layer (car (gimp-image-get-active-layer image)))
+	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+ 		(car (gimp-image-get-active-layer image))	
+        	(aref (cadr (gimp-image-get-selected-layers image)) 0)))
 		(width (car (gimp-image-get-width image)))
 		(height (car (gimp-image-get-height image)))
 		(alpha (car (gimp-drawable-has-alpha image-layer)))
@@ -523,8 +525,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 				(( equal? gradient-type-in 0 ) "GRADIENT-SHAPEBURST-ANGULAR")
 				(( equal? gradient-type-in 1 ) "GRADIENT-SHAPEBURST-SPHERICAL")
 				(( equal? gradient-type-in 2 ) "GRADIENT-SHAPEBURST-DIMPLED")))			
-	(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY gradient-type-blend 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height)
-	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type-blend 0 REPEAT-NONE FALSE 0.2 TRUE 0 0 width height)
+	;(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY gradient-type-blend 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height)
+	(gimp-drawable-edit-gradient-fill bkg-layer gradient-type-blend 0 REPEAT-NONE 1 0.2 TRUE 0 0 width height)
 	;(gimp-item-set-name bkg-layer (string-append gradient "_" gradient-type-name))
 	))
 ;;;;create the random gradients
@@ -663,6 +665,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 (gimp-layer-set-opacity text-layer opacity )
 (gimp-layer-set-opacity tint-layer opacity ))
 )
+	(if (> bkg-type 0) (begin
+    (gimp-image-lower-item-to-bottom image bkg-layer)))
 ;;;;finish the script	
 	(if (= conserve FALSE) (begin
 	(set! text-layer (car (gimp-image-merge-down image tint-layer EXPAND-AS-NECESSARY)))
