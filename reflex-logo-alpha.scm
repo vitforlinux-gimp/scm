@@ -12,7 +12,9 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 
-(define (apply-reflex-logo image drawable gradient displace merge)
+
+
+(define (apply-reflex-logo image drawable gradient reverse displace merge)
  
 	(let* (
 		(old-bg (car (gimp-context-get-background)))
@@ -57,6 +59,7 @@
 (plug-in-gauss-rle2 1 image blur-layer (/ area 70) (/ area 70))
 
 (gimp-context-set-gradient gradient)
+(gimp-context-get-gradient-reverse reverse)
 ;(gimp-edit-blend fond-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 (+ image-height displace))
 		      (gimp-drawable-edit-gradient-fill fond-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ image-height displace)) ; Fill with gradient
 
@@ -117,7 +120,7 @@
 ;; script pour <image> 
 ;; ------------------------
 
-(define (script-fu-reflex-logo-alpha image drawable gradient displace merge)
+(define (script-fu-reflex-logo-alpha image drawable gradient reverse displace merge)
 
 	(let* (
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
@@ -149,7 +152,7 @@
 		(gimp-drawable-edit-fill drawable FILL-FOREGROUND)
 		(gimp-layer-set-lock-alpha drawable FALSE)
 
-		(apply-reflex-logo image drawable gradient displace merge)
+		(apply-reflex-logo image drawable gradient reverse displace merge)
     		
 		(if (= var-select TRUE) 
 			(begin 
@@ -179,7 +182,8 @@
         "RGBA"
         SF-IMAGE      "Image"        0
         SF-DRAWABLE   "Drawable"     0
-        SF-GRADIENT   "Gradient"     "Horizon 2"
+        SF-GRADIENT   "Gradient"     _"Horizon 2"
+	SF-TOGGLE     "Gradient reverse" FALSE
         SF-ADJUSTMENT "Shift amount"     '(10 1 20 1 10 0 0)
         SF-TOGGLE     "Flatten" TRUE
 )
@@ -194,7 +198,7 @@
 ;; script pour <toolbox> 
 ;; ------------------------
 
-(define (script-fu-reflex-logo text size font justification letter-spacing line-spacing gradient displace merge)
+(define (script-fu-reflex-logo text size font justification letter-spacing line-spacing gradient reverse displace merge)
 
   (let* (
 	(image (car (gimp-image-new 256 256 RGB)))
@@ -213,7 +217,7 @@
 
     (gimp-item-set-name text-layer "Text")
 	(gimp-image-resize image (car (gimp-drawable-get-width text-layer)) (car (gimp-drawable-get-height text-layer)) 0 0)    	
-	(apply-reflex-logo image text-layer gradient displace merge)
+	(apply-reflex-logo image text-layer gradient reverse displace merge)
 
 	(if (= merge FALSE)
 		(begin 
@@ -236,11 +240,12 @@
         ""
         SF-TEXT     _"Text"               "Reflex"
         SF-ADJUSTMENT _"Font size (pixels)" '(200 2 1000 1 10 0 1)
-        SF-FONT       _"Font"               "Liberation Mono Bold"
+        SF-FONT       _"Font"               font
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
-        SF-GRADIENT    "Gradient"           "Horizon 2"
+        SF-GRADIENT    "Gradient"           _"Horizon 2"
+	SF-TOGGLE      "Gradient reverse"        FALSE
         SF-ADJUSTMENT  "Shift amount"           '(10 1 20 1 10 0 0)
         SF-TOGGLE      "Flatten"        FALSE
 )
