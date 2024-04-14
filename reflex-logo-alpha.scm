@@ -59,7 +59,7 @@
 (plug-in-gauss-rle2 1 image blur-layer (/ area 70) (/ area 70))
 
 (gimp-context-set-gradient gradient)
-(gimp-context-get-gradient-reverse reverse)
+(gimp-context-set-gradient-reverse reverse)
 ;(gimp-edit-blend fond-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 (+ image-height displace))
 		      (gimp-drawable-edit-gradient-fill fond-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ image-height displace)) ; Fill with gradient
 
