@@ -240,11 +240,11 @@
         ""
         SF-TEXT     _"Text"               "Reflex"
         SF-ADJUSTMENT _"Font size (pixels)" '(200 2 1000 1 10 0 1)
-        SF-FONT       _"Font"               font
+        SF-FONT       _"Font"               "Liberation Mono Bold"
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
-        SF-GRADIENT    "Gradient"           _"Horizon 2"
+        SF-GRADIENT    "Gradient"           "Horizon 2"
 	SF-TOGGLE      "Gradient reverse"        FALSE
         SF-ADJUSTMENT  "Shift amount"           '(10 1 20 1 10 0 0)
         SF-TOGGLE      "Flatten"        FALSE
