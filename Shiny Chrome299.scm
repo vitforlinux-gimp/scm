@@ -34,6 +34,8 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
 
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
 ;
@@ -75,7 +77,7 @@
          (image (car (gimp-image-new 50 50 RGB)))
          (area (* 1000 1000))
          (border (/ font-size 4))
-		 (font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		 (font font-in)
          (text-layer (car (gimp-text-fontname image -1 0 0 text border TRUE font-size PIXELS font)))
          (text-width (car (gimp-drawable-get-width text-layer)))
          (text-height (car (gimp-drawable-get-height text-layer)))
@@ -217,8 +219,13 @@
 	)
 	)
 
-	(gimp-image-set-active-layer image drawable)	
-	
+    ; samj Old code ->   (gimp-image-set-active-layer image drawable)
+	; samj New code for gimp-2.99.12
+   ; (gimp-image-set-selected-layers image 1 (vector drawable))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector drawable)))
+(else (gimp-image-set-active-layer image drawable))
+)
+
 ;;;;begin the script	
 	(include-layer image bkg-layer drawable 0)	;stack 0=above 1=below
 	(gimp-layer-set-offsets bkg-layer offx offy)
@@ -242,7 +249,7 @@
 	(gimp-context-set-gradient-fg-bg-rgb)
 ;(gimp-image-select-item image 2 drawable)
 	;(gimp-drawable-edit-gradient-fill chrome GRADIENT-LINEAR 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE (+ offx x1) (+ offy y2) (+ offx x1) (+ offy y1))
-	  (gimp-drawable-edit-gradient-fill chrome GRADIENT-LINEAR 0 0 100 0 0 (+ offx x1) (+ offy y2) (+ offx x1) (+ offy y1))
+	  (gimp-drawable-edit-gradient-fill chrome GRADIENT-LINEAR 0 0 1 0 0 (+ offx x1) (+ offy y2) (+ offx x1) (+ offy y1))
 	(gimp-selection-none image)
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 3 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
@@ -252,7 +259,11 @@
 	(set! chrome-copy (car (gimp-layer-copy chrome TRUE)))
 	(include-layer image chrome-copy chrome 0)	;stack 0=above 1=below
 	(gimp-item-set-name chrome-copy "Chrome-Copy")
-	(gimp-context-set-gradient "Sunrise")
+	;(gimp-context-set-gradient "Sunrise")
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Sunrise")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Sunrise")))
+				)
 	;(plug-in-gradmap 1 image chrome-copy)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (plug-in-gradmap 1 image chrome-copy)
@@ -297,7 +308,7 @@
 	(set! y1 (/ height 2))))
 	;(gimp-drawable-edit-gradient-fill bkg-layer gradient-type 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE x1 y1 x2 y2)
 	(gimp-context-set-gradient-reverse reverse)
-	 (gimp-drawable-edit-gradient-fill bkg-layer gradient-type 0 0 100 0 0 x1 y1 x2 y2)
+	 (gimp-drawable-edit-gradient-fill bkg-layer gradient-type 0 0 1 0 0 x1 y1 x2 y2)
 	)
 	) ;endif
 	) ;endlet
