@@ -49,6 +49,7 @@
 		bplasma
 		colored
 		bcolor
+		
 	)
 
 	(let* 
@@ -197,6 +198,7 @@
 		bplasma
 		colored
 		bcolor
+		
 	)
 
 	(begin
@@ -225,7 +227,7 @@
 	SF-TOGGLE 	"Back Noise" TRUE
 	SF-TOGGLE 	"Back Plasma." TRUE
 	SF-TOGGLE 	"Background colored" FALSE
-	 SF-COLOR      "Background  color"         '(255 104 0) 
+	 SF-COLOR      "Background  color"         '(255 104 0)
 )
 
 (script-fu-menu-register 
@@ -251,6 +253,8 @@
 		bplasma
 		colored
 		bcolor
+		inBufferAmount
+		conserve
 		
 	)
   
@@ -260,7 +264,7 @@
 			(justify (cond ((= justify 0) 2)
 		        ((= justify 1) 0)
 			((= justify 2) 1)))
-			(border (/ size 4))
+			(border (* (/ size 4) inBufferAmount))
 			(text-layer (car (gimp-text-fontname img -1 0 0 text border TRUE size PIXELS font)))
 			(width (car (gimp-drawable-get-width text-layer)))
 			(height (car (gimp-drawable-get-height text-layer)))
@@ -300,6 +304,7 @@
  ))
 		
 		(apply-bumpy-logo-effect img text-layer text-color boolrippleh boolripplev bnoise bplasma colored bcolor)
+		  (if (= conserve TRUE) (gimp-image-flatten img))
 		(gimp-image-undo-enable img)
 		(gimp-context-pop)
 		(gimp-display-new img)    
@@ -317,7 +322,7 @@
 	""
 	SF-TEXT "Enter your text" "BUMPY"
 	SF-FONT "Font Name" "Blippo Heavy"
-	SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 1)
+	SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
 	SF-OPTION "Justify" '("Centered" "Left" "Right")
 	SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
@@ -329,7 +334,12 @@
 	SF-TOGGLE "Back Noise" TRUE
 	SF-TOGGLE "Back Plasma." TRUE
 	SF-TOGGLE "Background colored" FALSE
-	SF-COLOR   "Background  color"         '(255 104 0) 
+	SF-COLOR   "Background  color"         '(255 104 0)
+	SF-ADJUSTMENT  "Buffer amount" '(1 1 200 1 10 0 0)
+	SF-TOGGLE   "Merge Layers"     TRUE
+
+	  
+	
 	
 	)
 
