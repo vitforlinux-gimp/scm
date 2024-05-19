@@ -391,6 +391,7 @@
 	(gimp-selection-none image)
 	(if (> 3d-height 0)
 	(plug-in-mblur 1 image bkg-layer 0 3d-height 90 (/ width 2) (/ height 2)))
+	      (plug-in-gauss-iir2 1 image bkg-layer 2 2)
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 depth 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 	(if (= shined 1) (plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE))
@@ -434,7 +435,7 @@
 (plug-in-gradmap 1 image chrome-copy) 
       (plug-in-gradmap 1 image 1 (vector chrome-copy))   )              ; Map Gradient
       (plug-in-oilify 1 image chrome-copy 3 1)
-      (plug-in-gauss-iir2 1 image chrome-copy 1 1)
+      (plug-in-gauss-iir2 1 image chrome-copy 2 2)
 )     
 ) ;endif
 
