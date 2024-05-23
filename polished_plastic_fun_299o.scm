@@ -1535,6 +1535,7 @@
 									  line-spacing
 					grow-text
 					outline
+					buffer
 		border-color
 		border-size
 		refl-color
@@ -1569,7 +1570,7 @@
 		(
 			(img (car (gimp-image-new 256 256 RGB)))	; nouvelle image -> img
 			(border (/ size 4))
-			(text-layer (car (gimp-text-fontname img -1 0 0 text border TRUE size PIXELS font)))
+			(text-layer (car (gimp-text-fontname img -1 0 0 text  (round (* border buffer)) TRUE size PIXELS font)))
 					 (justify (cond ((= justify 0) 2)
 		                ((= justify 1) 0)
 						((= justify 2) 1)))
@@ -1643,6 +1644,7 @@
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
 	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 	SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
+	SF-ADJUSTMENT _"Buffer"          '(1 1 20 1 10 0 0)
 	SF-COLOR		"Border Color"			'(0 0 0)
 	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 0)
 	SF-COLOR		"Refl Color"	'(255 255 255)
