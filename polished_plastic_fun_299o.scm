@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood 2.10 only" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes Horiz" "Stripes 45" "Stripes Vert"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes Horiz" "Stripes 45" "Stripes Vert"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass" "Glitter"))
 
 
@@ -232,7 +232,7 @@
 						 (gimp-context-set-gradient "Rounded edge")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Rounded Edge")))
 				)
-				(gimp-context-set-gradient-repeat-mode 1)
+				(gimp-context-set-gradient-repeat-mode 2)
 				(gimp-drawable-edit-gradient-fill 
 			fond
 			;BLEND-FG-TRANSPARENT
@@ -264,8 +264,9 @@
 		)
 		
 																(if (= col-opt 1) 
-				;(gimp-drawable-colorize-hsl fond 0 0 0)
-				(gimp-drawable-brightness-contrast fond -0.2 0.4)
+				(begin (gimp-drawable-colorize-hsl fond 10 10 10)
+				(gimp-drawable-brightness-contrast fond -0.1 0.3)
+				(gimp-drawable-desaturate fond 1))
 			
 		)
 			))
