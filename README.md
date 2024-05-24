@@ -12,4 +12,4 @@ If a script-fu doesn't work, trash it.
 [Page with preview of filters](https://vitforlinux-gimp.github.io/) WIP!
 
 If you are looking for the original Gimp 2.99/3 scm script-fu
- (https://gitlab.gnome.org/GNOME/gimp/-/tree/master/plug-ins/script-fu/scripts?ref_type=heads)
+ https://gitlab.gnome.org/GNOME/gimp/-/tree/master/plug-ins/script-fu/scripts?ref_type=heads
