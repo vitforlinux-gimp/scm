@@ -22,3 +22,7 @@ https://gitlab.gnome.org/GNOME/gimp/-/tree/master/plug-ins/python?ref_type=heads
 If you are looking for the development guide for Gimp2.99/3
 
 https://developer.gimp.org/resource/script-fu/programmers-reference/#version-3-filter-plugin
+
+If you want to read the pages (in Italian) about Gimp on my blog
+
+https://vitforlinux.wordpress.com/category/gimp/
