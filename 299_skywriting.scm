@@ -135,7 +135,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 ;‰æ‘œ‰ÁH–{‘Ì
 (define (script-fu-skywritingimgh img drawable inSize color foption scolor grad pat)
   (let* (
-	(img2 (car (gimp-channel-ops-duplicate img)))
+	(img2 (car (gimp-image-duplicate img)))
 	(drawable2 (car (gimp-image-get-active-layer img2)))
 	)
 	(gimp-image-undo-disable img2)
