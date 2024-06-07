@@ -30,6 +30,9 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
+
 (define (apply-glossy-logo-effect img
                                   logo-layer
                                   blend-gradient-text
@@ -202,7 +205,7 @@
 
 
 (script-fu-register "script-fu-glossy-logo-alpha"
-  _"Glo_ssy..."
+  _"Glo_ssy ALPHA..."
   _"Add gradients, patterns, shadows, and bump maps to the selected region (or alpha)"
   "Hrvoje Horvat (hhorvat@open.hr)"
   "Hrvoje Horvat"
