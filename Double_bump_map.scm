@@ -3,6 +3,14 @@
 ; author: Tin Tran
 ; date: 2014
 ; update and extend 2023 vitforlinux
+
+
+; Fix code for gimp 2.99.6 working in 2.10
+(cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
+(cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+(cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
+(cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
+
 (define (script-fu-double-bump-map image layer 
               color
 			  pattern
