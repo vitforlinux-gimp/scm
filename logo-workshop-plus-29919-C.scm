@@ -30,6 +30,12 @@
 ;           three new effects (cubism, olify & plasma) to fill layer, proper layer arrangement
 ; 
 ; Define the apply logo effect procedure
+
+; Fix code for gimp 2.99.6 working in 2.10
+(cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
+(cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+
+
 ;
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
