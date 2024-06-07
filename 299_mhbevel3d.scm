@@ -15,9 +15,9 @@
 (define (script-fu-mhbevel2993d text size font justification buffer 3d md foption tcolor text-gradient pat
 	 bg-md bg-color bggrad bgpat stp bmpblr bmpmp ck? white?)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
-;;•¶š
+;;æ–‡å­—
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text (* (+ (/ size 12) 4) buffer) TRUE size PIXELS font)))
-;;•‚Æ‚‚³
+;;å¹…ã¨é«˜ã•
 	 (width (car (gimp-drawable-get-width text-layer)))
 	 (height (car (gimp-drawable-get-height text-layer)))
 	 	  		  (justification (cond ((= justification 0) 2)
@@ -32,7 +32,7 @@
     (gimp-image-undo-disable img)
     (gimp-text-layer-set-justification text-layer justification)
 
-;;ƒTƒCƒY’²®
+;;ã‚µã‚¤ã‚ºèª¿æ•´
     (if (= md 0) (gimp-image-resize img (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) (* 3d stp)))	;rb-slant
     (if (= md 1) (gimp-image-resize img width (+ height (* (* 3d stp) 2)) 0 (* (* 3d stp) 2)))		;b-vertical
     (if (= md 2) (gimp-image-resize img (+ width (* 3d stp)) (+ height (* 3d stp)) 0 (* 3d stp)))	;lb-slant
@@ -42,7 +42,7 @@
     (if (= md 6) (gimp-image-resize img (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) 0))	;rt-slant
     (if (= md 7) (gimp-image-resize img (+ width (* (* 3d stp) 2)) height (* (* 3d stp) 2) 0))		;r-horizontal
 
-;‚±‚ê‚ª‚È‚¯‚ê‚Îƒoƒ“ƒvƒ}ƒbƒv‚ª³‚µ‚­“K—p‚³‚ê‚È‚¢
+;ã“ã‚ŒãŒãªã‘ã‚Œã°ãƒãƒ³ãƒ—ãƒãƒƒãƒ—ãŒæ­£ã—ãé©ç”¨ã•ã‚Œãªã„
     (if (= md 0) (gimp-layer-resize text-layer (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) (* 3d stp)))	;rb-slant
     (if (= md 1) (gimp-layer-resize text-layer width (+ height (* (* 3d stp) 2)) 0 (* (* 3d stp) 2)))		;b-vertical
     (if (= md 2) (gimp-layer-resize text-layer (+ width (* 3d stp)) (+ height (* 3d stp)) 0 (* 3d stp)))	;lb-slant
@@ -52,7 +52,7 @@
     (if (= md 6) (gimp-layer-resize text-layer (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) 0))	;rt-slant
     (if (= md 7) (gimp-layer-resize text-layer (+ width (* (* 3d stp) 2)) height (* (* 3d stp) 2) 0))		;r-horizontal
 
-;‘OŒiF‚Ìİ’è
+;å‰æ™¯è‰²ã®è¨­å®š
   (gimp-context-set-foreground tcolor)
   (gimp-layer-set-lock-alpha text-layer TRUE)
   (gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
@@ -117,14 +117,14 @@
 (define (script-fu-mhbevel2993dimg img drawable resize? 3d md bg-md bg-color bggrad bgpat stp bmpblr bmpmp ck? white? bg?)
   (let* (
 
-;;•‚Æ‚‚³
+;;å¹…ã¨é«˜ã•
 	 (width (car (gimp-drawable-get-width drawable)))
 	 (height (car (gimp-drawable-get-height drawable)))
-;;”wŒi
+;;èƒŒæ™¯
 	 (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	 (bump-layer (car (gimp-layer-new img width height RGB-IMAGE "Bump" 100 LAYER-MODE-NORMAL-LEGACY)))
 )
-;2.4’Ç‰Á
+;2.4è¿½åŠ 
   (let (
        (bcopy 0)
        (bump 0)
@@ -231,9 +231,9 @@
     (set! y 0)
     (set! l2 (car (gimp-layer-copy drawable 0)))
     (while (< y 3d)
-    (set! l1 (car (gimp-layer-copy l2 0)))     ;ƒŒƒCƒ„[‚ÌƒRƒs[ì¬
-    (gimp-image-insert-layer img l1 0 0)                  ;ƒŒƒCƒ„[’Ç‰Á
-    (gimp-item-transform-translate l1 a b)                    ;‚¸‚ç‚·
+    (set! l1 (car (gimp-layer-copy l2 0)))     ;ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚³ãƒ”ãƒ¼ä½œæˆ
+    (gimp-image-insert-layer img l1 0 0)                  ;ãƒ¬ã‚¤ãƒ¤ãƒ¼è¿½åŠ 
+    (gimp-item-transform-translate l1 a b)                    ;ãšã‚‰ã™
     (set! l2 (car (gimp-layer-copy l1 0)))
     (gimp-image-insert-layer img l2 0 0)
     (gimp-item-transform-translate l2 c d)
@@ -294,12 +294,12 @@
       (gimp-layer-set-opacity l21 50)		;add
     ))
 
-;;”wŒiF‚ÌŒˆ’è
+;;èƒŒæ™¯è‰²ã®æ±ºå®š
 (if (= TRUE bg?)
 (begin
     (gimp-context-set-foreground bg-color)
     (gimp-image-insert-layer img bg-layer 0 2)
-    (gimp-layer-resize-to-image-size bg-layer)		;’Ç‰Á
+    (gimp-layer-resize-to-image-size bg-layer)		;è¿½åŠ 
     (gimp-drawable-fill bg-layer FILL-FOREGROUND)
     (cond((= bg-md 1)
        (gimp-context-set-gradient bggrad)
@@ -318,7 +318,7 @@
 
 ;;;    (if (= TRUE fr?) (gimp-image-flatten img))
 
-;2.4’Ç‰Á(let)
+;2.4è¿½åŠ (let)
  )
 ))
 
@@ -326,7 +326,7 @@
 
 
 
-;‚±‚±‚ÍTosi—l‚Ìscript-fu‚ğg—p‚µ‚Ü‚µ‚½B
+;ã“ã“ã¯Tosiæ§˜ã®script-fuã‚’ä½¿ç”¨ã—ã¾ã—ãŸã€‚
 ;http://www.geocities.jp/gimproject/scripts/layers-view-delete.html
 
 (define (script-fu-layers-view-none image drawable)
@@ -348,16 +348,16 @@
 )
 
 
-;‚±‚Á‚¿‚ª–{‘Ì
+;ã“ã£ã¡ãŒæœ¬ä½“
 (define (script-fu-mhbevel2993dimg22 img2 drawable2 resize? 3d md stp bmpblr bmpmp ck? white?)
   (let* (
-	(img (car (gimp-channel-ops-duplicate img2)))
+	(img (car (gimp-image-duplicate img2)))
 	(drawable (car (gimp-image-get-active-layer img)))
 
-;;•‚Æ‚‚³
+;;å¹…ã¨é«˜ã•
 	 (width (car (gimp-drawable-get-width drawable)))
 	 (height (car (gimp-drawable-get-height drawable)))
-;;”wŒi
+;;èƒŒæ™¯
 	 (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	 (bump-layer (car (gimp-layer-new img width height RGB-IMAGE "Bump" 100 LAYER-MODE-NORMAL-LEGACY)))
 
@@ -367,9 +367,9 @@
 )
     (gimp-image-undo-disable img)
 
-    (script-fu-layers-view-current-only img drawable)	;Tosi—l‚Ìscript-fu‚æ‚è
+    (script-fu-layers-view-current-only img drawable)	;Tosiæ§˜ã®script-fuã‚ˆã‚Š
 
-;;ƒTƒCƒY’²®
+;;ã‚µã‚¤ã‚ºèª¿æ•´
 (if (= resize? TRUE)
 (begin
     (if (= md 0) (gimp-image-resize img (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) (* 3d stp)))	;rb-slant
@@ -381,7 +381,7 @@
     (if (= md 6) (gimp-image-resize img (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) 0))	;rt-slant
     (if (= md 7) (gimp-image-resize img (+ width (* (* 3d stp) 2)) height (* (* 3d stp) 2) 0))		;r-horizontal
 
-;‚±‚ê‚ª‚È‚¯‚ê‚Îƒoƒ“ƒvƒ}ƒbƒv‚ª³‚µ‚­“K—p‚³‚ê‚È‚¢
+;ã“ã‚ŒãŒãªã‘ã‚Œã°ãƒãƒ³ãƒ—ãƒãƒƒãƒ—ãŒæ­£ã—ãé©ç”¨ã•ã‚Œãªã„
     (if (= md 0) (gimp-layer-resize drawable (+ width (* 3d stp)) (+ height (* 3d stp)) (* 3d stp) (* 3d stp)))	;rb-slant
     (if (= md 1) (gimp-layer-resize drawable width (+ height (* (* 3d stp) 2)) 0 (* (* 3d stp) 2)))		;b-vertical
     (if (= md 2) (gimp-layer-resize drawable (+ width (* 3d stp)) (+ height (* 3d stp)) 0 (* 3d stp)))	;lb-slant
