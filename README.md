@@ -7,9 +7,13 @@ If you use versions of Gimp equal to or higher than 2.99 the code for previous G
 
 The scripts in this repo try to support Gimp 2.10 and possibly the latest 2.99.xx.
 
+Now some scripts are fixed to run independently of others... there was a hidden dependency.
+
 If a script-fu doesn't work, trash it.
 
 [Page with preview of filters](https://vitforlinux-gimp.github.io/) WIP!
+
+If you want to report operating problems you can report them via the ISSUES button, please report the name of the problematic file.
 
 If you are looking for the original Gimp 2.99/3 scm script-fu
 
