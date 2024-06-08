@@ -216,7 +216,7 @@
 	(gimp-image-remove-channel img varSavedSelection)
 	(gimp-image-remove-channel img varBlurredSelection)
 	
-	(gimp-image-set-active-layer img inLayer)
+	;(gimp-image-set-active-layer img inLayer)
 	
 	;done
     (gimp-progress-end)
