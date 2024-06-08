@@ -30,6 +30,10 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+; Fix code for gimp 2.10 working in 2.99.16
+(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
+
+
 (define (script-fu-shine299 image drawable
                               shadow-size
 							  shadow-opacity
@@ -63,7 +67,10 @@
 	
 ;;;;create channel
 	(gimp-selection-save image)
-	(set! img-channel (car (gimp-image-get-active-drawable image)))	
+	;(set! img-channel (car (gimp-image-get-active-drawable image)))
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (set! img-channel (car (gimp-image-get-active-drawable image)))
+  (set! img-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)	
 	(gimp-channel-set-opacity img-channel 100)	
 	(gimp-item-set-name img-channel "img-channel")
 	(gimp-image-set-active-layer image img-layer)	
@@ -97,7 +104,10 @@
     (gimp-image-insert-layer image tmp-layer 0 -1)
 	(gimp-image-raise-item image tmp-layer)
     (gimp-image-merge-down image tmp-layer CLIP-TO-IMAGE)
-	(set! shadow-layer (car (gimp-image-get-active-drawable image)))
+	;(set! shadow-layer (car (gimp-image-get-active-drawable image)))
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (set! shadow-layer (car (gimp-image-get-active-drawable image)))
+  (set! shadow-layer (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-image-lower-item image shadow-layer)
 	
    )
