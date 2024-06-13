@@ -859,7 +859,7 @@
 	0
 	REPEAT-NONE
 	;back-reverse
-	FALSE 
+	1
 	;3
 	0.2 TRUE x1 y1 x2 y2)
 	)
