@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes Horiz" "Stripes 45" "Stripes Vert"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes Horiz" "Stripes 45" "Stripes Vert" "material gradient"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass" "Glitter"))
 
 
@@ -83,6 +83,97 @@
 		(define (material-pattern pattern fond) (begin
 				(gimp-context-set-pattern pattern)
 				(gimp-drawable-fill fond FILL-PATTERN)
+			))
+		(define (material-gradient fond image gradient gradient-type direction reverse fond-color)  			(begin
+		        (define width (car (gimp-drawable-get-width fond)))
+        (define height (car (gimp-drawable-get-height fond)))
+					(gimp-context-set-foreground fond-color)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				; choose gradient destination
+     (cond ((= direction 0)         ; Top-Bottom 
+          (define x1 0)            ; X Blend Starting Point
+          (define y1 0)            ; Y Blend Starting Point
+          (define x2 0)              ; X Blend Ending Point
+          (define y2 height)   ; Y Blend Ending Point
+          )
+          ((= direction 1)           ; Bottom-Top
+          (define x1 0)            ; X Blend Starting Point
+          (define y1 height) ; Y Blend Starting Point
+          (define x2 0)              ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+          ((= direction 2)           ; Left-Right
+          (define x1 0)            ; X Blend Starting Point
+          (define y1 0)            ; Y Blend Starting Point
+          (define x2 width)    ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+          ((= direction 3)           ; Right-Left
+          (define x1 width)  ; X Blend Starting Point
+          (define y1 0)            ; Y Blend Starting Point
+          (define x2 0)              ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+          ((= direction 4)           ; Diag-Top-Left
+          (define x1 0)            ; X Blend Starting Point
+          (define y1 0)            ; Y Blend Starting Point
+          (define x2 width)    ; X Blend Ending Point
+          (define y2 height)   ; Y Blend Ending Point
+          )
+          ((= direction 5)           ; Diag-Top-Right
+          (define x1 width)  ; X Blend Starting Point
+          (define y1 0)            ; Y Blend Starting Point
+          (define x2 0)              ; X Blend Ending Point
+          (define y2 height)   ; Y Blend Ending Point
+          )
+          ((= direction 6)           ; Diag-Bottom-Left
+          (define x1 0)            ; X Blend Starting Point
+          (define y1 height) ; Y Blend Starting Point
+          (define x2 width)    ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+
+          ((= direction 7)           ; Diag-Bottom-Right
+          (define x1 width)  ; X Blend Starting Point
+          (define y1 height) ; Y Blend Starting Point
+          (define x2 0)              ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+	  
+	  ((= direction 8)           ; Diag-to-center
+          (define x1 0)  ; X Blend Starting Point
+          (define y1 0) ; Y Blend Starting Point
+          (define x2  (/ width 2))              ; X Blend Ending Point
+          (define y2  (/ height 2))              ; Y Blend Ending Point
+          )
+	  
+	  
+	  ((= direction 9)           ; Diag-from-center
+          (define x1 (/ width 2))  ; X Blend Starting Point
+          (define y1 (/ height 2)) ; Y Blend Starting Point
+          (define x2 0)              ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+	  	  ((= direction 10)           ; center-to-top-center
+          (define x1 (/ width 2))  ; X Blend Starting Point
+          (define y1 (/ height 2)) ; Y Blend Starting Point
+          (define x2  (/ width 2))              ; X Blend Ending Point
+          (define y2 0)              ; Y Blend Ending Point
+          )
+	  
+	  	  	  ((= direction 11)           ; center-to-bottom-center
+          (define x1 (/ width 2))  ; X Blend Starting Point
+          (define y1 (/ height 2)) ; Y Blend Starting Point
+          (define x2  (/ width 2))              ; X Blend Ending Point
+          (define y2 height)              ; Y Blend Ending Point
+          )
+;          (else
+;                 ; For later use.. 
+;          )
+       ) ;end cond
+(gimp-context-set-gradient gradient)
+(gimp-context-set-gradient-reverse reverse)
+ (gimp-drawable-edit-gradient-fill fond gradient-type 0 REPEAT-NONE 1 0.0 FALSE x1 y1 x2 y2)
 			))
 			
 		(define  (material-bovination fond image) (begin
@@ -704,6 +795,7 @@
 		gradient
 		gradient-type
 		direction
+		grad-rev
 		;ripple
 		backtype
 		effect-back
@@ -713,6 +805,7 @@
 		back-gradient
 		 back-gradient-type
 		 blendir
+		 back-grad-rev
 		 vignette
 		 vignette-color
 		 applyMasks
@@ -761,110 +854,9 @@
 				(material-pattern back-pattern fond)			
 		)
 		(if (= backtype 2) ;START gradient
+	(material-gradient fond img back-gradient back-gradient-type blendir back-grad-rev fond-color))
 
-	(begin
-	(gimp-selection-none img)
-	(gimp-drawable-fill fond FILL-BACKGROUND)
-	(gimp-context-set-gradient back-gradient)
-      (cond ((= blendir 0)         ; Top-Bottom 
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 height)   ; Y Blend Ending Point
-          )
-          ((= blendir 1)           ; Bottom-Top
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 height) ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-          ((= blendir 2)           ; Left-Right
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 width)    ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-          ((= blendir 3)           ; Right-Left
-          (define x1 width)  ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-          ((= blendir 4)           ; Diag-Top-Left
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 width)    ; X Blend Ending Point
-          (define y2 height)   ; Y Blend Ending Point
-          )
-          ((= blendir 5)           ; Diag-Top-Right
-          (define x1 width)  ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 height)   ; Y Blend Ending Point
-          )
-          ((= blendir 6)           ; Diag-Bottom-Left
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 height) ; Y Blend Starting Point
-          (define x2 width)    ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
 
-          ((= blendir 7)           ; Diag-Bottom-Right
-          (define x1 width)  ; X Blend Starting Point
-          (define y1 height) ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-	  
-	  ((= blendir 8)           ; Diag-to-center
-          (define x1 0)  ; X Blend Starting Point
-          (define y1 0) ; Y Blend Starting Point
-          (define x2  (/ width 2))              ; X Blend Ending Point
-          (define y2  (/ height 2))              ; Y Blend Ending Point
-          )
-	  
-	  
-	  ((= blendir 9)           ; Diag-from-center
-          (define x1 (/ width 2))  ; X Blend Starting Point
-          (define y1 (/ height 2)) ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-	  	  ((= blendir 10)           ; center-to-top-center
-          (define x1 (/ width 2))  ; X Blend Starting Point
-          (define y1 (/ height 2)) ; Y Blend Starting Point
-          (define x2  (/ width 2))              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-	  
-	  	  	  ((= blendir 11)           ; center-to-bottom-center
-          (define x1 (/ width 2))  ; X Blend Starting Point
-          (define y1 (/ height 2)) ; Y Blend Starting Point
-          (define x2  (/ width 2))              ; X Blend Ending Point
-          (define y2 height)              ; Y Blend Ending Point
-          )
-;          (else
-;                 ; For later use.. 
-;          )
-       ) ;end cond
-	;old(gimp-edit-blend fond BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY back-gradient-type 100 0 REPEAT-NONE back-reverse FALSE 3 0.2 TRUE x1 y1 x2 y2))
-				(gimp-context-set-background fond-color)
-			(gimp-context-set-foreground fond-color2)
-	(gimp-drawable-edit-gradient-fill
-	fond 
-	;BLEND-CUSTOM 
-	;LAYER-MODE-NORMAL-LEGACY
-	back-gradient-type
-	;100
-	0
-	REPEAT-NONE
-	;back-reverse
-	1
-	;3
-	0.2 TRUE x1 y1 x2 y2)
-	)
-			
-		);END gradient
 				(if (= backtype 3) 
 (material-carbon fond)
 			
@@ -961,6 +953,8 @@
 (material-stripes img fond fond-color fond-color2 1 20))
  (if (= backtype 34) 
 (material-stripes img fond fond-color fond-color2 2 20))
+   (if (= backtype 35) 
+(material-gradient fond img back-gradient back-gradient-type blendir back-grad-rev fond-color))
 
 		(if (= effect-back 1) ;Blur
 		(effect-blur fond img)			; Blur effect
@@ -1013,87 +1007,7 @@
 		(gimp-layer-add-mask refl reflmask)
 		(gimp-selection-all img)
 		; choose gradient destination
-     (cond ((= direction 0)         ; Top-Bottom 
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 height)   ; Y Blend Ending Point
-          )
-          ((= direction 1)           ; Bottom-Top
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 height) ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-          ((= direction 2)           ; Left-Right
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 width)    ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-          ((= direction 3)           ; Right-Left
-          (define x1 width)  ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-          ((= direction 4)           ; Diag-Top-Left
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 width)    ; X Blend Ending Point
-          (define y2 height)   ; Y Blend Ending Point
-          )
-          ((= direction 5)           ; Diag-Top-Right
-          (define x1 width)  ; X Blend Starting Point
-          (define y1 0)            ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 height)   ; Y Blend Ending Point
-          )
-          ((= direction 6)           ; Diag-Bottom-Left
-          (define x1 0)            ; X Blend Starting Point
-          (define y1 height) ; Y Blend Starting Point
-          (define x2 width)    ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
 
-          ((= direction 7)           ; Diag-Bottom-Right
-          (define x1 width)  ; X Blend Starting Point
-          (define y1 height) ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-	  
-	  ((= direction 8)           ; Diag-to-center
-          (define x1 0)  ; X Blend Starting Point
-          (define y1 0) ; Y Blend Starting Point
-          (define x2  (/ width 2))              ; X Blend Ending Point
-          (define y2  (/ height 2))              ; Y Blend Ending Point
-          )
-	  
-	  
-	  ((= direction 9)           ; Diag-from-center
-          (define x1 (/ width 2))  ; X Blend Starting Point
-          (define y1 (/ height 2)) ; Y Blend Starting Point
-          (define x2 0)              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-	  	  ((= direction 10)           ; center-to-top-center
-          (define x1 (/ width 2))  ; X Blend Starting Point
-          (define y1 (/ height 2)) ; Y Blend Starting Point
-          (define x2  (/ width 2))              ; X Blend Ending Point
-          (define y2 0)              ; Y Blend Ending Point
-          )
-	  
-	  	  	  ((= direction 11)           ; center-to-bottom-center
-          (define x1 (/ width 2))  ; X Blend Starting Point
-          (define y1 (/ height 2)) ; Y Blend Starting Point
-          (define x2  (/ width 2))              ; X Blend Ending Point
-          (define y2 height)              ; Y Blend Ending Point
-          )
-;          (else
-;                 ; For later use.. 
-;          )
-       ) ;end cond
 		(if (= type 0)
 			(material-color color basetext)
 		)
@@ -1101,24 +1015,7 @@
 			(material-pattern pattern basetext)
 		)
 		(if (= type 2) ;QUESTO
-			(begin
-				(gimp-context-set-gradient gradient)
-								(gimp-context-set-background color)
-			(gimp-context-set-foreground color2)
-				(gimp-drawable-edit-gradient-fill 
-					basetext 	; 
-					gradient-type ;0 ;GRADIENT-LINEAR	; gradient type
-					0				; opacity
-					0				; offset
-					1 				;
-					0				; 
-					0 ; FALSE			; dithering
-					x1				; x1
-					y1				; y1
-					x2			; x2
-					y2			; y2
-				)
-			)
+(material-gradient basetext img gradient gradient-type direction grad-rev color)
 		)
 
 						(if (= type 3) 
@@ -1219,6 +1116,8 @@
 (material-stripes img basetext color color2 1 20))
    (if (= type 34) 
 (material-stripes img basetext color color2 2 20))
+   (if (= type 35) 
+(material-gradient basetext img gradient gradient-type direction grad-rev color))
 	
 		; Adding light effect on edge
 		(gimp-selection-none img)
@@ -1456,6 +1355,7 @@
 		gradient
 		gradient-type
 		direction
+		grad-rev
 		;ripple
 		backtype
 		effect-back
@@ -1465,6 +1365,7 @@
 		back-gradient
 									          back-gradient-type
 							          blendir
+		back-grad-rev
 		vignette
 		vignette-color
 		applyMasks
@@ -1472,7 +1373,7 @@
 	(begin
 		(gimp-image-undo-disable img)
 		(gimp-layer-resize-to-image-size text-layer)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction grad-rev backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir back-grad-rev vignette vignette-color applyMasks)
 		(gimp-image-undo-enable img)
 		(gimp-displays-flush)
 	)
@@ -1505,6 +1406,7 @@
 	SF-GRADIENT		"Fill Gradient"		"Golden"
 	SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
 	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
+	SF-TOGGLE  "Gradient reverse"    FALSE
 	;SF-TOGGLE  "Ripple"    FALSE
 					 SF-OPTION "Background Type" list-fill-ppf-dir
 	SF-OPTION  	"Back Effect"    list-effect-ppf-dir
@@ -1514,6 +1416,7 @@
   SF-GRADIENT   "Back Gradient" "Abstract 3"
     SF-ENUM "Back  Gradient Mode" '("GradientType" "gradient-linear")
   SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
+  SF-TOGGLE  "Back Gradient reverse"    FALSE
   SF-TOGGLE  "Apply Vignette"    FALSE
   	SF-COLOR		"Vignette Color"	'(0 0 0)
   SF-TOGGLE  "Apply Masks"    TRUE
@@ -1535,6 +1438,7 @@
 									  line-spacing
 					grow-text
 					outline
+					text-effect
 					buffer
 		border-color
 		border-size
@@ -1552,6 +1456,7 @@
 		gradient
 		gradient-type
 		direction
+		grad-rev
 		;ripple
 		backtype
 		effect-back
@@ -1561,6 +1466,7 @@
 		back-gradient
 											          back-gradient-type
 							          blendir
+		back-grad-rev
 		vignette
 		vignette-color
 		applyMasks
@@ -1614,12 +1520,23 @@
 	(gimp-drawable-edit-clear text-layer)
 	(gimp-image-select-item img 2 text-layer)
  ))
+ 		(if (= text-effect 1)
+				(begin (plug-in-ripple 1 img text-layer 26 2 0 0 0 TRUE FALSE) ; Horiz
+		(plug-in-ripple 1 img text-layer 26 2 1 0 0 TRUE FALSE)) ; Vert
+		)
+		 		(if (= text-effect 2)
+				(begin (plug-in-ripple 1 img text-layer 800 50 1 1 0 TRUE FALSE) ; Vert
+		))
+		(if (= text-effect 3) (plug-in-waves  1 img text-layer 5 70 10 1 0 FALSE ))
+		(if (= text-effect 4) (begin (gimp-selection-none img)
+			(plug-in-gauss-rle2 RUN-NONINTERACTIVE img text-layer 20 20)
+(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
  	(gimp-selection-none img)
 
 
 		(gimp-image-undo-disable img)
 		(gimp-item-set-name text-layer text)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction  backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir vignette vignette-color applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction grad-rev backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir back-grad-rev vignette vignette-color applyMasks)
 
 		;(plug-in-waves 1 img text-layer 100 180 50 0 FALSE)
 		(gimp-image-undo-enable img)
@@ -1644,6 +1561,7 @@
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
 	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 	SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
+		SF-OPTION "Text effect" '("None" "Corrugated" "Wave" "Electrized" "Rounded" "Right" )
 	SF-ADJUSTMENT _"Buffer"          '(1 1 20 1 10 0 0)
 	SF-COLOR		"Border Color"			'(0 0 0)
 	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 0)
@@ -1660,6 +1578,7 @@
 	SF-GRADIENT		"Fill Gradient"				"Golden"
 	 SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
 	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
+	SF-TOGGLE  "Gradient Reverse"    FALSE
 	;SF-TOGGLE  "Fill Ripple"    FALSE
 	SF-OPTION 		"Back Type" list-fill-ppf-dir
 	SF-OPTION  	"Back Effect"    list-effect-ppf-dir
@@ -1669,6 +1588,7 @@
 	SF-GRADIENT   "Back Gradient" "Abstract 3"
 	  SF-ENUM "Back Gradient Mode" '("GradientType" "gradient-linear")
   SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
+  	SF-TOGGLE  "Back Gradient Reverse"    FALSE
     SF-TOGGLE  "Apply Vignette"    FALSE
     	SF-COLOR		"Vignette Color"			'(0 0 0)
     SF-TOGGLE  "Apply Masks"    TRUE
