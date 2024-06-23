@@ -29,7 +29,7 @@
 ;299k added text alignment functions transparence, and materials carbon fiber, aluminium, jeans, bovination, camouflage
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define list-blend-ppf-dir '("Top-Botton" "Bottom-Top" "Left-Right" "Right-Left" "Diag-Top-Left" "Diag-Top-Right" "Diag-Bottom-Left" "Diag-Bottom-Right" "Diag-to-center" "Diag-from-center" "Center-to-Top center" "Center-to-Bottom center" ))
-(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "Carbon fiber" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Dark Jeans" "Bovination 2.10 only" "Camouflage 2.10 only"  "Bovination 2.99" "Camouflage 2.99" "Plasma" "None"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient" "Will Wood" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes Horiz" "Stripes 45" "Stripes Vert" "material gradient"))
+(define list-fill-ppf-dir '("Color" "Pattern" "Gradient" "None" "Aluminium Brushed" "Aluminium Brushed Light" "Blue Jeans" "Washed Jeans" "Dark Jeans" "Carbon fiber"  "Bovination" "Camouflage 1" "Camouflage 2" "Plasma"  "Patchwork" "Diffraction" "Pizza" "Leopard" "Giraffe" "Zebra" "Leopard 2 colors" "Snake" "Snake 2 colors" "Pois 2 colors" "Squares 2 colors" "Emap gradient" "Pijama gradient Horiz" "Pijama gradient 45" "Pijama gradient Vert" "Will Wood" "Steampunk Brass" "Steampunk Color" "Grunge Green" "Grunge Color" "Stripes Horiz" "Stripes 45" "Stripes Vert" "material gradient"))
 (define list-effect-ppf-dir '("None" "Blur" "Oilify" "Cubism" "Ripple" "Bump with pattern" "Desaturate & Chrome"  "Desaturate+Chrome+Color LIGHTEN ONLY" "Desaturate+Chrome+Color MULTILPLY"  "Desaturate+Chrome+Color OVERLAY" "Desaturate+Color  LIGHTEN ONLY" "Desaturate+Color MULTILPLY" "Desaturate+Color OVERLAY" "Stained Glass" "Glitter"))
 
 
@@ -176,14 +176,6 @@
  (gimp-drawable-edit-gradient-fill fond gradient-type 0 REPEAT-NONE 1 0.0 FALSE x1 y1 x2 y2)
 			))
 			
-		(define  (material-bovination fond image) (begin
-				(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
-				    ;(gimp-brightness-contrast fond 0 127) ; cambiare!
-				   ; (gimp-drawable-brightness-contrast fond 0.4 0.5)
-				   (gimp-drawable-levels fond  0 0.1 0.4 FALSE 0.1 0.1 0.2 FALSE)
-				   (gimp-drawable-brightness-contrast fond 0 0.5)
-				   (gimp-drawable-brightness-contrast fond 0 0.5)
-			))
 			
 		(define  (material-bovination-2 fond image) (begin
 				(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
@@ -198,11 +190,17 @@
 				   ;(gimp-drawable-levels fond  0 0 0.4 FALSE 0.1 0.1 0.2 FALSE)
 				    (gimp-drawable-brightness-contrast fond 0 0.5)
 			))
-		(define (material-camo2 fond image) (begin
+		(define (material-camo2 fond image col-opt) (begin
 					(gimp-selection-none image)
-					(define color1 '(136 125 52)) 
+						(if (= col-opt 1) 
+				(begin (define color1 '(136 125 52)) 
 					(define color2 '(62 82 22))
-					(define color3  '(50 28 0))
+					(define color3  '(50 28 0)))	)
+						(if (= col-opt 0) 
+				(begin (define color1 '(170 170 60)) 
+					(define color2 '(33 100 58))
+					(define color3  '(150 115 100)))	)
+
 					;(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 					(gimp-context-set-paint-mode LAYER-MODE-NORMAL)
 				(material-bovination-2 fond image)
@@ -229,43 +227,6 @@
 				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
 				
 				(gimp-selection-none image)
-			))
-		(define  (material-camo1 fond image) (begin
-			(gimp-selection-none image)
-				(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
-				    ;(gimp-brightness-contrast fond 0 127) ; cambiare!
-				   ; (gimp-drawable-brightness-contrast fond 0.4 0.5)
-				   (gimp-drawable-levels fond  0 0.1 0.4 FALSE 0.1 0.1 0.2 FALSE)
-				   (gimp-drawable-brightness-contrast fond 0 0.5)
-				   (gimp-drawable-brightness-contrast fond 0 0.5)
-				    (gimp-drawable-brightness-contrast fond 0 0.5)
-				    (gimp-image-select-color image 0 fond '(255 255 255) )
-				    (gimp-selection-grow image 2)
-				    	(gimp-context-set-foreground '(33 100 58) )
-				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
-				(gimp-selection-invert image)
-								    	(gimp-context-set-foreground '(170 170 60) )
-				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
-				(gimp-selection-none image)
-				 (gimp-image-select-color image 0 fond  '(33 100 58))
-				 (gimp-selection-grow image 2)
-				 (plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
-				   (gimp-drawable-levels fond  0 0.1 0.4 FALSE 0.1 0.1 0.2 FALSE)
-				(gimp-drawable-brightness-contrast fond 0 0.5)
-				   (gimp-drawable-brightness-contrast fond 0 0.5)
-				    (gimp-drawable-brightness-contrast fond 0 0.5)
-				    (gimp-selection-none image)
-					(gimp-image-select-color image 0 fond '(255 255 255) )
-					(gimp-selection-grow image 2)
-				    	(gimp-context-set-foreground '(33 100 58) )
-				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
-								    (gimp-selection-none image)
-					(gimp-image-select-color image 0 fond '(0 0 0 ) )
-					(gimp-selection-grow image 2)
-									    	(gimp-context-set-foreground  '(150 115 100) )
-				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
-				(gimp-selection-none image)
-				    
 			))
 		(define  (material-alubrushed fond image) (begin
 
@@ -347,14 +308,20 @@
 				(gimp-drawable-desaturate fond 1)
 				(plug-in-gauss-iir TRUE image fond 3 TRUE TRUE)
 				;(gimp-drawable-colorize-hsl fond 230 36 20 )
-				
+
 																(if (= col-opt 0) 
-				(gimp-drawable-colorize-hsl fond 230 36 20 )
-				;(gimp-drawable-brightness-contrast fond 0.0 -0.5)
+				(begin (gimp-drawable-colorize-hsl fond 230 36 20 )
+				(gimp-drawable-brightness-contrast fond -0.1 0.3))
+			
+		)
+				
+																(if (= col-opt 1) 
+				(begin(gimp-drawable-colorize-hsl fond 230 36 20 )
+				(gimp-drawable-brightness-contrast fond -0.1 0.1))
 			
 		)
 		
-																(if (= col-opt 1) 
+																(if (= col-opt 2) 
 				(begin (gimp-drawable-colorize-hsl fond 10 10 10)
 				(gimp-drawable-brightness-contrast fond -0.1 0.3)
 				(gimp-drawable-desaturate fond 1))
@@ -392,37 +359,17 @@
 	      (plug-in-oilify 1 image fond 20 0) 
 			))
 			
-		(define (material-pijama fond image gradient)  			(begin
+		(define (material-pijama fond image gradient col-opt)  			(begin
 (gimp-context-set-gradient gradient)
  (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
- (gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE 1 0.0 FALSE 0 0 90 45)
+ (if (= col-opt 1)(gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE 1 0.0 FALSE 0 0 90 45)) ;45
+(if (= col-opt 0) (gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE 1 0.0 FALSE 0 0 0 45)); horiz
+(if (= col-opt 2) (gimp-drawable-edit-gradient-fill fond 0 0 REPEAT-NONE 1 0.0 FALSE 0 0 90 0));vert
  (gimp-drawable-posterize fond 3)
 
 
 			))
 			
-
-		(define  (material-leopard-old fond image) (begin
-				          (gimp-selection-none image)    (material-bovination fond image)
-	     (gimp-selection-none image)
-	     (gimp-image-select-color image 0 fond '(255 255 255) )
-	     (gimp-selection-shrink image 8)
-	     (material-bovination fond image)
-	       (gimp-image-select-color image 0 fond '(255 255 255) )
-	     (gimp-selection-shrink image 8)
-	     (material-bovination fond image)
-	       (gimp-image-select-color image 0 fond '(255 255 255) )
-	     (gimp-selection-shrink image 8)
-	     (material-bovination fond image)
-	       (gimp-image-select-color image 0 fond '(255 255 255) )
-	     (gimp-selection-shrink image 8)
-	     (material-bovination fond image)
-		(gimp-image-select-color image 0 fond '(0 0 0) )
-		(gimp-selection-shrink image 8)
-		;(script-fu-distress-selection 1 image fond 127 8 4 2 1 1)
-		;(gimp-drawable-edit-fill fond FILL-FOREGROUND)
-		(gimp-selection-none image)
-			))
 			
 		(define (material-leopard fond image)  			(begin
           ;(gimp-layer-set-lock-alpha fond TRUE)
@@ -858,7 +805,7 @@
 
 
 				(if (= backtype 3) 
-(material-carbon fond)
+(material-none fond)
 			
 		)
 						(if (= backtype 4) 
@@ -873,31 +820,34 @@
 (material-blue-jeans fond img 0)
 			
 		)
-										(if (= backtype 7) 
+								(if (= backtype 7) 
 (material-blue-jeans fond img 1)
 			
 		)
-	(if (= backtype 8) 
-(material-bovination fond img)
+										(if (= backtype 8) 
+(material-blue-jeans fond img 2)
 			
 		)
 	(if (= backtype 9) 
-(material-camo1 fond img)
+;(material-bovination fond img)
+(material-carbon fond)
+			
 		)
+
 	(if (= backtype 10) 
 (material-bovination-2 fond img)
 			
 		)
 	(if (= backtype 11) 
-(material-camo2 fond img)
+(material-camo2 fond img 0)
 			
 		)
 	(if (= backtype 12) 
-(material-plasma fond img)
+(material-camo2 fond img 1)
 			
 		)
-		(if (= backtype 13) 
-(material-none fond)
+	(if (= backtype 13) 
+(material-plasma fond img)
 			
 		)
 	(if (= backtype 14) 
@@ -936,24 +886,28 @@
 	(if (= backtype 25) 
 (material-emap fond img back-gradient))
 	(if (= backtype 26) 
-(material-pijama fond img back-gradient))
+(material-pijama fond img back-gradient 0))
 	(if (= backtype 27) 
+(material-pijama fond img back-gradient 1))
+	(if (= backtype 28) 
+(material-pijama fond img back-gradient 2))
+	(if (= backtype 29) 
  (material-willwood fond img 9 1))
- 	(if (= backtype 28) 
+ 	(if (= backtype 30) 
  (material-steampunk-brass img fond fond-color 0))
-  	(if (= backtype 29) 
+  	(if (= backtype 31) 
  (material-steampunk-brass img fond fond-color 1))
-  	(if (= backtype 30) 
+  	(if (= backtype 32) 
  (material-grunge-green img fond fond-color 0))
-   	(if (= backtype 31) 
+   	(if (= backtype 33) 
  (material-grunge-green img fond fond-color 1))
- (if (= backtype 32) 
-(material-stripes img fond fond-color fond-color2 0 20))
- (if (= backtype 33) 
-(material-stripes img fond fond-color fond-color2 1 20))
  (if (= backtype 34) 
+(material-stripes img fond fond-color fond-color2 0 20))
+ (if (= backtype 35) 
+(material-stripes img fond fond-color fond-color2 1 20))
+ (if (= backtype 36) 
 (material-stripes img fond fond-color fond-color2 2 20))
-   (if (= backtype 35) 
+   (if (= backtype 37) 
 (material-gradient fond img back-gradient back-gradient-type blendir back-grad-rev fond-color))
 
 		(if (= effect-back 1) ;Blur
@@ -1019,7 +973,7 @@
 		)
 
 						(if (= type 3) 
-(material-carbon basetext)
+(material-none basetext)
 			
 		)
 								(if (= type 4) 
@@ -1034,16 +988,17 @@
 (material-blue-jeans basetext img 0)
 			
 		)
-												(if (= type 7) 
+										(if (= type 7) 
 (material-blue-jeans basetext img 1)
 			
 		)
-														(if (= type 8) 
-(material-bovination basetext img )
+												(if (= type 8) 
+(material-blue-jeans basetext img 2)
 			
 		)
 														(if (= type 9) 
-(material-camo1 basetext img )
+;(material-bovination basetext img )
+(material-carbon basetext)
 			
 		)
 														(if (= type 10) 
@@ -1051,15 +1006,15 @@
 			
 		)
 														(if (= type 11) 
-(material-camo2 basetext img )
+(material-camo2 basetext img 0)
 			
 		)
 														(if (= type 12) 
-(material-plasma basetext img )
+(material-camo2 basetext img 1)
 			
 		)
-			(if (= type 13) 
-(material-none basetext)
+														(if (= type 13) 
+(material-plasma basetext img )
 			
 		)
 		
@@ -1099,24 +1054,28 @@
 	(if (= type 25) 
 (material-emap basetext img gradient))
 	(if (= type 26) 
-(material-pijama basetext img gradient))
-	(if (= type 27) 
+(material-pijama basetext img gradient 0))
+(if (= type 27) 
+(material-pijama basetext img gradient 1))
+(if (= type 28) 
+(material-pijama basetext img gradient 2))
+	(if (= type 29) 
  (material-willwood basetext img 9 1))
- 	(if (= type 28) 
+ 	(if (= type 30) 
   (material-steampunk-brass img basetext color 0))
-   	(if (= type 29) 
+   	(if (= type 31) 
   (material-steampunk-brass img basetext color 1))
-   	(if (= type 30) 
+   	(if (= type 32) 
   (material-grunge-green img basetext color 0))
-     	(if (= type 31) 
+     	(if (= type 33) 
   (material-grunge-green img basetext color 1))
-   (if (= type 32) 
-(material-stripes img basetext color color2 0 20))
-   (if (= type 33) 
-(material-stripes img basetext color color2 1 20))
    (if (= type 34) 
-(material-stripes img basetext color color2 2 20))
+(material-stripes img basetext color color2 0 20))
    (if (= type 35) 
+(material-stripes img basetext color color2 1 20))
+   (if (= type 36) 
+(material-stripes img basetext color color2 2 20))
+   (if (= type 37) 
 (material-gradient basetext img gradient gradient-type direction grad-rev color))
 	
 		; Adding light effect on edge
@@ -1561,7 +1520,7 @@
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
 	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 	SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
-		SF-OPTION "Text effect" '("None" "Corrugated" "Wave" "Electrized" "Rounded" "Right" )
+		SF-OPTION "Text deformation" '("None" "Corrugated" "Wave" "Electrized" "Rounded" "Right" )
 	SF-ADJUSTMENT _"Buffer"          '(1 1 20 1 10 0 0)
 	SF-COLOR		"Border Color"			'(0 0 0)
 	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 0)
