@@ -30,8 +30,11 @@
          (old-fg (car (gimp-context-get-foreground)))
          (old-grad (car (gimp-context-get-gradient)))
          (old-pat (car (gimp-context-get-pattern)))
+
 )
     (gimp-image-undo-disable img)
+    	     (gimp-context-push)
+		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
     (gimp-text-layer-set-justification text-layer justification)
 
 ;;サイズ調整
@@ -80,7 +83,7 @@
     (gimp-context-set-foreground old-fg)
     (gimp-context-set-gradient old-grad)
     (gimp-context-set-pattern old-pat)
-
+    	     (gimp-context-pop)
     (gimp-image-undo-enable img)
     (gimp-display-new img)
 ));script-fu-mhbevel2993d
@@ -132,7 +135,6 @@
        (bump 0)
        (l1 0) (l2 0) (l21 0) (a 0) (b 0) (c 0) (d 0) (olda 0) (y 0)
        )
-
     (set! bcopy (car (gimp-layer-copy drawable 0)))
     (gimp-image-insert-layer img bcopy 0 1)
     (gimp-image-insert-layer img bump-layer 0 2)
@@ -322,6 +324,7 @@
 
 ;2.4追加(let)
  )
+
 ))
 
 
@@ -369,7 +372,10 @@
          (old-grad (car (gimp-context-get-gradient)))
          (old-pat (car (gimp-context-get-pattern)))
 )
+
     (gimp-image-undo-disable img)
+        	     (gimp-context-push)
+		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
 
     (script-fu-layers-view-current-only img drawable)	;Tosi様のscript-fuより
 
@@ -401,10 +407,13 @@
     (gimp-context-set-foreground old-fg)
     (gimp-context-set-gradient old-grad)
     (gimp-context-set-pattern old-pat)
+        	     (gimp-context-pop)
 
     (gimp-image-undo-enable img)
     (gimp-display-new img)
 ))
+
+
 
 (script-fu-register "script-fu-mhbevel2993dimg22"
 		    "MH Bevel 3D 299 ALPHA"
