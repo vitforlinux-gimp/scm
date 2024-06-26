@@ -113,8 +113,11 @@
 	;(cond ((not (defined? 'gimp-image-get-item-position)) (set! ver 2.6))) ;define the gimp version	 
     
 	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
 	(gimp-context-set-paint-method "gimp-paintbrush")
 	;(cond ((defined? 'gimp-context-set-dynamics) (gimp-context-set-dynamics "Dynamics Off")))
+		(cond ((defined? 'gimp-context-set-dynamics) (gimp-context-set-dynamics "Pressure Opacity")))
+	(if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics FALSE))
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
 
@@ -266,8 +269,10 @@
 	(cond ((not (defined? 'gimp-image-get-item-position)) (set! ver 2.6))) ;define the gimp version
 	
 	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-context-set-paint-method "gimp-paintbrush")
-	;(cond ((defined? 'gimp-context-set-dynamics) (gimp-context-set-dynamics "Dynamics Off")))
+	(cond ((defined? 'gimp-context-set-dynamics) (gimp-context-set-dynamics "Pressure Opacity")))
+	(if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics FALSE))
     (gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
 
