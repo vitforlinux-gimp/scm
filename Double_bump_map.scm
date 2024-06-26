@@ -44,6 +44,8 @@
 		) ;end of variable declaration
 		(gimp-context-push)
 		(gimp-image-undo-group-start image)                   ;undo-group in one step
+			(gimp-context-set-paint-mode 0)
+
 
 
 		(set! image-width (car (gimp-image-get-width image)))
@@ -287,6 +289,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 						       ((= justification 2) 1)
 						       ((= justification 3) 3)))	 
       ) ;end of our local variables
+      		(gimp-context-push)
+		(gimp-context-set-paint-mode 0)
       (gimp-image-insert-layer theImage theLayer 0 0)
       (gimp-context-set-background bgcolor )
       (gimp-context-set-foreground color)
@@ -381,6 +385,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	(gimp-layer-resize-to-image-size theLayer)
 	(if (= flatten 1) (gimp-image-merge-visible-layers theImage 0)) 
       (list theImage theLayer theText)
+      		(gimp-context-pop)
     (gimp-display-new theImage)
     )
   )
