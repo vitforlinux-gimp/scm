@@ -81,6 +81,7 @@
 		 (bkg-layer 0))
 		 
     (gimp-context-push)
+    (gimp-context-set-paint-mode 0)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
 	
@@ -208,6 +209,7 @@
 							   keep-selection-in
 							   conserve)
 	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	
 
