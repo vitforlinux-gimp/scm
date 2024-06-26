@@ -70,7 +70,7 @@
 
 ; Set up the script so that user settings can be reset after the script is run		
 
-;;;;;  (gimp-context-push)
+  (gimp-context-push)
   
 ; Start an Undo Group so script can be undone in one step  
 
@@ -210,7 +210,7 @@
 
 ; Resets previous user settings  
   
-;;;;;(gimp-context-pop)
+(gimp-context-pop)
   )
 )
 
@@ -261,6 +261,8 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
          (old-pat (car (gimp-context-get-pattern)))
 )
 	(gimp-image-undo-disable img)
+		(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
 	(gimp-image-resize img (+ width offsetX) (+ height offsetY) 0 0)
 
 ;;
@@ -350,6 +352,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 	(gimp-context-set-pattern old-pat)
 
 	(gimp-image-undo-enable img)
+		(gimp-context-pop)
 	(gimp-display-new img)
 ))
 (script-fu-register "script-fu-lotr299-text-text"
