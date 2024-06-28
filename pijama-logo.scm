@@ -1,7 +1,9 @@
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
-  
+
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+
   (script-fu-register
             "script-fu-pijama-logo"                        ;function name
             "Pijama logo"                                  ;menu label
@@ -77,6 +79,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 						       ((= justification 2) 1)
 						       ((= justification 3) 3)))
       ) ;end of our local variables
+      	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
+    (gimp-image-undo-group-start theImage)
       (gimp-image-insert-layer theImage theLayer 0 0)
       (gimp-context-set-background '(255 255 255) )
       (gimp-context-set-foreground inTextColor)
@@ -176,7 +181,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
      (gimp-context-set-background old-bg)
     (gimp-context-set-foreground old-fg)
     (gimp-context-set-gradient old-grad)
-      (gimp-context-set-paint-mode 0)
+    	(gimp-context-pop)
+    (gimp-image-undo-group-end theImage)
       (gimp-display-new theImage)
       (list theImage theLayer theText)
     )
