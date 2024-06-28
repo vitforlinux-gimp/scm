@@ -63,6 +63,7 @@
 
     (gimp-context-push)
     (gimp-context-set-defaults)
+    (gimp-context-set-paint-mode 0)
 
     (script-fu-util-image-resize-from-layer img logo-layer)
     (script-fu-util-image-add-layers img layer1 layer2 layer3 shadow background)
@@ -179,7 +180,8 @@
 
 	(gimp-image-undo-disable image)
 
-;;;;;    (gimp-context-push)
+    (gimp-context-push)
+ (gimp-context-set-paint-mode 0)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))    
     
@@ -198,7 +200,7 @@
 ;;;;;	(gimp-text-layer-set-letter-spacing text-layer (/ font-size 12))	;none 2.4
 	(set! text-width (car (gimp-drawable-get-width text-layer)))
     (set! text-height (car (gimp-drawable-get-height text-layer)))
-
+(gimp-context-set-paint-mode 0)
 (script-fu-wire-art-299-textcore image img-width img-height text-layer text-width text-height
 				grow
 				shape 
@@ -214,7 +216,7 @@
 
     (gimp-context-set-foreground old-fg)
     (gimp-context-set-background old-bg)
-;;;;;    (gimp-context-pop)
+    (gimp-context-pop)
 
 	(gimp-image-undo-enable image)
 
@@ -277,7 +279,7 @@
 	 (old-fg (car (gimp-context-get-foreground)))
          (old-bg (car (gimp-context-get-background)))
          )
-
+(gimp-context-set-paint-mode 0)
 (script-fu-wire-art-299-textcore img img-width img-height t-layer text-width text-height
 				grow
 				shape 
@@ -389,6 +391,7 @@
 	)
 
 ;;;;set the new Image size
+(gimp-context-set-paint-mode 0)
 	(if (> text-width img-width) (set! width text-width))
     (if (> text-height img-height) (set! height text-height))
 
