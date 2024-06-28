@@ -111,6 +111,8 @@
 		)
 
 	;; Start undo group.
+		(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
 	(gimp-image-undo-group-start img)	
 
 		
@@ -968,6 +970,7 @@
 	(gimp-display-new img)
 
 	; End undo group.
+		(gimp-context-pop)
 	(gimp-image-undo-group-end img)	
 	
 
