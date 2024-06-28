@@ -175,7 +175,9 @@ height
 (gimp-selection-none image) ;no selection
 (if (= flatten 1)
  (gimp-image-flatten image) ; image flattening
- )
+     
+
+ )(gimp-context-pop)
 );end of let*
 );end of define
  
@@ -186,6 +188,7 @@ height
 (text-layer 0)
 )
 (set! img (car (gimp-image-new 256 256 RGB)))
+(gimp-context-push)
 (gimp-context-set-foreground '(0 0 0) )
 (set! text-layer (car (gimp-text-fontname img -1 0 0 text 10 TRUE size PIXELS fontname)))
 (gimp-image-undo-disable img)
