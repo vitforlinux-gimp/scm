@@ -45,6 +45,8 @@
 )
 
     (gimp-image-undo-disable img)
+    	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-image-resize img width height 0 0)
     (gimp-image-insert-layer img bg-layer 0 1)
     (gimp-image-insert-layer img shadow-layer 0 1)
@@ -86,6 +88,7 @@
     (gimp-context-set-foreground old-fg)
     (gimp-context-set-gradient old-grad)
     (gimp-image-undo-enable img)
+        	(gimp-context-pop)
     (gimp-display-new img)))
 
 (script-fu-register "script-fu-scanner-logo"
