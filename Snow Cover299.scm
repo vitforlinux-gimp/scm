@@ -77,6 +77,7 @@
 	(cond ((not (defined? 'gimp-image-get-item-position)) (set! ver 2.6))) ;define the gimp version
 	
 	(gimp-context-push)
+	 (gimp-context-set-paint-mode 0)
     (gimp-context-set-paint-method "gimp-paintbrush")
 	;(cond ((defined? 'gimp-context-set-dynamics) (gimp-context-set-dynamics "Dynamics Off")))
     (gimp-context-set-foreground '(0 0 0))
@@ -210,6 +211,7 @@
 	(cond ((not (defined? 'gimp-image-get-item-position)) (set! ver 2.6))) ;define the gimp version	 
 		 
     (gimp-context-push)
+     (gimp-context-set-paint-mode 0)
 	(gimp-context-set-paint-method "gimp-paintbrush")
 	;(if (= ver 2.8) (gimp-context-set-dynamics "Dynamics Off"))
 	(gimp-context-set-foreground '(0 0 0))
