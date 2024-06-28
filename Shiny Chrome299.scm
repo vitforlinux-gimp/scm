@@ -67,6 +67,7 @@
 							          blendir)
 									  
 	(gimp-context-push)
+	 (gimp-context-set-paint-mode 0)
 	(gimp-context-set-foreground '(0 0 0))
 	
   (let* (
@@ -203,6 +204,7 @@
 	(cond ((not (defined? 'gimp-image-get-item-position)) (set! ver 2.6))) ;define the gimp version
 	
 	(gimp-context-push)
+	 (gimp-context-set-paint-mode 0)
     (gimp-context-set-paint-method "gimp-paintbrush")
           (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics TRUE))
 	(cond ((defined? 'gimp-context-set-dynamics) (gimp-context-set-dynamics "Pressure Opacity")))
