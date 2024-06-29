@@ -14,7 +14,7 @@
 
 
 
-(define (apply-reflex-logo image drawable gradient reverse displace merge)
+(define (apply-reflex-logo image drawable grad-type gradient reverse displace merge)
  
 	(let* (
 		(old-bg (car (gimp-context-get-background)))
@@ -52,13 +52,19 @@
 	(gimp-layer-set-offsets fond-layer c-x c-y)
 	(gimp-layer-set-offsets horizon-layer c-x c-y)
 	(gimp-layer-set-offsets bump-layer c-x c-y)
+    (gimp-context-set-paint-mode 0)
 
 (gimp-context-set-background '(255 255 255))
 (gimp-drawable-edit-fill white-layer 1)
 (set! blur-layer (car (gimp-image-merge-down image text-layer 0)))
 (plug-in-gauss-rle2 1 image blur-layer (/ area 70) (/ area 70))
 
-(gimp-context-set-gradient gradient)
+	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Horizon 2")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
+				))
+	(gimp-context-set-gradient gradient))
+;(gimp-context-set-gradient gradient)
 (gimp-context-set-gradient-reverse reverse)
 ;(gimp-edit-blend fond-layer 3 0 0 100 0 0 FALSE FALSE 0 0 FALSE 0 0 0 (+ image-height displace))
 		      (gimp-drawable-edit-gradient-fill fond-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ image-height displace)) ; Fill with gradient
@@ -94,22 +100,16 @@
     (gimp-selection-grow image (/ area 160))
     (gimp-selection-grow image 1))
 (gimp-selection-invert image)
+(gimp-image-remove-layer image fond-layer)
 (gimp-drawable-edit-clear horizon-layer)
 (gimp-drawable-edit-clear bump-layer)
 (gimp-selection-none image)
 
-(if (= merge TRUE)
-	(begin
-		(gimp-image-remove-layer image fond-layer)
-		(gimp-image-merge-down image horizon-layer 0)
-		(set! layer (car (gimp-image-merge-down image bump-layer 0)))
-		(gimp-item-set-name layer "Script-fu reflex")
-	)
-)
 
-(gimp-context-set-background old-bg)
-(gimp-context-set-foreground old-fg)
-(gimp-context-set-gradient old-gradient)
+
+;(gimp-context-set-background old-bg)
+;(gimp-context-set-foreground old-fg)
+;(gimp-context-set-gradient old-gradient)
 
 	)
 )
@@ -120,7 +120,7 @@
 ;; script pour <image> 
 ;; ------------------------
 
-(define (script-fu-reflex-logo-alpha image drawable gradient reverse displace merge)
+(define (script-fu-reflex-logo-alpha image drawable grad-type gradient reverse displace bg-type bg-col merge)
 
 	(let* (
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
@@ -131,6 +131,9 @@
 		(old-fg 0) )
 
   		(gimp-image-undo-group-start image)
+		    (gimp-context-push)
+		    (gimp-context-set-paint-mode 0)
+
     		
 		(set! var-select (car (gimp-selection-is-empty image)))
 		(if (= var-select TRUE) 
@@ -148,11 +151,12 @@
 		(set! drawable (car (gimp-layer-copy drawable TRUE)))
 		(gimp-layer-set-mode drawable LAYER-MODE-NORMAL-LEGACY)
 		(gimp-image-insert-layer image drawable 0 -1)
+				(plug-in-autocrop-layer 1 image drawable)
 		(gimp-layer-set-lock-alpha drawable TRUE)
 		(gimp-drawable-edit-fill drawable FILL-FOREGROUND)
 		(gimp-layer-set-lock-alpha drawable FALSE)
 
-		(apply-reflex-logo image drawable gradient reverse displace merge)
+		(apply-reflex-logo image drawable grad-type gradient reverse displace FALSE)
     		
 		(if (= var-select TRUE) 
 			(begin 
@@ -162,12 +166,58 @@
 				(gimp-image-remove-channel image canal)
 			)
 		)
+		(gimp-layer-resize-to-image-size drawable)
+				(gimp-selection-none image)
 
-		(if (= merge TRUE)
-			(gimp-image-merge-down image (car (gimp-image-get-selected-drawables image)) 0)
-			(gimp-image-remove-layer image drawable))
+			(if (= bg-type 0)
+		(begin 
+	     ; (gimp-drawable-edit-fill drawable FILL-WHITE)
+	     	     (gimp-drawable-edit-clear drawable)
 
-        (gimp-context-set-foreground old-fg)
+	     		(gimp-layer-set-lock-alpha drawable TRUE)
+	      (gimp-item-set-name drawable "Transparent")
+		)
+	)
+	(if (= bg-type 1)
+		(begin 
+	      ;(gimp-drawable-edit-fill drawable FILL-WHITE)
+	      		(gimp-context-set-background bg-col)
+	(gimp-drawable-fill drawable FILL-BACKGROUND)
+	      (gimp-item-set-name drawable "Color")
+		)
+	)
+	(if (= bg-type 2)
+		(begin 
+	     ; (gimp-drawable-edit-fill drawable FILL-WHITE)
+	      (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Horizon 2")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
+				)
+	     (gimp-drawable-edit-gradient-fill drawable  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (car (gimp-drawable-get-height drawable))) ; Fill with gradient
+	      (gimp-item-set-name drawable "Grad default")
+		)
+	)
+		(if (= bg-type 3)
+		(begin 
+	     ; (gimp-drawable-edit-fill drawable FILL-WHITE)
+	     
+						 (gimp-context-set-gradient gradient)
+
+	     (gimp-drawable-edit-gradient-fill drawable  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (car (gimp-drawable-get-height drawable))) ; Fill with gradient
+	      (gimp-item-set-name drawable "Grad manual")
+		)
+	)
+	(if (= merge TRUE)
+	(begin
+						(gimp-image-merge-visible-layers image 1)
+	))
+
+		;(if (= merge TRUE)
+			;(gimp-image-merge-down image (car (gimp-image-get-selected-drawables image)) 0)
+			;(gimp-image-remove-layer image drawable))
+
+       ; (gimp-context-set-foreground old-fg)
+	    (gimp-context-pop)
 		(gimp-image-undo-group-end image)
 		(gimp-displays-flush)
   )
@@ -182,10 +232,13 @@
         "RGBA"
         SF-IMAGE      "Image"        0
         SF-DRAWABLE   "Drawable"     0
+	SF-OPTION "Gradient Type" '("Default Gradient" "Manual Gradient")
         SF-GRADIENT   "Gradient"     _"Horizon 2"
 	SF-TOGGLE     "Gradient reverse" FALSE
         SF-ADJUSTMENT "Shift amount"     '(10 1 20 1 10 0 0)
-        SF-TOGGLE     "Flatten" TRUE
+	SF-OPTION "Background Type" '("Transparent" "Color" "Default Gradient" "Manual Gradient")
+	SF-COLOR "Background color" '(255 255 255)
+        SF-TOGGLE     "Flatten" FALSE
 )
 
 (script-fu-menu-register "script-fu-reflex-logo-alpha"
@@ -198,7 +251,7 @@
 ;; script pour <toolbox> 
 ;; ------------------------
 
-(define (script-fu-reflex-logo text size font justification letter-spacing line-spacing gradient reverse displace merge)
+(define (script-fu-reflex-logo text size font justification letter-spacing line-spacing buffer grad-type gradient reverse displace bg-type bg-col merge)
 
   (let* (
 	(image (car (gimp-image-new 256 256 RGB)))
@@ -207,26 +260,65 @@
 						       ((= justification 1) 0)
 						       ((= justification 2) 1)
 						       ((= justification 3) 3)))	
-	(text-layer (car (gimp-text-fontname image -1 0 0 text 10 TRUE size PIXELS font))))
+	(text-layer (car (gimp-text-fontname image -1 0 0 text (* 10 buffer) TRUE size PIXELS font))))
 	
 	   (gimp-text-layer-set-justification  text-layer  justification) ; Text Justification (Rev Value)
 	(gimp-text-layer-set-letter-spacing text-layer letter-spacing)  ; Set Letter Spacing
 	(gimp-text-layer-set-line-spacing text-layer line-spacing)      ; Set Line Spacing    
 
 	(gimp-image-undo-disable image)
+	    (gimp-context-push)
+	    (gimp-context-set-paint-mode 0)
+
 
     (gimp-item-set-name text-layer "Text")
 	(gimp-image-resize image (car (gimp-drawable-get-width text-layer)) (car (gimp-drawable-get-height text-layer)) 0 0)    	
-	(apply-reflex-logo image text-layer gradient reverse displace merge)
+	(apply-reflex-logo image text-layer grad-type gradient reverse displace FALSE)
 
-	(if (= merge FALSE)
+	(if (= bg-type 0)
 		(begin 
-	      (gimp-drawable-edit-fill text-layer FILL-WHITE)
-	      (gimp-item-set-name text-layer "Background")
+	     ; (gimp-drawable-edit-fill text-layer FILL-WHITE)
+	     (gimp-drawable-edit-clear text-layer)
+	     	     		(gimp-layer-set-lock-alpha text-layer TRUE)
+	      (gimp-item-set-name text-layer "Transparent")
 		)
 	)
+	(if (= bg-type 1)
+		(begin 
+	      ;(gimp-drawable-edit-fill text-layer FILL-WHITE)
+	      		(gimp-context-set-background bg-col)
+	(gimp-drawable-fill text-layer FILL-BACKGROUND)
+	      (gimp-item-set-name text-layer "Color")
+		)
+	)
+	(if (= bg-type 2)
+		(begin 
+	     ; (gimp-drawable-edit-fill text-layer FILL-WHITE)
+	      (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Horizon 2")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
+				)
+	     (gimp-drawable-edit-gradient-fill text-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (car (gimp-drawable-get-height text-layer))) ; Fill with gradient
+	      (gimp-item-set-name text-layer "Grad default")
+		)
+	)
+		(if (= bg-type 3)
+		(begin 
+	     ; (gimp-drawable-edit-fill text-layer FILL-WHITE)
+	     
+						 (gimp-context-set-gradient gradient)
 
+	     (gimp-drawable-edit-gradient-fill text-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (car (gimp-drawable-get-height text-layer))) ; Fill with gradient
+	      (gimp-item-set-name text-layer "Grad manual")
+		)
+	)
+	(if (= merge TRUE)
+	(begin
+			(gimp-image-merge-visible-layers image 1)
+	)
+)
 	(gimp-image-undo-enable image)
+	    (gimp-context-pop)
 	(gimp-display-new image)
   )
 )
@@ -244,9 +336,13 @@
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
+	SF-ADJUSTMENT  "Buffer"           '(1 1 20 1 10 0 0)
+	SF-OPTION "Gradient Type" '("Default Gradient" "Manual Gradient")
         SF-GRADIENT    "Gradient"           "Horizon 2"
 	SF-TOGGLE      "Gradient reverse"        FALSE
         SF-ADJUSTMENT  "Shift amount"           '(10 1 20 1 10 0 0)
+	SF-OPTION "Background Type" '("Transparent" "Color" "Default Gradient" "Manual Gradient")
+	SF-COLOR "Background color" '(255 255 255)
         SF-TOGGLE      "Flatten"        FALSE
 )
 
