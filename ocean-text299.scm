@@ -38,7 +38,10 @@
 (define (script-fu-ocean-text inText
 	                      inFontSize
 	                      inFont
+			      grad-type
 			      gradient
+			      grad-rvs
+			      bgcol
 	)
 
 	
@@ -51,10 +54,11 @@
 
 	; Disable undoing
 	(gimp-image-undo-disable theImage)
+    (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 
 
 	(gimp-context-set-foreground '(128 128 128))
-	(gimp-context-set-background '(255 255 255))
+	(gimp-context-set-background bgcol)
 
 	; Create the initial text layer and background layer
 	(define textLayer (car (gimp-text-fontname theImage -1 0 0 inText
@@ -68,7 +72,11 @@
 	                       1 "Background" 100 0)))
 
 	(gimp-image-insert-layer theImage background 0 0)
-	(gimp-drawable-fill background 1)	
+	(gimp-context-set-background bgcol)
+	(gimp-drawable-edit-fill background FILL-BACKGROUND)
+		(gimp-context-set-background '(255 255 255))
+
+	
 
 	(gimp-image-lower-item-to-bottom theImage background)
 	(gimp-context-set-foreground '(0 0 0))
@@ -94,7 +102,12 @@
 
 
 ; Add the ocean waves
-	(gimp-context-set-gradient gradient)
+	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Horizon 2")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
+				))
+	(gimp-context-set-gradient gradient))
+			(gimp-context-set-gradient-reverse grad-rvs)
 	(gimp-image-set-active-layer theImage textLayer)
 	(define waveLayer (car (gimp-layer-new theImage
 	                      (car (gimp-image-get-width theImage))
@@ -125,13 +138,17 @@
                           TRUE FALSE 0)
 
 	; Restore palette
-	(gimp-context-set-foreground '(128 128 128))
-	(gimp-context-set-background '(255 255 255))
+	;(gimp-context-set-foreground '(128 128 128))
+	;(gimp-context-set-background '(255 255 255))
+		(gimp-context-set-background bgcol)
+	(gimp-drawable-fill background FILL-BACKGROUND)
 
 	; Display the image & re-enable undoing
 	(gimp-image-undo-enable theImage)
 	(gimp-image-clean-all theImage)
 	(gimp-display-new theImage)
+	
+
 
 	; Force update
 	(gimp-displays-flush)
@@ -158,7 +175,10 @@
     SF-STRING     "Text"               "Ocean Text"
     SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 0 0 1)
     SF-FONT       "Font"               "Sans Bold"
+      SF-OPTION "Gradient Type" '("Default" "Manual")
       SF-GRADIENT   _"Gradient"           "Horizon 2"
+      		    SF-TOGGLE "Gradient Reverse" FALSE
+      SF-COLOR "Background color" '(255 255 255)
 )
 (script-fu-menu-register
 	"script-fu-ocean-text"
