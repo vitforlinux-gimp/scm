@@ -152,6 +152,7 @@
 		(gimp-layer-set-mode drawable LAYER-MODE-NORMAL-LEGACY)
 		(gimp-image-insert-layer image drawable 0 -1)
 				(plug-in-autocrop-layer 1 image drawable)
+				(gimp-layer-resize drawable (+ (car (gimp-drawable-get-width drawable)) 50) (+ (car (gimp-drawable-get-height drawable)) 50 ) 25 25)
 		(gimp-layer-set-lock-alpha drawable TRUE)
 		(gimp-drawable-edit-fill drawable FILL-FOREGROUND)
 		(gimp-layer-set-lock-alpha drawable FALSE)
