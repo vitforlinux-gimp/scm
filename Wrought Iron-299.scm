@@ -24,6 +24,7 @@
 ; ------------ 
 ; Rel 0.01 - Initial Release
 ; Rel 0.02 - Little fix for gimp 2.10.32
+; Rel 299 - Fixes for 2.10 compatibility OFF and 2.99.19 - alpha not works good
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
@@ -32,11 +33,12 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+(cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
+;(cond ((not (defined? 'gimp-image-get-active-drawable)) (define (gimp-image-get-active-drawable image) (aref (cadr (gimp-image-get-selected-drawables image)) 0))))
 
 ;
-(define (script-fu-wrought-iron image drawable
+(define (script-fu-wrought-iron-299 image drawable
                                iron-size
 							   spread
 							   bev-w
@@ -67,6 +69,7 @@
         )	
 	
 	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)	
 	
@@ -78,10 +81,17 @@
 	
 ;;;;create selection-channel (gimp-selection-load selection-channel)
     (gimp-selection-save image)
-	(set! selection-channel (car (gimp-image-get-selected-drawables image)))	
+	;(set! selection-channel (car (gimp-image-get-active-drawable image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! selection-channel (car (gimp-image-get-active-drawable image)))
+	)
+)	
 	(gimp-channel-set-opacity selection-channel 100)	
-	(gimp-item-set-name selection-channel "selection-channel")
-    (gimp-image-set-active-layer image image-layer)	
+	;(gimp-item-set-name selection-channel "selection-channel")
+    ;(gimp-image-set-active-layer image image-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector image-layer)))
+(else (gimp-image-set-active-layer image image-layer))
+)      
 	
     (gimp-drawable-edit-fill image-layer FILL-FOREGROUND)
 	
@@ -103,12 +113,12 @@
 	(plug-in-gauss-rle2 1 image age-layer 5 5)
 	(plug-in-bump-map 1 image age-layer age-layer 108 83 50 0 0 0 0 TRUE FALSE 2)
 	(gimp-image-select-rectangle image 1 0 0 1 1)
-	(gimp-curves-spline age-layer 0 12 #(0 0 30 68 69 73 128 184 186 188 255 255))
+	(gimp-drawable-curves-spline age-layer 0 12 #(0 0 0.117647058824 0.266666666667 0.270588235294 0.2862745098 0.501960784314 0.721568627451 0.729411764706 0.737254901961 1 1))
 	(set! image-layer (car (gimp-image-merge-down image age-layer 0)))
 	(the-wrought-iron-beveller image image-layer 18 0 0 bev-w 0 0 135 30 bev-d 3 10 FALSE)
 	(set! image-layer (car (gimp-image-merge-down image (car (gimp-image-get-active-layer image)) 0)))
-	(gimp-curves-spline image-layer 0 22 #(0 0 21 138 37 222 62 255 83 230 106 166 147 87 173 63 199 90 223 160 255 255))
-	(gimp-brightness-contrast image-layer brightness contrast)	
+	(gimp-drawable-curves-spline image-layer 0 22 #(0 0 0.0823529411765 0.541176470588 0.145098039216 0.870588235294 0.2431372549 1 0.325490196078 0.901960784314 0.41568627451 0.650980392157 0.576470588235 0.341176470588 0.678431372549 0.247058823529 0.780392156863 0.352941176471 0.874509803922 0.627450980392 1 1))
+	(gimp-drawable-brightness-contrast image-layer (/ brightness 127)  (/ contrast 127))	
 	
 ;;;;create the background layer    
 	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
@@ -136,7 +146,7 @@
 ;;;;finish the script	
 	(if (= conserve FALSE) (set! image-layer (car (gimp-image-merge-down image image-layer EXPAND-AS-NECESSARY))))
     (gimp-item-set-name image-layer layer-name)
-    (if (= keep-selection TRUE) (gimp-selection-load selection-channel))
+    (if (= keep-selection TRUE) (gimp-image-select-item image 2 selection-channel))
 	(gimp-image-remove-channel image selection-channel)
 	(if (and (= conserve FALSE) (= alpha FALSE) (gimp-layer-flatten image-layer)))	
 	
@@ -147,12 +157,12 @@
  )
 )
 
-(script-fu-register "script-fu-wrought-iron"        		    
-  "Wrought Iron..."
+(script-fu-register "script-fu-wrought-iron-299"        		    
+  "Wrought Iron Alpha 299"
   "Wrought Iron can Create shapes with the texture and look of wrought-iron work with optional frame and bkg color"
   "Graechan"
-  "Graechan - http://gimpchat.com"
-  "Dec 2012"
+  "Graechan - Vitforlinux"
+  "Dec 2012 - Lug 2024"
   "RGB*"
   SF-IMAGE      "image"      0
   SF-DRAWABLE   "drawable"   0
@@ -171,9 +181,9 @@
   SF-TOGGLE     "Keep selection"    FALSE
   SF-TOGGLE     "Keep the Layers"   FALSE
  )
-(script-fu-menu-register "script-fu-wrought-iron" "<Image>/Script-Fu/Alpha-to-Logo/")
+(script-fu-menu-register "script-fu-wrought-iron-299" "<Image>/Script-Fu/Alpha-to-Logo/")
 
-(define (script-fu-wrought-iron-logo 
+(define (script-fu-wrought-iron-299-logo 
                                       text                                       
                                       font-in 
                                       font-size
@@ -192,7 +202,7 @@
   (let* (
          (image (car (gimp-image-new 256 256 RGB)))         
          (border (/ font-size 3))
-		 (font (if (> (string-length font-in) 0) font-in (car (gimp-context-get-font))))
+		 (font  font-in )
          (size-layer (car (gimp-text-fontname image -1 0 0 text border TRUE font-size PIXELS font)))
          (final-width (car (gimp-drawable-get-width size-layer)))
          (final-height (car (gimp-drawable-get-height size-layer)))
@@ -205,6 +215,7 @@
          )
 		 
     (gimp-context-push)
+	(gimp-context-set-paint-mode 0)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
 
@@ -223,7 +234,7 @@
 	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
 
 ;;;;Start the script;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
-    (script-fu-wrought-iron image 
+    (script-fu-wrought-iron-299 image 
                             text-layer
 							iron-size
 							spread
@@ -240,10 +251,14 @@
 							FALSE  ;keep-selection-in
 							TRUE)  ;conserve
 							
-	(set! bkg-layer (car (gimp-image-get-active-layer image)))
+	;(set! bkg-layer (car (gimp-image-get-active-layer image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! bkg-layer (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! bkg-layer (car (gimp-image-get-active-layer image)))
+	)
+)
 
 ;;;;Scale Image to it's original size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    (gimp-image-scale-full image final-width final-height 2)
+    (gimp-image-scale image final-width final-height)
 	(set! width (car (gimp-image-get-width image)))
 	(set! height (car (gimp-image-get-height image)))
 	
@@ -272,12 +287,12 @@
     (gimp-display-new image)
     )
   ) 
-(script-fu-register "script-fu-wrought-iron-logo"
-  "Wrought Iron Logo..."
+(script-fu-register "script-fu-wrought-iron-299-logo"
+  "Wrought Iron Logo 299"
   "Wrought Iron can Create Logos with the texture and look of wrought-iron work with optional frame and bkg color"
   "Graechan"
-  "Graechan - http://gimpchat.com"
-  "Dec 2012"
+  "Graechan - Vitforlinux"
+  "Dec 2012 - Lug 2024"
   ""
   SF-TEXT       "Text"    "Wrought Iron"
   SF-FONT       "Font"               "JasmineUPC Bold"
@@ -294,7 +309,7 @@
   SF-GRADIENT   "Border Gradient" "Crown molding"
   SF-TOGGLE     "Keep the Layers"   FALSE
   )
-(script-fu-menu-register "script-fu-wrought-iron-logo" "<Image>/Script-Fu/Logos/")
+(script-fu-menu-register "script-fu-wrought-iron-299-logo" "<Image>/Script-Fu/Logos/")
   
 (define (the-wrought-iron-beveller image drawable
                                   layer-mode
@@ -335,6 +350,7 @@
         )	
 	
 	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
@@ -355,19 +371,33 @@
 
 ;;;;save the selection    
 	(gimp-selection-save image)
-	(set! image-channel (car (gimp-image-get-selected-drawables image)))	
+	;(set! image-channel (car (gimp-image-get-active-drawable image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! image-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! image-channel (car (gimp-image-get-active-drawable image)))
+	)
+)	
 	(gimp-channel-set-opacity image-channel 100)	
 	(gimp-item-set-name image-channel "image-channel")
-	(gimp-image-set-active-layer image image-layer)
+	;(gimp-image-set-active-layer image image-layer) MAH!
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector image-layer)))
+(else (gimp-image-set-active-layer image image-layer))
+)  
+
 	
 ;;;;Add new layer with Bevel
     (if (= bev-type 0) (set! name "Inner bevel"))
     (if (= bev-type 1) (set! name "Outer bevel"))
-    (gimp-selection-load image-channel)
-    (gimp-image-set-active-layer image image-layer)    
+    (gimp-image-select-item image 2 image-channel)
+   ; (gimp-image-set-active-layer image image-layer) 
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector image-layer)))
+(else (gimp-image-set-active-layer image image-layer))
+)    
     (set! bevel-layer (car (gimp-layer-new image width height RGBA-IMAGE name 100 layer-mode)))
     (gimp-image-insert-layer image bevel-layer 0 -1)
-    (gimp-image-set-active-layer image bevel-layer)    
+;    (gimp-image-set-active-layer image bevel-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector bevel-layer)))
+(else (gimp-image-set-active-layer image bevel-layer))
+) 
     (gimp-context-set-foreground '(0 0 0))
     (gimp-context-set-background '(255 255 255))
 	;(if (> grow 0) (gimp-selection-grow image grow));;;;Expand the selection if needed
@@ -382,11 +412,11 @@
 	(begin
 					(aset *newpoint* 0 0)    ; set the arrays
 					(aset *newpoint* 1 0)
-					(aset *newpoint* 2 (round (+ (/ shape 10) 127)))
-	                (aset *newpoint* 3 (+ shape 127))
-					(aset *newpoint* 4 255)
-					(aset *newpoint* 5 255)
-	(gimp-curves-spline bevel-layer 0 6 *newpoint*)
+					(aset *newpoint* 2  (/(+ (/ shape 10) 127) 255))
+	                (aset *newpoint* 3 (+ shape 0.5))
+					(aset *newpoint* 4 1)
+					(aset *newpoint* 5 1)
+	(gimp-drawable-curves-spline bevel-layer 0 6 *newpoint*)
     )
     )	
 
@@ -411,33 +441,33 @@
 					
 					(aset *newpointx1* 0 0)    ; set the arrays
 					(aset *newpointx1* 1 0)
-					(aset *newpointx1* 2 63)
-	                (aset *newpointx1* 3 (+ 63 y1))
-					(aset *newpointx1* 4 95)
-					(aset *newpointx1* 5 (+ 95 y2))
-					(aset *newpointx1* 6 127)
-					(aset *newpointx1* 7 (- 127 y3))
-					(aset *newpointx1* 8 156)
-					(aset *newpointx1* 9 (+ 156 y4))
-					(aset *newpointx1* 10 191)
-					(aset *newpointx1* 11 (- 191 y5))
-					(aset *newpointx1* 12 223)
-					(aset *newpointx1* 13 (+ 223 y6))
-					(aset *newpointx1* 14 255)
-					(aset *newpointx1* 15 255)
+					(aset *newpointx1* 2 0.247058823529)
+	                (aset *newpointx1* 3 (/ (+ 63 y1) 255))
+					(aset *newpointx1* 4 0.372549019608)
+					(aset *newpointx1* 5 (/(+ 95 y2) 255))
+					(aset *newpointx1* 6 0.5)
+					(aset *newpointx1* 7 (/ (- 127 y3) 255))
+					(aset *newpointx1* 8 0.611764705882)
+					(aset *newpointx1* 9 (/(+ 156 y4) 255))
+					(aset *newpointx1* 10 0.749019607843)
+					(aset *newpointx1* 11 (/(- 191 y5) 255))
+					(aset *newpointx1* 12 0.874509803922)
+					(aset *newpointx1* 13 (/(+ 223 y6) 255))
+					(aset *newpointx1* 14 1)
+					(aset *newpointx1* 15 1)
 					;(0,0, 63,(63 + y1), 95,(95 + y2), 127,(127 - y3), 156,(156 + y4), 191,(191 - y5), 223,(223 + y6), 255,255)
 	 
-	(gimp-curves-spline bevel-layer 0 16 *newpointx1*)
+	(gimp-drawable-curves-spline bevel-layer 0 16 *newpointx1*)
 	 )
 	 )
-	(gimp-selection-load image-channel)  
+	(gimp-image-select-item image 2 image-channel)  
 ;postblur                
 	(if (> postblur 0) (plug-in-gauss-rle2 RUN-NONINTERACTIVE image bevel-layer postblur postblur))
 	;(if (> postblur 0) (plug-in-gauss-rle 1 image bevel-layer postblur TRUE TRUE))
 	(gimp-layer-set-lock-alpha bevel-layer FALSE)
 	
 ;reload selection
-    (gimp-selection-load image-channel)
+    (gimp-image-select-item image 2 image-channel)
                 
 ;clear excess
     (if (= bev-type 0) 
@@ -503,36 +533,50 @@
         )	
 	
 	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)
     
 ;;;;create original-selection-channel if a selection exists (gimp-selection-load original-selection-channel)
     (if (= sel FALSE) (begin
     (gimp-selection-save image)
-	(set! original-selection-channel (car (gimp-image-get-selected-drawables image)))	
+	;(set! original-selection-channel (car (gimp-image-get-active-drawable image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! original-selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! original-selection-channel (car (gimp-image-get-active-drawable image)))
+	)
+)	
 	(gimp-channel-set-opacity original-selection-channel 100)	
 	(gimp-item-set-name original-selection-channel "original-selection-channel")
-    (gimp-image-set-active-layer image image-layer)	
+;    (gimp-image-set-active-layer image image-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector image-layer)))
+(else (gimp-image-set-active-layer image image-layer))
+) 
 	(gimp-selection-none image)))	
 	
 	(if (= alpha FALSE) (gimp-layer-add-alpha image-layer))
 	
 ;;;;create the Image selection  
-	(gimp-rect-select image
+	(gimp-image-select-rectangle image 2
                         (car (gimp-drawable-get-offsets image-layer))
                         (cadr (gimp-drawable-get-offsets image-layer))
                         old-width
                         old-height
-						CHANNEL-OP-REPLACE
-						FALSE
-						10)    
+						
+						)    
 	
 ;;;;create selection-channel (gimp-selection-load selection-channel)
     (gimp-selection-save image)
-	(set! selection-channel (car (gimp-image-get-selected-drawables image)))	
+	;(set! selection-channel (car (gimp-image-get-active-drawable image)))
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! selection-channel (car (gimp-image-get-active-drawable image)))
+	)
+)	
 	(gimp-channel-set-opacity selection-channel 100)	
 	(gimp-item-set-name selection-channel "selection-channel")
-    (gimp-image-set-active-layer image image-layer)	
+;    (gimp-image-set-active-layer image image-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector image-layer)))
+(else (gimp-image-set-active-layer image image-layer))
+)
 	(gimp-selection-none image)
 	
 ;;;;begin the script
@@ -549,11 +593,14 @@
 	(set! tint-layer (car (gimp-layer-new image width height typeA "Tint" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 1) 
 	(gimp-context-set-background tint-color)
-	(gimp-selection-load selection-channel)
+	(gimp-image-select-item image 2 selection-channel)
 	(gimp-selection-invert image)
 	(gimp-layer-set-mode border-layer GRAIN-MERGE-MODE)
 	(gimp-drawable-edit-fill tint-layer FILL-BACKGROUND)))
-	(gimp-image-set-active-layer image border-layer)
+;	(gimp-image-set-active-layer image border-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector border-layer)))
+(else (gimp-image-set-active-layer image border-layer))
+)
 	
 	(set! bump-layer (car (gimp-layer-new image width height typeA "Grain" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bump-layer 0 -1)
@@ -610,23 +657,36 @@
 	
 	(gimp-context-set-gradient gradient)
 ;;;;create the top of border
-	(gimp-free-select image 10 *newpoint-top* 2 TRUE FALSE 15)
-	(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE (/ width 2) 0 (/ width 2) ysize)
+	;(gimp-free-select image 10 *newpoint-top* 2 TRUE FALSE 15)
+	(gimp-image-select-polygon image 2 10 *newpoint-top*)
+	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE (/ width 2) 0 (/ width 2) ysize)
+	(gimp-context-set-gradient-reverse reverse)
+	(gimp-drawable-edit-gradient-fill border-layer GRADIENT-LINEAR 0 0 1 0 0  (/ width 2) 0 (/ width 2) ysize) ; Fill with gradient
 
 ;;;;create the bottom of border
-	(gimp-free-select image 10 *newpoint-bot* 2 TRUE FALSE 15)
-	(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE (/ width 2) height (/ width 2) (+ old-height ysize))
-
+	;(gimp-free-select image 10 *newpoint-bot* 2 TRUE FALSE 15)
+	(gimp-image-select-polygon image 2 10 *newpoint-bot*)
+	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE (/ width 2) height (/ width 2) (+ old-height ysize))
+	(gimp-context-set-gradient-reverse reverse)
+	(gimp-drawable-edit-gradient-fill border-layer GRADIENT-LINEAR 0 0 1 0 0  (/ width 2) height (/ width 2) (+ old-height ysize)) ; Fill with gradient
 ;;;;create the left of border
-	(gimp-free-select image 10 *newpoint-left* 2 TRUE FALSE 15)
-	(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE 0 (/ height 2) xsize (/ height 2))
-
+	;(gimp-free-select image 10 *newpoint-left* 2 TRUE FALSE 15)
+	(gimp-image-select-polygon image 2 10 *newpoint-left*)
+	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE 0 (/ height 2) xsize (/ height 2))
+	(gimp-context-set-gradient-reverse reverse)
+	(gimp-drawable-edit-gradient-fill border-layer GRADIENT-LINEAR 0 0 1 0 0   0 (/ height 2) xsize (/ height 2)) ; Fill with gradient
 ;;;;create the right of border
-	(gimp-free-select image 10 *newpoint-right* 2 TRUE FALSE 15)
-	(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE width (/ height 2) (+ old-width xsize) (/ height 2))
+	;(gimp-free-select image 10 *newpoint-right* 2 TRUE FALSE 15)
+	(gimp-image-select-polygon image 2 10 *newpoint-right*)
+	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE width (/ height 2) (+ old-width xsize) (/ height 2))
+	(gimp-context-set-gradient-reverse reverse)
+	(gimp-drawable-edit-gradient-fill border-layer GRADIENT-LINEAR 0 0 1 0 0  width (/ height 2) (+ old-width xsize) (/ height 2)) ; Fill with gradient
     (gimp-selection-none image)
 	
-	(gimp-image-set-active-layer image border-layer)
+;	(gimp-image-set-active-layer image border-layer)
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector border-layer)))
+(else (gimp-image-set-active-layer image border-layer))
+)  
 	(if (= tint TRUE) (plug-in-sample-colorize 1 image border-layer tint-layer TRUE FALSE FALSE TRUE 0 255 1.00 0 255))
 	(if (= use-pattern TRUE) (plug-in-bump-map 1 image border-layer bump-layer 135 45 3 0 0 0 0 TRUE FALSE LINEAR))
 
@@ -637,8 +697,8 @@
 	(gimp-image-remove-layer image bump-layer)
    ; (gimp-item-set-name image-layer layer-name)
     ))
-    (if (and (= sel TRUE) (= keep-selection TRUE)) (gimp-selection-load selection-channel))
-	(if (and (= sel FALSE) (= keep-selection TRUE)) (gimp-selection-load original-selection-channel))
+    (if (and (= sel TRUE) (= keep-selection TRUE)) (gimp-image-select-item image 2 selection-channel))
+	(if (and (= sel FALSE) (= keep-selection TRUE)) (gimp-image-select-item image 2 original-selection-channel))
 	(gimp-image-remove-channel image selection-channel)
 	(if (= sel FALSE) (gimp-image-remove-channel image original-selection-channel))
 	(if (and (= conserve FALSE) (= alpha FALSE) (gimp-layer-flatten image-layer)))	
