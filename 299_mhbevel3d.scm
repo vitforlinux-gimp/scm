@@ -140,11 +140,14 @@
     (gimp-image-insert-layer img bump-layer 0 2)
     (gimp-context-set-foreground '(0 0 0))
     (gimp-layer-set-lock-alpha bcopy TRUE)
+    (gimp-selection-none img)
     (gimp-drawable-edit-fill bcopy FILL-FOREGROUND)
     (gimp-context-set-foreground '(255 255 255))
     (gimp-drawable-edit-fill bump-layer FILL-FOREGROUND)
     (set! bump (car (gimp-image-merge-down img bcopy 0)))
     (plug-in-gauss-iir2 1 img bump bmpblr bmpblr)
+       
+       
 
     (cond((= 0 md)
 	(plug-in-bump-map 1 img drawable bump 135 45 bmpmp 0 0 0 0 TRUE TRUE 0)
@@ -348,7 +351,7 @@
 ))
 (define (script-fu-layers-view-current-only image drawable)
     (script-fu-layers-view-none image drawable)
-    (if (not (= 0 (car (gimp-drawable-is-layer drawable))))
+    (if (not (= 0 (car (gimp-item-id-is-layer drawable))))
         (gimp-item-set-visible drawable TRUE))
 )
 
