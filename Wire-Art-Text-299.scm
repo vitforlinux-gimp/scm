@@ -126,7 +126,7 @@
 ))
 (define (script-fu-layers-view-current-only image drawable)
     (script-fu-layers-view-none image drawable)
-    (if (not (= 0 (car (gimp-drawable-is-layer drawable))))
+    (if (not (= 0 (car (gimp-item-id-is-layer drawable))))
         (gimp-item-set-visible drawable TRUE))
 )
 (define (script-fu-layers-delete-hidden image drawable)
