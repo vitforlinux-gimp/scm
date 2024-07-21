@@ -78,7 +78,7 @@
 ;
 ;               Replaced call of gimp-image-set-active layer with call of gimp-image-set-selected-layers
 ;  29/2/2024 fixes for Gimp 2.99.18... work with errors, last version with backwards compatibility with 2.10 (vitforlinux)
-;
+;  21/7/2024 fixes for Gimp 2.99.19 r988/R1005 
 ;
 ;              programmer_ceds A T yahoo D O T co D O T uk
 ;
@@ -556,9 +556,16 @@
 			)	; end - if
 
             ; get path/vector points
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+		(begin
             (set! theFirstStroke  (aref  (cadr (gimp-vectors-get-strokes theActiveVector)) 0))
             (set! theStrokePoints (caddr (gimp-vectors-stroke-get-points theActiveVector theFirstStroke)))
-            (set! theNumPoints    (cadr  (gimp-vectors-stroke-get-points theActiveVector theFirstStroke)))
+            (set! theNumPoints    (cadr  (gimp-vectors-stroke-get-points theActiveVector theFirstStroke))))
+(begin
+            (set! theFirstStroke  (aref  (cadr (gimp-path-get-strokes theActiveVector)) 0))
+            (set! theStrokePoints (caddr (gimp-path-stroke-get-points theActiveVector theFirstStroke)))
+            (set! theNumPoints    (cadr  (gimp-path-stroke-get-points theActiveVector theFirstStroke))))
+)
 
 			(if (< theNumPoints 12)
 				(begin
@@ -591,7 +598,9 @@
             (set! inPoint_2Y    (aref theStrokePoints (- theNumPoints 3)))
 
             ; calculate length of arrows depending on the length of the whole arrow
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 			(set! theArrowLength	(car (gimp-vectors-stroke-get-length theActiveVector 1 3.0)))
+			(set! theArrowLength	(car (gimp-path-stroke-get-length theActiveVector 1 3.0))))
             (if (= WingLengthType FACTOR_RELATIVE_TO_PATH_LENGTH)
             	(set! theWingLength (/ theArrowLength WingLengthFactor))
             	(set! theWingLength WingLengthFactor)
@@ -746,8 +755,9 @@
 	 
 
             (gimp-context-pop)
-
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
             (if (= usePathThenRemove 1) (gimp-image-remove-vectors image theActiveVector))
+            (if (= usePathThenRemove 1) (gimp-image-remove-path image theActiveVector)))
 
             (if (= useNewLayer 1) (begin
                 (plug-in-autocrop-layer TRUE image drawable)
