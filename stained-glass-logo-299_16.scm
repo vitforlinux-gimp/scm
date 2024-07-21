@@ -114,7 +114,7 @@ sf
 ;(gimp-path-stroke-current image)
   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
  (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-active-vectors image)))
- (gimp-drawable-edit-stroke-item path-layer (car (gimgimp-image-get-path-by-name image "Path")))	)
+ (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-path-by-name image "Path")))	)
  
 (set!  outline-layer (car(gimp-layer-copy path-layer 1)))
 (gimp-image-insert-layer image outline-layer 0 0)

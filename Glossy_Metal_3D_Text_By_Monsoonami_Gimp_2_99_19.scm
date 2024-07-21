@@ -690,7 +690,10 @@
 	(gimp-image-select-item 
 		img						; image 
 		0						; op
-		(car (gimp-image-get-path-by-name img "Texte_1"))
+		;(car (gimp-image-get-path-by-name img "Texte_1"))
+				  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+		(car (gimp-image-get-vectors-by-name img "Texte_1"))
+		(car (gimp-image-get-path-by-name img "Texte_1")))
 		;"Texte_1"				; name 
 		 
 		;TRUE					; antialias 
@@ -727,7 +730,10 @@
 	(gimp-image-select-item 
 		img						; image 
 		1						; op
-		(car (gimp-image-get-path-by-name img "Texte_3"))
+		;(car (gimp-image-get-path-by-name img "Texte_3"))
+				  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+		(car (gimp-image-get-vectors-by-name img "Texte_3"))
+		(car (gimp-image-get-path-by-name img "Texte_3")))
 		;"Texte_3"				; name 
 		;1						; op 
 		;TRUE					; antialias 
@@ -855,7 +861,9 @@
 	(gimp-image-select-item 
 		img						; image 
 		0						; op
-		(car (gimp-image-get-path-by-name img "Texte_3_contour"))
+		  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+		(car (gimp-image-get-vectors-by-name img "Texte_3_contour"))
+		(car (gimp-image-get-path-by-name img "Texte_3_contour")))
 		;"Texte_3_contour"		; name 
 		;0						; op 
 		;TRUE					; antialias 
