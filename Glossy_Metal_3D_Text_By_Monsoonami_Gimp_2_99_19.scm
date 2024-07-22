@@ -539,7 +539,7 @@
 	
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1")
-(cond ((defined? 'gimp-image-get-selected-vectors) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors img)) 0) "Texte_1"))
+(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_1"))
 (else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1"))
 )
 
@@ -570,7 +570,7 @@
 	
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2")
-	(cond ((defined? 'gimp-image-get-selected-vectors) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors img)) 0) "Texte_2"))
+	(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_2"))
 (else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2"))
 )
 
@@ -710,7 +710,7 @@
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3")
-	(cond ((defined? 'gimp-image-get-selected-vectors) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors img)) 0) "Texte_3"))
+	(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_3"))
 (else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3"))
 )
 	
@@ -747,7 +747,7 @@
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour")
-		(cond ((defined? 'gimp-image-get-selected-vectors) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors img)) 0) "Texte_3_contour"))
+		(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_3_contour"))
 (else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour"))
 )
 
@@ -887,7 +887,7 @@
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut")
-	(cond ((defined? 'gimp-image-get-selected-vectors) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors img)) 0) "demi_texte_haut"))
+	(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "demi_texte_haut"))
 (else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut"))
 )
 

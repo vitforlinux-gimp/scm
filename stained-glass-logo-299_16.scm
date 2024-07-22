@@ -89,7 +89,7 @@ sf
 ; Convert text to path
 (gimp-image-select-item image 2  bump-layer) ;select text
 (plug-in-sel2path 1 image bump-layer) ;
-(cond ((defined? 'gimp-image-get-selected-vectors) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors image)) 0) "Path"))
+(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path image)) 0) "Path"))
 (else (gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path"))
 )
 ;(gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")
