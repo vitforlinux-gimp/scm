@@ -86,7 +86,7 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
-(cond ((not (defined? 'gimp-image-get-selected-vectors)) (define gimp-image-get-selected-vectors gimp-image-get-vectors)))
+(cond ((not (defined? 'gimp-image-get-selected-path)) (define gimp-image-get-selected-path gimp-image-get-vectors)))
 (cond ((not (defined? 'gimp-item-id-is-layer)) (define gimp-item-id-is-layer gimp-item-is-layer)))
 (cond ((not (defined? 'gimp-image-get-base-type)) (define gimp-image-get-base-type  gimp-image-base-type )))
 
@@ -465,7 +465,7 @@
     (let*
         (
         (theActiveVector 0)
-        (theNumVectors  (car (gimp-image-get-selected-vectors image)))
+        (theNumVectors  (car (gimp-image-get-selected-path image)))
         (theFirstStroke  0)          (theStrokePoints 0)
         (theNumPoints    0)
         (inPoint_1X      0)          (inPoint_1Y      0)	; point 1 is for the arrow at the start of the path
@@ -527,7 +527,7 @@
           )	; end - prog1
         )   ; end - if
 
-        (set! theActiveVector (aref (cadr (gimp-image-get-selected-vectors image)) 0))
+        (set! theActiveVector (aref (cadr (gimp-image-get-selected-path image)) 0))
 
         (if (not (= theActiveVector -1)) (begin
             (gimp-image-undo-group-start image)
