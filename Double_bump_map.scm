@@ -60,7 +60,9 @@
 		(gimp-selection-invert image)
 		(gimp-selection-feather image 2)
 		(plug-in-sel2path RUN-NONINTERACTIVE image layer)
-		(set! get-vectors-returned-values (gimp-image-get-vectors image))
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			(set! get-vectors-returned-values (gimp-image-get-vectors image))
+			(set! get-vectors-returned-values (gimp-image-get-paths image)) )
 		(set! vectors-count (car  get-vectors-returned-values))
 		(set! vectors-array (cadr get-vectors-returned-values))
 		(set! current-vector (aref vectors-array 0))      ;top path, our own created from selection
@@ -137,7 +139,10 @@
 		(gimp-selection-none image)
 		
 		;delete current-vector
-		(gimp-image-remove-vectors image current-vector)
+		;(gimp-image-remove-vectors image current-vector)
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			(gimp-image-remove-vectors image current-vector)
+		(gimp-image-remove-path image current-vector) )
 				
 		;bump map 2nd time (color layer)
 		(plug-in-bump-map 1 image color-layer layer 
@@ -338,6 +343,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 ;;;; shrink grow text
 (cond ((> grow-text 0)
 	(gimp-selection-none theImage)
+		 (gimp-image-resize-to-layers theImage)
 	(gimp-image-select-item theImage 2 theText)
 	(gimp-selection-grow theImage (round grow-text)) 
         (gimp-selection-feather theImage 2 )	
@@ -345,6 +351,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
  )
  ((< grow-text 0)
         (gimp-selection-none theImage)
+	(gimp-image-resize-to-layers theImage)
 	(gimp-image-select-item theImage 2 theText)
 	(gimp-drawable-edit-clear theText)
 	(gimp-selection-shrink theImage (- grow-text))
