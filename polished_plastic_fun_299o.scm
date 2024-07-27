@@ -349,8 +349,8 @@
           ;(gimp-layer-set-lock-alpha fond TRUE)
             
              (material-bovination-2 fond image)
-	     (gimp-selection-none image)
-	     (gimp-image-select-color image 0 fond '(0 0 0) )
+	    ; (gimp-selection-none image)
+	     (gimp-image-select-color image 2 fond '(0 0 0) )
 	     (gimp-selection-grow image 3)
 	     (gimp-context-set-foreground  '(255 0 0) )
 				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
@@ -474,7 +474,9 @@
             				(gimp-context-set-foreground '(0 0 0))
 					(gimp-context-set-background '(255 255 255))
 				(gimp-context-set-gradient-fg-bg-rgb)
+				(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 				(gimp-context-set-gradient-repeat-mode 1)
+				(gimp-context-set-gradient-repeat-mode 3))
 				(gimp-drawable-edit-gradient-fill 
 			fond
 			;BLEND-FG-TRANSPARENT
