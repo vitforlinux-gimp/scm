@@ -204,10 +204,17 @@
 			(begin
 			
 				; créer un chemin à partir du texte
-				(set! chemin_texte (car (gimp-vectors-new-from-text-layer img calque_texte)))
+				;(set! chemin_texte (car (gimp-vectors-new-from-text-layer img calque_texte)))
+				(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+					(set! chemin_texte (car (gimp-vectors-new-from-text-layer img calque_texte)))
+					(set! chemin_texte (car (gimp-path-new-from-text-layer img calque_texte))))
 	
 				; ajouter le chemin à l'image
-				(gimp-image-insert-vectors img chemin_texte 0 0)
+				;(gimp-image-insert-vectors img chemin_texte 0 0)
+				(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+					(gimp-image-insert-vectors img chemin_texte 0 0)
+					(gimp-image-insert-path img chemin_texte 0 0))
+				
 
 				; calque texte aux dimensions de l'image
 				(gimp-layer-resize-to-image-size calque_texte)
@@ -701,14 +708,14 @@
                     SF-ADJUSTMENT _"Line Spacing"          '(-5 -300 300 1 10 0 1)
 	SF-ADJUSTMENT "Flou Texte / Text Blur [%] " '(12 1 20 1 10 0 1) 
 	SF-ADJUSTMENT "Inclinaison Bandes / Stripes Angle [degres] " '(30 -180 180 1 10 0 0) 
-	SF-ADJUSTMENT "Espacement Bandes / Stripes Spacing [1/1000] " '(35 10 100 1 10 0 0) 
+	SF-ADJUSTMENT "Espacement Bandes / Stripes Spacing [1/1000] " '(40 10 100 1 10 0 0) 
 	SF-COLOR "Couleur 1 Bandes / Stripes color 1 " '(255 255 255)
 	SF-COLOR "Couleur 2 Bandes / Stripes color 2 " '(255 0 0)
-	SF-ADJUSTMENT "Nettete Bandes / Stripes Sharpness " '(1 0 10 1 10 0 0) 
+	SF-ADJUSTMENT "Nettete Bandes / Stripes Sharpness " '(1 0 50 1 10 0 0) 
 	SF-TOGGLE "Deformation Bandes / Ripple Stripes "    TRUE
 	SF-TOGGLE "Separation Bandes / Stripes Borderline "    TRUE
 	SF-COLOR "Couleur Separation / Borderline Color " '(0 165 0)
-	SF-ADJUSTMENT "Largeur Separation / Width Borderline [pixels] " '(7 0 10 1 10 0 0) 
+	SF-ADJUSTMENT "Largeur Separation / Width Borderline [pixels] " '(7 1 50 1 10 0 0) 
 	SF-TOGGLE "Ombre / Shadow "    FALSE
 	SF-COLOR "Couleur Ombre / Shadow color " '(127 127 127)
 	SF-ADJUSTMENT "X Decalage Ombre / X Shift Shadow [% Font] " '(-8 -20 20 1 10 0 0) 
