@@ -8,6 +8,7 @@
 ;; ---------------------------------------------------------
 ;; creative commons licence
 ;; http://creativecommons.org/licenses/by-nc-sa/2.0/fr/
+;; 31-lug-2024 a little fix for Gimp 2.10.38 compatibility OFF
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
@@ -24,7 +25,7 @@
 		;; conserver les outils dans des variables
 		(old-pat (car (gimp-context-get-pattern)))
 		(old-fg (car (gimp-context-get-foreground)))
-		(old-deg (car (gimp-gradients-get-gradient)))
+		(old-deg (car (gimp-context-get-gradient)))
 		
 		;; connaitre les dimensions de l'image
 		(image-width (car (gimp-drawable-get-width drawable)))
@@ -47,8 +48,8 @@
 		(width 0)
 		(height 0)
 
-		(bg-layer (car (gimp-layer-new finale-image image-width image-height RGB-IMAGE "Background" 100 NORMAL-MODE)))
-		(s-layer (car (gimp-layer-new finale-image image-width image-height RGBA-IMAGE "Shadow" 100 NORMAL-MODE)))
+		(bg-layer (car (gimp-layer-new finale-image image-width image-height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(s-layer (car (gimp-layer-new finale-image image-width image-height RGBA-IMAGE "Shadow" 100 LAYER-MODE-NORMAL-LEGACY)))
 
 		(text-layer (car (gimp-layer-new-from-drawable drawable finale-image)))
 		(fond-map-layer 0) ;; map pour le relief
@@ -94,7 +95,7 @@
 		;; TYPE D'EFFET
 		;; *******************************************************************************
 		;; base
-		(gimp-gradients-set-gradient gradient)
+		(gimp-context-set-gradient gradient)
 		(if (= relief 1)	;; relief double
 			(begin		;;changed 5 to 10 2.6
 			(plug-in-displace RUN-NONINTERACTIVE finale-image text-layer (* (/ size 121) 5) (* (/ size 120) 5) TRUE TRUE bump-layer bump-layer 1)
@@ -102,7 +103,7 @@
 		)
 		(if (> flou 0) ;; si un flou est demandé
 			(begin
-				(gimp-selection-layer-alpha text-layer) ;; alpha vers selection
+				(gimp-image-select-item finale-image 2 text-layer) ;; alpha vers selection
 				(gimp-drawable-edit-fill flou-layer FILL-FOREGROUND) ;; remplir de noir
 				(gimp-selection-none finale-image)
 				(plug-in-gauss-rle2 RUN-NONINTERACTIVE finale-image flou-layer flou flou) ;; flou gaussien
@@ -159,7 +160,7 @@
 		(gimp-image-insert-layer finale-image duplicate-layer 0 -1)
 
 		(gimp-layer-set-mode duplicate-layer HARDLIGHT-MODE)
-		(gimp-selection-layer-alpha text-layer)		;add 2.6
+		(gimp-image-select-item finale-image 2 text-layer)		;add 2.6
 		(gimp-layer-add-alpha duplicate-layer)		;add 2.6
 		(gimp-selection-invert finale-image)		;add 2.6
 		(gimp-drawable-edit-clear duplicate-layer)		;add 2.6
@@ -188,7 +189,7 @@
 				(set! mask (car (gimp-layer-create-mask duplicate-layer ADD-MASK-BLACK)))
 				(gimp-layer-add-mask duplicate-layer mask)
 				(gimp-context-set-foreground '(255 255 255))
-				(gimp-selection-layer-alpha text-layer) ;; alpha vers selection
+				(gimp-image-select-item finale-image 2 text-layer) ;; alpha vers selection
 				(gimp-drawable-edit-fill mask FILL-FOREGROUND) ;; remplir de noir
 				(gimp-selection-none finale-image)
 			)
@@ -211,7 +212,7 @@
 		(gimp-image-insert-layer finale-image s-layer 0 2) ;add
 		(gimp-layer-resize s-layer (+ (+ image-width soff) (* sblur 1.1)) (+ (+ image-height soff) (* sblur 1.1)) 0 0)
 		(gimp-drawable-edit-clear s-layer)			;add
-		(gimp-selection-layer-alpha text-layer)		;add
+		(gimp-image-select-item finale-image 2 text-layer)		;add
 		(gimp-context-set-foreground scolor)		;add
 		(gimp-drawable-edit-fill s-layer FILL-FOREGROUND)	;add
 		(gimp-selection-none finale-image)		;add
@@ -246,7 +247,7 @@
 		;; mise a jour
 		(gimp-context-set-pattern old-pat)
 		(gimp-context-set-foreground old-fg)
-		(gimp-gradients-set-gradient old-deg)
+		(gimp-context-set-gradient old-deg)
 		
 	)
 )
@@ -281,7 +282,7 @@
 			(begin ;; aucune selection n'avait faite 
 			)
 			(begin ;; une selection avait faite (remettre la selection de l'utilisateur)
-				(gimp-selection-load canal) ;; mask de canal vers selection
+				(gimp-image-select-item image 2 canal) ;; mask de canal vers selection
 				(gimp-image-remove-channel image canal) ;; supprimer le mask de canal
 			)
 		)
@@ -329,7 +330,7 @@
 	 (height (car (gimp-drawable-get-height text-layer)))
 
          (old-fg (car (gimp-context-get-foreground)))
-         (old-grad (car (gimp-gradients-get-gradient)))
+         (old-grad (car (gimp-context-get-gradient)))
          (old-pat (car (gimp-context-get-pattern)))
 
 
@@ -342,7 +343,7 @@
 
     (gimp-selection-none img)
     (gimp-context-set-foreground old-fg)
-    (gimp-gradients-set-gradient old-grad)
+    (gimp-context-set-gradient old-grad)
     (gimp-context-set-pattern old-pat)
 
     (gimp-image-undo-enable img)
