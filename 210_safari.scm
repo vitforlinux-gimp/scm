@@ -321,7 +321,7 @@
 (script-fu-menu-register "script-fu-safari-logo-alpha" "<Image>/Script-Fu/Alpha-to-Logo/")
 
 
-(define (script-fu-safari-logo text size font type relief gradient flou flou-r elevation depth conserv trans? bgcolor scolor sblur soff)
+(define (script-fu-safari-logo text size font justify type relief gradient flou flou-r elevation depth conserv trans? bgcolor scolor sblur soff)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
 ;;ï∂éö
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text (+ (/ size 12) 4) TRUE size PIXELS font)))
@@ -332,11 +332,16 @@
          (old-fg (car (gimp-context-get-foreground)))
          (old-grad (car (gimp-context-get-gradient)))
          (old-pat (car (gimp-context-get-pattern)))
+	(justify (cond ((= justify 0) 2)
+		                ((= justify 1) 0)
+				((= justify 2) 1)))
 
 
 )
 (gimp-image-undo-disable img)
 ;;ÉTÉCÉYí≤êÆ
+    (gimp-text-layer-set-justification text-layer justify)
+
     (gimp-image-resize img width height 0 0)
 
     (script-fu-safari-logo-alpha img text-layer size type relief gradient flou flou-r elevation depth conserv trans? bgcolor scolor sblur soff)
@@ -361,6 +366,7 @@
 		SF-TEXT	"Text String"      "Safari"
 		SF-ADJUSTMENT	"Font Size (pixels)" '(120 2 1000 1 10 0 1)
 		SF-FONT		"Font"             "FrizQuadrata Bold"
+		  SF-OPTION "Justify" '("Centered" "Left" "Right") 
 		SF-OPTION	"Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION	"Relief" '("Simple" "Double")
 		SF-GRADIENT	"Gradient" "Shadows 1"
