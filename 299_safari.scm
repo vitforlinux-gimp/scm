@@ -107,8 +107,16 @@
 	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 						 (gimp-context-set-gradient "Shadows 1")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Shadows 1" )))
-				))
-	(gimp-context-set-gradient gradient))
+				)))
+	(if (= grad-type 1)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Greens")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Greens" )))
+				)))
+	(if (= grad-type 2)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient "Four bars")
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Four Bars" )))
+				)))
+		(if (= grad-type 3)	(gimp-context-set-gradient gradient))
 		;(gimp-context-set-gradient gradient)
 		(if (= relief 1)	;; relief double
 			(begin		;;changed 5 to 10 2.6
@@ -324,8 +332,8 @@
 		SF-ADJUSTMENT	"Size (pixels)" '(120 2 1000 1 10 0 1)
 		SF-OPTION "Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION "Relief" '("Simple" "Double")
-		SF-OPTION "Gradient type" '("Default (Shadows 1)" "Manual")
-		SF-GRADIENT _"Gradient (Shadows 1)" "Shadows 1"
+		SF-OPTION "Gradient type" '("Desert (Shadows 1)" "Jungle (Greens)" "Urban (Four Bars)" "User choice")
+		SF-GRADIENT _"Gradient User choice" "Shadows 1"
 		SF-ADJUSTMENT "Bump blur" '(0 0 50 1 10 0 1)
 		SF-ADJUSTMENT "Bump blur (repoussage)" '(15 1 120 1 0 0 1)
 		SF-ADJUSTMENT "Elevation (repoussage)" '(20 1 90 1 0 0 1)
@@ -391,8 +399,8 @@
 		  SF-OPTION "Justify" '("Centered" "Left" "Right") 
 		SF-OPTION	"Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION	"Relief" '("Simple" "Double")
-		SF-OPTION "Gradient type" '("Default (Shadows 1)" "Manual")
-		SF-GRADIENT	"Gradient (Shadows 1)" "Shadows 1"
+		SF-OPTION "Gradient type" '("Desert (Shadows 1)" "Jungle (Greens)" "Urban (Four Bars)" "User choice")
+		SF-GRADIENT	"Gradient User choice" "Shadows 1"
 		SF-ADJUSTMENT	"Bump blur" '(0 0 50 1 10 0 1)
 		SF-ADJUSTMENT	"Bump blur (repoussage)" '(15 1 120 1 0 0 1)
 		SF-ADJUSTMENT	"Elevation (repoussage)" '(20 1 90 1 0 0 1)
