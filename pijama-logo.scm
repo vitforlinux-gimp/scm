@@ -18,6 +18,8 @@
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(0 193 160)     ;color variable
 	     SF-COLOR       "Color 2"         '(255 255 255)     ;color variable
+	     SF-OPTION     "Third Color Type"    '("Coherent" "User Choice")
+	      SF-COLOR       "Color 3"         '(255 139 0)     ;color variable
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
@@ -25,19 +27,23 @@ SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                                                         ;a spin-button
 							SF-GRADIENT    "Gradient"           "Abstract 3"
-           
-            SF-ADJUSTMENT  "Buffer amount" '(35 0 100 1 10 1 0)
-                                                        ;a slider
+							SF-OPTION     "grad direction"    '("Diagonal" "Horizontal" "Vertical")
+							SF-OPTION     "Background Color Type"    '("Coherent" "Gradient Color" "User Choice" "Transparent")
+SF-COLOR       "Color"         '(141 105 224)     ;color variable							
+            SF-ADJUSTMENT  "Buffer amount" '(35 0 100 1 10 1 0);a slider
 							SF-TOGGLE   "Merge Layers"     TRUE
   )
   (script-fu-menu-register "script-fu-pijama-logo" "<Image>/File/Create/Logos")
-  (define (script-fu-pijama-logo inText inFont inFontSize inTextColor inTextColor2
+  (define (script-fu-pijama-logo inText inFont inFontSize inTextColor inTextColor2 Third-type inTextColor3
 					justification
 					letter-spacing
 					line-spacing
 					grow-text
 					outline
 					base-grad
+					grad-dir
+					bg-type
+					bg-color
 					inBufferAmount
 					conserve)
     (let*
@@ -64,16 +70,16 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                         theImage
                         theImageWidth
                         theImageHeight
-                        RGB-IMAGE
+                        RGBA-IMAGE
                         "Background"
                         100
                         LAYER-MODE-NORMAL
                       )
                   )
         )
-	  (old-fg (car (gimp-context-get-foreground)))
-	  (old-bg (car (gimp-context-get-background)))
-          (old-grad (car (gimp-context-get-gradient)))
+	 ; (old-fg (car (gimp-context-get-foreground)))
+	 ; (old-bg (car (gimp-context-get-background)))
+         ; (old-grad (car (gimp-context-get-gradient)))
 	  (justification (cond ((= justification 0) 2)
 						       ((= justification 1) 0)
 						       ((= justification 2) 1)
@@ -158,7 +164,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-selection-grow theImage 11) 
 	;(gimp-selection-invert theImage)
 	(gimp-selection-flood theImage)
-		(gimp-context-set-foreground inTextColor)
+		(if (= Third-type 0)(gimp-context-set-foreground inTextColor)(gimp-context-set-foreground inTextColor3))
 	(gimp-drawable-edit-fill bord2Layer FILL-FOREGROUND)
 	(gimp-image-raise-item theImage bord1Layer)
 ; shad
@@ -170,17 +176,23 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 (gimp-selection-none theImage)
 (gimp-context-set-gradient base-grad)
  (gimp-context-set-gradient-repeat-mode REPEAT-SAWTOOTH)
- (gimp-drawable-edit-gradient-fill theLayer 0 0 REPEAT-NONE 1 1 FALSE 0 0 90 45)
+(if (= grad-dir 0) (gimp-drawable-edit-gradient-fill theLayer 0 0 REPEAT-NONE 1 1 FALSE 0 0 90 45) )
+(if (= grad-dir 1) (gimp-drawable-edit-gradient-fill theLayer 0 0 REPEAT-NONE 1 1 FALSE 0 0 0 45) )
+(if (= grad-dir 2) (gimp-drawable-edit-gradient-fill theLayer 0 0 REPEAT-NONE 1 1 FALSE 0 0 90 0) )
+
+(if (or (= bg-type 0) (= bg-type 2))(begin
  (gimp-drawable-desaturate theLayer 3)
  (gimp-drawable-posterize theLayer 3)
- (gimp-context-set-paint-mode 23)
- 	(gimp-context-set-foreground inTextColor)
-	(gimp-drawable-edit-fill theLayer FILL-FOREGROUND)
-	(if (= conserve TRUE) (gimp-image-flatten theImage))	
+ (gimp-context-set-paint-mode 23);LAYER-MODE-OVERLAY
+ 	(if (= bg-type 2)(gimp-context-set-foreground bg-color)(gimp-context-set-foreground inTextColor))
+	(gimp-drawable-edit-fill theLayer FILL-FOREGROUND)))
+(if (= bg-type 1)(gimp-drawable-posterize theLayer 3))
+(if (= bg-type 3) (gimp-image-remove-layer theImage theLayer ))
+	(if (= conserve TRUE) (gimp-image-merge-visible-layers theImage 1))	
  
-     (gimp-context-set-background old-bg)
-    (gimp-context-set-foreground old-fg)
-    (gimp-context-set-gradient old-grad)
+   ;  (gimp-context-set-background old-bg)
+   ; (gimp-context-set-foreground old-fg)
+   ; (gimp-context-set-gradient old-grad)
     	(gimp-context-pop)
     (gimp-image-undo-group-end theImage)
       (gimp-display-new theImage)
