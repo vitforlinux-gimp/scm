@@ -281,7 +281,7 @@
 	SF-ADJUSTMENT		_"reflections width"	'(5 0 50 1 5 0 1)
 	SF-TOGGLE		_"antialias"		FALSE)
 (script-fu-menu-register "script-fu-raindrop-299-logo-alpha"
-                         "<Image>/Script-Fu/AlphaToLogo")
+                         "<Image>/Script-Fu/Alpha-to-Logo")
 
 
 	; ロゴ作成

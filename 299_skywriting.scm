@@ -165,7 +165,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 )
 
 (script-fu-menu-register "script-fu-skywritingimgh"
-		_"<Image>/Script-Fu/AlphaToLogo/"
+		_"<Image>/Script-Fu/Alpha-to-Logo/"
 )
 
 (define (script-fu-skywritingcore img theText inSize color foption scolor grad pat)

@@ -237,7 +237,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 ;SF-TOGGLE     "Keep Bump Map Layer?" FALSE 
 )
 
-(script-fu-menu-register "script-fu-lotr299-text" "<Image>/Script-Fu/AlphaToLogo/")
+(script-fu-menu-register "script-fu-lotr299-text" "<Image>/Script-Fu/Alpha-to-Logo/")
 ;;text
 (define (script-fu-lotr299-text-text text size font justification letter-spacing line-spacing grow-text outline md color mgrad mtex blendStyle addShadow offsetX offsetY blurRadius shadowColor 
 		opacity bg-md bg-color1 bggrad bgpat)
