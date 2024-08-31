@@ -14,6 +14,32 @@
 ;http://kikidide.yuki-mura.net/GIMP/engimp.htm
 ;
 
+	(define  (material-mh-emap fond image gradient) (begin
+				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
+				      (plug-in-gauss                 
+                   1     ; Non-interactive 
+                 image     ; Image to apply blur 
+            fond     ; Layer to apply blur
+         5     ; Blur Radius x  
+         5     ; Blue Radius y 
+                   0     ; Method (IIR=0 RLE=1)
+      )
+      (gimp-context-set-gradient gradient)
+      (plug-in-autostretch-hsv 1 image fond)
+ (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+(plug-in-gradmap 1 image fond) 
+      (plug-in-gradmap 1 image 1 (vector fond))   )              ; Map Gradient
+
+	))
+		(define  (material-mh-willwood fond img n1 n2) (begin
+				(plug-in-solid-noise 0 img fond 1 0 (random 65535) 2 n1 n2)
+				(plug-in-alienmap2 1 img fond 1 0 1 0 15 0 1 FALSE FALSE TRUE)
+				(plug-in-alienmap2 1 img fond 1 0 1 0 0.1 0 1 FALSE TRUE TRUE)
+				(gimp-drawable-hue-saturation fond 0 0 30 -40 0)
+				(plug-in-wind 1 img fond 1 3 1 0 0)
+		 (plug-in-oilify 1 img fond 2 0)
+			))
+
 (define (script-fu-mhbevel2993d text size font justification buffer 3d md foption tcolor text-gradient pat
 	 bg-md bg-color bggrad bgpat stp bmpblr bmpmp ck? white?)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
@@ -76,7 +102,18 @@
        ;(gimp-drawable-edit-bucket-fill text-layer FILL-PATTERN  100 255 )
        	(gimp-drawable-edit-fill text-layer FILL-PATTERN)
        (gimp-selection-none img)
-       ))
+       )
+           ((= foption 3)
+       (gimp-image-select-item img 2 text-layer)
+	(material-mh-emap text-layer img text-gradient)(material-willwood fond img 9 1)
+       (gimp-selection-none img)
+       )
+                  ((= foption 4)
+       (gimp-image-select-item img 2 text-layer)
+	(material-willwood text-layer img 9 1)
+       (gimp-selection-none img)
+       )
+)
 
     (script-fu-mhbevel2993dimg img text-layer TRUE 3d md bg-md bg-color bggrad bgpat stp bmpblr bmpmp ck? white? TRUE)
 
@@ -102,11 +139,11 @@
 		SF-ADJUSTMENT  "Buffer"  	'(1 1 70 1 2 0 1)
 		    SF-ADJUSTMENT "3D"			'(10 1 600 1 2 0 1)
                     SF-OPTION     "logo-direction"            '(_"right-bottom" _"vertical-bottom" _"left-bottom" _"left-horizontal" _"left-top" _"vertical-top" _"right-top" _"right-horizontal")
-                    SF-OPTION     "fg-mode"            '(_"color" _"gradient" _"pattern")
+                    SF-OPTION     "fg-mode"            '(_"color" _"gradient" _"pattern" "emap" "willwood")
 		    SF-COLOR      "Color"              '(222 200 156)
                     SF-GRADIENT   "Gradient"           "Pastel Rainbow"
                     SF-PATTERN    "Pattern"            "Dried mud"
-                    SF-OPTION     "bg-mode"            '(_"color" _"gradient" _"pattern")
+                    SF-OPTION     "bg-mode"            '(_"color" _"gradient" _"pattern" "emap" "willwood")
 		    SF-COLOR      "Background Color"   '(243 255 222)
                     SF-GRADIENT   "Background Gradient" "Greens"
                     SF-PATTERN    "Background Pattern"  "Fibers"
@@ -320,7 +357,18 @@
        ;(gimp-drawable-edit-bucket-fill bg-layer FILL-PATTERN  100 255 )
        	(gimp-drawable-fill bg-layer FILL-PATTERN)
        (gimp-selection-none img)
-       ))
+       )
+              ((= bg-md 3)
+       (gimp-selection-all img)
+	(material-mh-emap bg-layer img bggrad)
+       (gimp-selection-none img)
+       )
+                     ((= bg-md 4)
+       (gimp-selection-all img)
+	(material-willwood bg-layer img 9 1)
+       (gimp-selection-none img)
+       )
+       )
 ))
 
 ;;;    (if (= TRUE fr?) (gimp-image-flatten img))
