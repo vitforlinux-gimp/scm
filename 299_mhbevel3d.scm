@@ -105,7 +105,7 @@
        )
            ((= foption 3)
        (gimp-image-select-item img 2 text-layer)
-	(material-mh-emap text-layer img text-gradient)(material-willwood fond img 9 1)
+	(material-mh-emap text-layer img text-gradient)
        (gimp-selection-none img)
        )
                   ((= foption 4)
