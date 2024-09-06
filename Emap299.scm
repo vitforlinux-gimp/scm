@@ -359,25 +359,28 @@
 		bkg-layer          ; ENVIRONMENT MAP  (set to 0 if disabled)
 		FALSE              ; ENABLE BUMPMAPPING ok
 		TRUE               ; ENABLE ENVMAPPING ok
-		"bumpmap-sinusoidal"		; TYPE OF MAPPING (0=linear,1=log, 2=sinusoidal, 3=spherical)
+		"bumpmap-sinusoidal"		; TYPE OF MAPPING (0=linear,1=log, 2=sinusoidal, 3=spherical)ok
 		
-		1                 ; TYPE OF LIGHTSOURCE (0=point,1=directional,3=spot,4=none) 
-		"light-directional"	
-		'(255 255 255)     ; LIGHTSOURCE COLOR
-		1.63                 ; LIGHTSOURCE POS X
-		-1.25                 ; LIGHTSOURCE POS Y
-		1                  ; LIGHTSOURCE POS Z
-		-1                 ; LIGHTSOURCE DIR X
-		-1                 ; LIGHTSOURCE DIR Y
-		1                  ; LIGHTSOURCE DIR Z
-		glow               ; AMBIANT INTENSITY (GLOWING)0.20
-		0.50               ; DIFFUSE INTENSITY (BRIGHT)0.50
-		 bright                 ; DIFFUSE REFLECTIVITY (INTENSITY)1 GUARDA QUI !!
+		1                 ; max height bumpmapping ok
+		"light-directional"	 ;TYPE OF LIGHTSOURCE (0=point,1=directional,3=spot,4=none) ok
+		'(255 255 255)     ; LIGHTSOURCE COLOR ok
+		1 ; light inteensity NEW
+		1.63                 ; LIGHTSOURCE POS X ok
+		-1.25                 ; LIGHTSOURCE POS Y ok
+		1                  ; LIGHTSOURCE POS Z ok
+		-1                 ; LIGHTSOURCE DIR X ok
+		-1                 ; LIGHTSOURCE DIR Y ok
+		1                  ; LIGHTSOURCE DIR Z ok
+		glow               ; AMBIANT INTENSITY (GLOWING)0.20 ok
+		0.50               ; DIFFUSE INTENSITY (BRIGHT)0.50 ok
+		 bright                 ; DIFFUSE REFLECTIVITY (INTENSITY)1 GUARDA QUI !! ok
 		shine               ; SPECULAR REFLECTIVITY (SHINY)0.50
-		0.55 ;polish                  ; HIGHLIGHT (POLISHED)27
+		0.55 ;polish                  ; material HIGHLIGHT (POLISHED)27 ok
+		FALSE ; metallic NEW ok
 		TRUE               ; ANTIALIASING
 		FALSE              ; CREATE NEW IMAGE
-		FALSE)	           ; MAKE BACKGROUND TRANSPARENT
+		FALSE;	           ; MAKE BACKGROUND TRANSPARENT
+		0.25) ;distance NEW ok
 	)
   	)
   
