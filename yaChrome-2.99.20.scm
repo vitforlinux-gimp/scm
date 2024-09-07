@@ -132,6 +132,7 @@
 									  justify
 									  letter-spacing
 									  line-spacing
+									  grow-text
                                       font-in 
                                       font-size
 				      metal
@@ -196,6 +197,25 @@
 	(gimp-text-layer-set-letter-spacing text-layer letter-spacing)
 	(gimp-text-layer-set-line-spacing text-layer line-spacing)
 	
+;;;; shrink grow text
+(cond ((> grow-text 0)
+	(gimp-selection-none image)
+	 (gimp-image-resize-to-layers image)
+	(gimp-image-select-item image 2 text-layer)
+	(gimp-selection-grow image (round grow-text))
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ )
+ ((< grow-text 0)
+        (gimp-selection-none image)
+	 (gimp-image-resize-to-layers image)
+	(gimp-image-select-item image 2 text-layer)
+		(gimp-selection-grow image 1)
+	(gimp-drawable-edit-clear text-layer)
+	(gimp-selection-shrink image (- grow-text))   
+	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)	
+ ))
+	
 
 ;;;;set the new width and height	
     (set! width (car (gimp-drawable-get-width text-layer)))
@@ -254,6 +274,7 @@
   SF-OPTION "Justify" '("Centered" "Left" "Right")
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
+  	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
   SF-FONT       "Font"               "Serif Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(150 6 500 1 1 0 0)
     SF-OPTION "Metal Type" '("None" "Colorized" "Gold" "Silver" "Copper" "Bronze" "Brass" "Chrome" "Gold Shined")
