@@ -62,6 +62,7 @@
         )
 
     (gimp-context-push)
+    	(gimp-context-set-paint-mode 0)
     (gimp-context-set-defaults)
 
     (script-fu-util-image-resize-from-layer img logo-layer)
@@ -187,6 +188,8 @@
                                      s-offset-y)
   (begin
     (gimp-image-undo-group-start img)
+    	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (apply-glossy-logo-effect img logo-layer
                               blend-gradient-text
                               blend-gradient-text-reverse
@@ -198,6 +201,7 @@
                               use-pattern-overlay pattern-overlay
                               noninteractive shadow-toggle
                               s-offset-x s-offset-y)
+			          	(gimp-context-pop)
     (gimp-image-undo-group-end img)
     (gimp-displays-flush)
   )
@@ -265,6 +269,8 @@
 						       ((= justification 2) 1)
 						       ((= justification 3) 3)))
         )
+    	(gimp-context-push)
+	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-disable img)
     	(gimp-text-layer-set-justification text-layer justification) ; Text Justification (Rev Value)
 	(gimp-text-layer-set-letter-spacing text-layer letter-spacing)  ; Set Letter Spacing
@@ -280,6 +286,7 @@
                               use-pattern-overlay pattern-overlay
                               noninteractive shadow-toggle
                               s-offset-x s-offset-y)
+			      	(gimp-context-pop)
     (gimp-image-undo-enable img)
     (gimp-display-new img)
   )
