@@ -32,6 +32,18 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 
 (define (apply-glossy-logo-effect img
                                   logo-layer
@@ -154,7 +166,7 @@
     (if (= shadow-toggle TRUE)
       (begin
         (gimp-image-select-item img CHANNEL-OP-REPLACE logo-layer)
-        (set! dont-drop-me (car (script-fu-drop-shadow img logo-layer
+        (set! dont-drop-me (car (apply-drop-shadow img logo-layer
                                                        s-offset-x s-offset-y
                                                        15 '(0 0 0) 80 TRUE)))
         (set! width (car (gimp-image-get-width img)))
