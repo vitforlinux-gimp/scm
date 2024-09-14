@@ -94,14 +94,24 @@
 	(gimp-drawable-edit-clear snow-layer)
 	(gimp-selection-none image)
 	(gimp-image-select-item image 2  snow-layer)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	(script-fu-distress-selection image 
-	                              snow-layer 
+	                             snow-layer
 								  127       ;Threshold (bigger 1<-->255 smaller)
 								  2         ;Spread (8 0 1000 1 10 0 1)
 								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
 								  2         ;Smooth (2 1 150 1 10 0 1)
 								  TRUE      ;Smooth horizontally TRUE
 								  TRUE)     ;Smooth vertically TRUE
+		(script-fu-distress-selection image 
+	                             (vector snow-layer )
+								  127       ;Threshold (bigger 1<-->255 smaller)
+								  2         ;Spread (8 0 1000 1 10 0 1)
+								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
+								  2         ;Smooth (2 1 150 1 10 0 1)
+								  TRUE      ;Smooth horizontally TRUE
+								  TRUE)     ;Smooth vertically TRUE
+								  )
 	(gimp-item-set-visible snow-layer FALSE)
 	
 	(set! snowtop-layer (car (gimp-layer-new image width height RGBA-IMAGE "Snow Topping" 100 LAYER-MODE-NORMAL-LEGACY)))

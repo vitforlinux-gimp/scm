@@ -245,15 +245,24 @@
 	(if (= sel TRUE) (set! keep-selection FALSE))
 	(if (= sel TRUE) (gimp-image-select-item image 2 layer))
 	
+	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	(script-fu-distress-selection image 
-	                              layer 
+	                            layer
 								  127       ;Threshold (bigger 1<-->255 smaller)
 								  8         ;Spread (8 0 1000 1 10 0 1)
 								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
 								  2         ;Smooth (2 1 150 1 10 0 1)
 								  TRUE      ;Smooth horizontally TRUE
 								  TRUE)     ;Smooth vertically TRUE
-	
+		(script-fu-distress-selection image 
+	                             (vector layer )
+								  127       ;Threshold (bigger 1<-->255 smaller)
+								  8         ;Spread (8 0 1000 1 10 0 1)
+								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
+								  2         ;Smooth (2 1 150 1 10 0 1)
+								  TRUE      ;Smooth horizontally TRUE
+								  TRUE)     ;Smooth vertically TRUE
+	)
 ;;;;create selection-channel (gimp-image-select-item image 2 selection)    
 	(set! selection (car (gimp-selection-save image)))	
     (gimp-image-set-active-layer image layer)	
@@ -270,14 +279,26 @@
 	(if (> motle 35) (begin
 	;(gimp-by-color-select fur-layer '(0 0 0) 15 2 TRUE FALSE 0 FALSE)
 	(gimp-image-select-color image 2 fur-layer '(0 0 0))
+	
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	(script-fu-distress-selection image 
-	                              layer 
+	                             layer
 								  127       ;Threshold (bigger 1<-->255 smaller)
 								  8         ;Spread (8 0 1000 1 10 0 1)
 								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
 								  2         ;Smooth (2 1 150 1 10 0 1)
 								  TRUE      ;Smooth horizontally TRUE
 								  TRUE)     ;Smooth vertically TRUE
+	(gimp-selection-feather image blur-radius)
+		(script-fu-distress-selection image 
+	                             (vector layer )
+								  127       ;Threshold (bigger 1<-->255 smaller)
+								  8         ;Spread (8 0 1000 1 10 0 1)
+								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
+								  2         ;Smooth (2 1 150 1 10 0 1)
+								  TRUE      ;Smooth horizontally TRUE
+								  TRUE)     ;Smooth vertically TRUE
+								  )
 	(gimp-selection-feather image blur-radius)
 	
 ;;;;create motle-selection-channel (gimp-image-select-item image 2 motle-selection)    
