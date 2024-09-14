@@ -36,6 +36,18 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 
 ; Include layer Procedure
 (define (include-layer image newlayer oldlayer stack)	;stack 0=above 1=below
@@ -404,7 +416,8 @@
 	(plug-in-colortoalpha RUN-NONINTERACTIVE image highlight '(128 128 128))
 	
 ;;;;add a drop shadow
-	(script-fu-drop-shadow image layer ds-off ds-off ds-blur "Black" 80 FALSE)
+	;(script-fu-drop-shadow image layer ds-off ds-off ds-blur "Black" 80 FALSE)
+	(apply-drop-shadow image layer ds-off ds-off ds-blur "Black" 80 FALSE)
 	
 ;;;;create alternate bkg
 	;(gimp-image-set-active-layer image bkg-layer)
@@ -425,7 +438,7 @@
 	
 ;;;;finish the script	
 	(if (= conserve FALSE) (begin
-	(set! layer (car (gimp-image-merge-down image layer EXPAND-AS-NECESSARY)))
+	;(set! layer (car (gimp-image-merge-down image layer EXPAND-AS-NECESSARY)))
 	(set! layer (car (gimp-image-merge-down image layer EXPAND-AS-NECESSARY)))
 	(set! layer (car (gimp-image-merge-down image highlight EXPAND-AS-NECESSARY)))
 	(gimp-image-remove-channel image highlight-channel)
