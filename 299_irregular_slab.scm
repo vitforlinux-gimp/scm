@@ -174,7 +174,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-selection-invert theImage)
 	;  (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
 	  (if (= inDistress TRUE) 
+	  	  	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	      (script-fu-distress-selection theImage theSourceLayer 127 2 1.5 2 TRUE TRUE)
+	      (script-fu-distress-selection theImage (vector theSourceLayer) 127 2 1.5 2 TRUE TRUE))
               (plug-in-gauss-iir TRUE theImage theSourceLayer 1 TRUE TRUE) 
 	     ; (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
           )
@@ -212,8 +214,11 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	  (gimp-selection-grow theImage theBuffer )
 
           (if (= inDistressSlab TRUE) 
+	  	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	     (script-fu-distress-selection theImage theSourceLayer 127 8 4 
                    (if (= inWoodLook TRUE) 8 2) TRUE (if (= inWoodLook TRUE) FALSE TRUE))
+		     (script-fu-distress-selection theImage (vector theSourceLayer) 127 8 4 
+                   (if (= inWoodLook TRUE) 8 2) TRUE (if (= inWoodLook TRUE) FALSE TRUE)))
              ()
           )
 	  (gimp-context-set-background '(0 0 0))
