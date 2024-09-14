@@ -201,7 +201,10 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 		(gimp-image-select-item img 2 theText)
 		(gimp-selection-grow img grow)
 ;		(script-fu-distress-selection img clouds1 thr 10 4 2 1 1)	;none
-		(script-fu-distress-selection img clouds1 thr (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) 1 1)	;add
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 		(script-fu-distress-selection img clouds1 thr (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) 1 1)	;add
+		(script-fu-distress-selection img (vector clouds1) thr (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) 1 1)	;add
+		)
 		;(gimp-edit-bucket-fill clouds1 FG-BUCKET-FILL LAYER-MODE-NORMAL-LEGACY 8 0 0 0 0)
 		(gimp-context-set-opacity 8)
 		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
