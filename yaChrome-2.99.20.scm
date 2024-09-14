@@ -48,6 +48,18 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
 (define list-gradname-dir '("None" "Crown Molding" "Deep Sea" "Flare Rays Size 1" "Four Bars" "Full Saturation Spectrum CW" "Golden" "Greens" "Incandescent" "Metallic Something" "Pastels" "Purples" "Rounded Edge" "Three Bars Sin" ))
@@ -467,7 +479,7 @@
 
 
 	(set! chrome (car (gimp-image-merge-down image chrome-copy EXPAND-AS-NECESSARY)))
-	(script-fu-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE)
+	(apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE)
 
 	
 		(if (= metal 2) (set! colorize '(253 208 23)));gold
