@@ -11,6 +11,18 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 (define (script-fu-double-bump-map image layer 
               color
 			  pattern
@@ -171,7 +183,7 @@
 							  0    ;type of map LINEAR (0), SPHERICAL (1), SINUSOIDAL (2)
 		)
 		;drops shadow of color-layer
-		(script-fu-drop-shadow image pattern-layer
+		(apply-drop-shadow image pattern-layer
 								   shadow-offset-X   ;offset x
 								   shadow-offset-Y   ;offset y
 								   shadow-blur-radius ;blur-radius
