@@ -40,6 +40,18 @@
 ;(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 
 (define (script-fu-plastic-or-glass-text 
                                       text
@@ -363,7 +375,7 @@
 	(set! text-layer (car (gimp-image-merge-down image tint-layer EXPAND-AS-NECESSARY)))
 	(gimp-drawable-hue-saturation text-layer 0 0 0 26 50)
 	(gimp-image-remove-layer image bump-layer)))
-	(if (= drop-shadow TRUE) (script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) (- opacity 20) FALSE))
+	(if (= drop-shadow TRUE) (apply-drop-shadow image text-layer 8 8 15 '(0 0 0) (- opacity 20) FALSE))
 	
 	(if (= conserve FALSE) (begin
 	(if (> bkg-type 0) (set! layer-name (car (gimp-item-get-name bkg-layer)))) 
