@@ -101,6 +101,18 @@
 ; Fix code for gimp 2.10 working in 2.99.16
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 (define (apply-logo-toolbox  img
                              logo-layer
                              fill-style
@@ -823,9 +835,9 @@
           ;Funky Scheme if-then-else clause
           (if (and (or (= extru-type 4)(= extru-type 5)(= extru-type 6))(< bump-style 4))
                 ; true                                                                 ; Make Drop Shadow from Bump Layer 
-                (script-fu-drop-shadow img bump-layer 10 10 shadow-blur '(0 0 0) 50 1) ; Create Drop Shadow
+                (apply-drop-shadow img bump-layer 10 10 shadow-blur '(0 0 0) 50 1) ; Create Drop Shadow
                 ; else                                                                 ; Make Drop Shadow From Fill Layer   
-                (script-fu-drop-shadow img fill-layer 10 10 shadow-blur '(0 0 0) 50 1) ; Create Drop Shadow
+                (apply-drop-shadow img fill-layer 10 10 shadow-blur '(0 0 0) 50 1) ; Create Drop Shadow
           )
          (gimp-image-select-item img 2 saved-selection)                               ; Restore Selection
          (gimp-image-remove-channel img saved-selection)                     ; Remove Selection Mask
@@ -852,7 +864,7 @@
          (gimp-image-set-active-layer img temp-layer)                ; Make it active          
          (plug-in-colorify 1 img temp-layer '(0 0 0))                ; Set outline to black
 
-         (script-fu-drop-shadow img temp-layer 23 18 shadow-blur '(0 0 0) 50 1)  ; Create Outline Shadow
+         (apply-drop-shadow img temp-layer 23 18 shadow-blur '(0 0 0) 50 1)  ; Create Outline Shadow
 
          (gimp-image-select-item img 2 saved-selection)                       ; Restore Selection
          (gimp-image-remove-channel img saved-selection)             ; Remove Selection Mask
