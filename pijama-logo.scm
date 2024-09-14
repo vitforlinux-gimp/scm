@@ -4,6 +4,19 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
   (script-fu-register
             "script-fu-pijama-logo"                        ;function name
             "Pijama logo"                                  ;menu label
@@ -169,9 +182,9 @@ SF-COLOR       "Color"         '(141 105 224)     ;color variable
 	(gimp-image-raise-item theImage bord1Layer)
 ; shad
 (gimp-selection-none theImage)
-(script-fu-drop-shadow  theImage theText 2 2 4 '(0 0 0) 70 0)
-(script-fu-drop-shadow  theImage bord1Layer 2 2 4 '(0 0 0) 70 0)
-(script-fu-drop-shadow  theImage bord2Layer 2 2 4 '(0 0 0) 70 0)
+(apply-drop-shadow theImage theText 2 2 4 '(0 0 0) 70 0)
+(apply-drop-shadow  theImage bord1Layer 2 2 4 '(0 0 0) 70 0)
+(apply-drop-shadow  theImage bord2Layer 2 2 4 '(0 0 0) 70 0)
 	 
 (gimp-selection-none theImage)
 (gimp-context-set-gradient base-grad)
