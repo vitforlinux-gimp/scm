@@ -33,6 +33,18 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 
 (define (script-fu-3d-wood 
                                       text
@@ -181,7 +193,7 @@
 		(gimp-drawable-edit-gradient-fill bkg-layer GRADIENT-SHAPEBURST-SPHERICAL 0 1 1 0.0 FALSE 0 0 width height)
 ))
     
-	(script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) 80 FALSE)	
+	(apply-drop-shadow image text-layer 8 8 15 '(0 0 0) 80 FALSE)	
 ;;;;resize the text-layer		
     ;(gimp-image-set-active-layer image text-layer)
 	(gimp-layer-resize-to-image-size text-layer)    
@@ -191,7 +203,7 @@
     (gimp-image-remove-layer image guass-layer)
 	(gimp-image-remove-layer image noise-layer)
 	(gimp-image-remove-layer image motion-layer)
-	(set! text-layer (car (gimp-image-merge-down image text-layer EXPAND-AS-NECESSARY)))
+	;(set! text-layer (car (gimp-image-merge-down image text-layer EXPAND-AS-NECESSARY)))
 	(if (> bkg-type 0) (set! text-layer (car (gimp-image-merge-down image text-layer EXPAND-AS-NECESSARY))))
 	))
 	(gimp-item-set-name text-layer text)
