@@ -38,6 +38,19 @@
 
 
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
+
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 ;
 ; Include layer Procedure
 (define (include-layer image newlayer oldlayer stack)	;stack 0=above 1=below
@@ -272,7 +285,7 @@
   (plug-in-gradmap 1 image 1 (vector chrome-copy))	)
 	(gimp-layer-set-mode chrome-copy LAYER-MODE-BURN-LEGACY)
 	(set! chrome (car (gimp-image-merge-down image chrome-copy EXPAND-AS-NECESSARY)))
-	(script-fu-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE)
+	(apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE)
 	
 	;;;;create the background layer
   (let* (
