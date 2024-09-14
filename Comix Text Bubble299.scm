@@ -37,6 +37,18 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 (cond ((not (defined? 'gimp-text-get-extents-fontname)) (define (gimp-text-get-extents-fontname efn1 efn2 PIXELS efn3) (gimp-text-get-extents-font efn1 efn2 efn3))))
 
+		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
+				(gimp-image-select-item img 2 fond)
+				(gimp-selection-translate img x y)
+				(gimp-selection-feather img blur)
+				(gimp-context-set-foreground color)
+				(gimp-context-set-opacity opacity)
+				(gimp-image-select-item img 1 fond)
+				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
+				(gimp-context-set-opacity 100)
+				(gimp-selection-none img)
+			))
+
 (define (script-fu-comix-text-bubble299 image drawable
                                 text-in 
                                 color 
@@ -178,10 +190,10 @@
 
 ;;;;add the drop shadow	
 	(if (= shadow TRUE) (begin
-	(script-fu-drop-shadow  image bkg-layer 8 8 15 '(0 0 0) 80 FALSE)))		
+	(apply-drop-shadow  image bkg-layer 8 8 15 '(0 0 0) 80 FALSE)))		
 	
 ;;;;finish the script;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-    (if (and(= shadow TRUE) (= conserve FALSE)) (set! bkg-layer (car (gimp-image-merge-down image bkg-layer CLIP-TO-IMAGE ))))
+    ;(if (and(= shadow TRUE) (= conserve FALSE)) (set! bkg-layer (car (gimp-image-merge-down image bkg-layer CLIP-TO-IMAGE ))))
 	(gimp-item-set-name bkg-layer "Comix Bubble")
 	(if (= conserve FALSE) (begin 
 	(set! text-layer (car (gimp-image-merge-down image text-layer EXPAND-AS-NECESSARY)))
