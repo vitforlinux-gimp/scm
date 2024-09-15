@@ -866,7 +866,9 @@
 ;;;;create the shadow
 (if (> shadow-size 0)
   (begin
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
     (script-fu-drop-shadow image img-layer shadow-size shadow-size shadow-size '(0 0 0) shadow-opacity FALSE)
+    (script-fu-drop-shadow image (vector img-layer) shadow-size shadow-size shadow-size '(0 0 0) shadow-opacity FALSE))
     (set! tmp-layer (car (gimp-layer-new image width height RGBA-IMAGE "temp" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image tmp-layer 0 -1)
 	(gimp-image-raise-item image tmp-layer)
