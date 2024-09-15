@@ -172,7 +172,10 @@
 ; run are put into the existing GIMP drop shadow script.  
 
   (if (= addShadow TRUE)
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
       (script-fu-drop-shadow image originalLayer offsetX offsetY blurRadius shadowColor opacity TRUE)	;changed
+            (script-fu-drop-shadow image (vector originalLayer) offsetX offsetY blurRadius shadowColor opacity TRUE))	;changed
+
   )
  
 ; Determine the position of the shadowLayer in the stack and link it 
