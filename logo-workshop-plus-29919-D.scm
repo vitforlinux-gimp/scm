@@ -263,7 +263,10 @@
 ;
    (if (> shadow-opacity 0)
        (begin 
+       		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (script-fu-drop-shadow img logo-layer shadowx shadowy 3 shadow-color shadow-opacity 1) ; Create shadow
+	        (script-fu-drop-shadow img (vector logo-layer) shadowx shadowy 3 shadow-color shadow-opacity 1) ); Create shadow
+
         )
      ) ; endif  
 
