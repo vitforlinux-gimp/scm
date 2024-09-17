@@ -1190,7 +1190,7 @@
     (gimp-layer-set-offsets patternlayer (car drwoffsets) (cadr drwoffsets))
     (gimp-selection-all img)
     (gimp-context-set-pattern pattern)
-    (gimp-drawable-edit-fill patternlayer 4)
+    (gimp-drawable-edit-fill patternlayer FILL-PATTERN)
     (gimp-selection-none img)
     (if (= merge 1)
       (begin
