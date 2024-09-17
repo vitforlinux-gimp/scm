@@ -1131,7 +1131,7 @@
     (gimp-context-set-gradient-reverse reverse)
     (gimp-context-get-gradient-repeat-mode repeattype )
    ; (gimp-drawable-edit-gradient-fill gradientlayer gradtype 0 repeattype FALSE 0.2 TRUE x1 y1 x2 y2)
-     (gimp-drawable-edit-gradient-fill gradientlayer gradtype 0  FALSE 0 0 0 x1 y1 x2 y2)
+     (gimp-drawable-edit-gradient-fill gradientlayer gradtype 0  FALSE 1 0 0 x1 y1 x2 y2)
     (gimp-selection-none img)
     (if (= merge 1)
       (begin
