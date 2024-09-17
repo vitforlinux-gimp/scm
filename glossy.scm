@@ -166,9 +166,13 @@
     (if (= shadow-toggle TRUE)
       (begin
         (gimp-image-select-item img CHANNEL-OP-REPLACE logo-layer)
-        (set! dont-drop-me (car (apply-drop-shadow img logo-layer
+	  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+        (set! dont-drop-me (car (script-fu-drop-shadow img logo-layer
                                                        s-offset-x s-offset-y
                                                        15 '(0 0 0) 80 TRUE)))
+	(set! dont-drop-me (car (script-fu-drop-shadow img (vector logo-layer)
+                                                       s-offset-x s-offset-y
+                                                       15 '(0 0 0) 80 TRUE))))
         (set! width (car (gimp-image-get-width img)))
         (set! height (car (gimp-image-get-height img)))
         (gimp-selection-none img)
