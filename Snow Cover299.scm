@@ -105,7 +105,7 @@
 								  TRUE)     ;Smooth vertically TRUE
 		(script-fu-distress-selection image 
 	                             (vector snow-layer )
-								  127       ;Threshold (bigger 1<-->255 smaller)
+								  0.5       ;Threshold (bigger 1<-->255 smaller)
 								  2         ;Spread (8 0 1000 1 10 0 1)
 								  4         ;Granularity (1 is low) (4 1 25 1 10 0 1)
 								  2         ;Smooth (2 1 150 1 10 0 1)
