@@ -203,7 +203,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 ;		(script-fu-distress-selection img clouds1 thr 10 4 2 1 1)	;none
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 			 		(script-fu-distress-selection img clouds1 thr (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) 1 1)	;add
-		(script-fu-distress-selection img (vector clouds1) 0.5 (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) TRUE TRUE)	;add
+		(script-fu-distress-selection img (vector clouds1) (/ thr 255) (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) TRUE TRUE)	;add
 		)
 		;(gimp-edit-bucket-fill clouds1 FG-BUCKET-FILL LAYER-MODE-NORMAL-LEGACY 8 0 0 0 0)
 		(gimp-context-set-opacity 8)
