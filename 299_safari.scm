@@ -395,7 +395,8 @@
 		    ""
 		SF-TEXT	"Text String"      "Safari"
 		SF-ADJUSTMENT	"Font Size (pixels)" '(120 2 1000 1 10 0 1)
-		SF-FONT		"Font"             "FrizQuadrata Bold"
+		SF-FONT		"Font"             "QTMilitary"
+				;SF-FONT		"Font"             "FrizQuadrata Bold"
 		  SF-OPTION "Justify" '("Centered" "Left" "Right") 
 		SF-OPTION	"Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION	"Relief" '("Simple" "Double")

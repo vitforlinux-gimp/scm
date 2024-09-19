@@ -402,7 +402,7 @@
   SF-OPTION "Fill type" '("Color" "Pattern" "Pattern+Color LIGHTEN ONLY" "Pattern+Color OVERLAY" "Pattern+Color MULTIPLY" "Pattern Desaturate +Color LIGHTEN ONLY" "Pattern Desaturate+Color OVERLAY" "Pattern Desaturate+Color MULTIPLY")
   SF-COLOR      "Text Color"         '(0 0 255)
   SF-PATTERN		"Text Pattern"				"Burlwood"
-  SF-FONT       "Font"               "JasmineUPC Bold"
+  SF-FONT       "Font"               "QTVagaRound-Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 1)

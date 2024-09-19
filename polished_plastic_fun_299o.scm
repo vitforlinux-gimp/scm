@@ -1514,7 +1514,7 @@
 	"Denis Bodor"
 	"03/31/2005"
 	""
-	SF-FONT			"Font Name"				"Blippo Heavy"
+	SF-FONT			"Font Name"				"QTBlimpo"
 		SF-ADJUSTMENT	"Font size (pixels)"	'(150 2 1000 1 10 0 1)
 	SF-TEXT		"Enter your text"		"PLASTIC FUN"
 	SF-OPTION "Justify" '("Centered" "Left" "Right")
