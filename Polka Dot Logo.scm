@@ -346,7 +346,7 @@
   SF-TEXT       "Text"    "DOTS"
   SF-ADJUSTMENT "Letter Spacing" '(45 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
-  SF-FONT       "Font"               "Insaniburger with Cheese"
+  SF-FONT       "Font"               "QTGreece"
   SF-ADJUSTMENT "Font size (pixels)" '(200 6 500 1 1 0 1)
   SF-COLOR      "Polka-Dot Color"   '(204 0 0)
   SF-COLOR      "Bevel Color"   '(0 255 0)
