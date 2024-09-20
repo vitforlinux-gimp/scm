@@ -136,7 +136,7 @@
                     ""
                     SF-TEXT     "Text"               "Zahnpasta\nPlus!"
                     SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 1)
-                    SF-FONT       "Font"               "Cooper Black,"
+                    SF-FONT       "Font"               "QTKooper"
 		      SF-OPTION "Justify" '("Centered" "Left" "Right")
 		                          SF-BRUSH      "Brush"            sfbrush
 SF-ADJUSTMENT "Brush Max Size" '(20 1 1000 1 5 0 0)		
