@@ -355,7 +355,7 @@
   ""
   SF-TEXT       "Text"    "SEASONS\nGREETINGS"
   SF-COLOR      "Text color"         '(255 0 0)
-  SF-FONT       "Font"               "Arial Bold"
+  SF-FONT       "Font"               "QTChanceryType-Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(250 6 500 1 1 0 1)
   		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 1)
