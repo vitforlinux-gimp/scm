@@ -287,7 +287,7 @@
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
-  SF-FONT       "Font"               "Serif Bold"
+  SF-FONT       "Font"               "QTBasker-Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(150 6 500 1 1 0 0)
     SF-OPTION "Metal Type" '("None" "Colorized" "Gold" "Silver" "Copper" "Bronze" "Brass" "Chrome" "Gold Shined")
   SF-COLOR      "Colorize"         "White"
