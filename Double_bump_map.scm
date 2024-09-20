@@ -241,7 +241,7 @@
             "May 12, 2023"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Double Bumped Text"   ;a string variable
-            SF-FONT        "Font"          "Ubuntu Bold"    ;a font variable
+            SF-FONT        "Font"          "QTLautrecType"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
                                                         ;a spin-button
 							SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
