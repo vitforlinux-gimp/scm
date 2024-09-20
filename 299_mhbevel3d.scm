@@ -134,7 +134,7 @@
 		    ""
 		    SF-TEXT     "Text String"        "3D Bevel"
 		    SF-ADJUSTMENT "Font Size (pixels)" '(120 2 1000 1 10 0 1)
-		    SF-FONT       "Font"               "Pump Demi Bold LET"
+		    SF-FONT       "Font"               "QTHowardTypeFat"
 		SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 		SF-ADJUSTMENT  "Buffer"  	'(1 1 70 1 2 0 1)
 		    SF-ADJUSTMENT "3D"			'(10 1 600 1 2 0 1)
