@@ -170,7 +170,7 @@
   SF-OPTION "Justify" '("Centered" "Left" "Right")
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
-  SF-FONT       "Font"               "Serif Bold"
+  SF-FONT       "Font"               "QTBookmann-Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(175 6 500 1 1 0 1)
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
