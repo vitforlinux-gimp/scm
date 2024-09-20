@@ -214,8 +214,8 @@
   "Graechan - http://gimpchat.com"
   "June 2011"
   ""
-  SF-TEXT     "Text"                  "Gimp"
-  SF-FONT       "Font"               "PT Banana Split"
+  SF-TEXT     "Text"                  "Emap"
+  SF-FONT       "Font"               "QTFloraline-Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(250 6 500 1 1 0 1)
   		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 0)
