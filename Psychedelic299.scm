@@ -407,12 +407,12 @@
   "Graechan - http://gimpchat.com"
   "May 2014"
   ""
-  SF-TEXT       "Text"    "GIMP"
+  SF-TEXT       "Text"    "PSYCHEDELIC"
   SF-OPTION "Justify" '("Centered" "Left" "Right") 
-  SF-ADJUSTMENT "Letter Spacing" '(50 -100 100 1 5 0 0)
+  SF-ADJUSTMENT "Letter Spacing" '(5 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Expand the Font if needed" '(0 0 12 1 1 0 1)
-  SF-FONT       "Font"               "Sans Bold"
+  SF-FONT       "Font"               "QTFrankHeavy"
   SF-ADJUSTMENT "Font size (pixels)" '(200 6 500 1 1 0 1)
   SF-COLOR		"Text Fill Color"			'(0 0 0)
   SF-GRADIENT   "Text Paint Splatter Gradient" "Tropical Colors"
@@ -423,7 +423,7 @@
   SF-ADJUSTMENT "Shadow Size" '(8 0 16 1 10 0 0)
   SF-ADJUSTMENT "Shadow Opacity" '(50 0 100 1 10 0 0)
   SF-OPTION "Background Type" '("Technicolor-Dream" "Transparent")
-  SF-GRADIENT   "Background Effect Gradient" "Full saturation spectrum CCW"
+  SF-GRADIENT   "Background Effect Gradient" "Full Saturation Spectrum CCW"
   SF-ADJUSTMENT "Blend Repititions" '(12 0 20 1 1 0 0)
   SF-ADJUSTMENT "Displace Repititions" '(8 0 20 1 1 0 0)
   SF-TOGGLE     "Keep the Layers"   FALSE
