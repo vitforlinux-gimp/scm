@@ -295,7 +295,7 @@
   "Dec 2012 - Lug 2024"
   ""
   SF-TEXT       "Text"    "Wrought Iron"
-  SF-FONT       "Font"               "JasmineUPC Bold"
+  SF-FONT       "Font"               "QTAbbie"
   SF-ADJUSTMENT "Font size (pixels)" '(150 50 600 1 10 0 1)
   SF-ADJUSTMENT "Pitting Amount" '(100 0 200 1 10 0 0)
   SF-ADJUSTMENT "Bevel Width" '(5 1 100 1 10 0 0)
