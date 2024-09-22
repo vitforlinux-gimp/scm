@@ -40,6 +40,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define bggrad "Full saturation spectrum CCW")
+  (define bggrad "Full Saturation Spectrum CCW")	)
 
 (define (gimp-version-meets? check)
   (let ((c (map string->number (strbreakup check ".")))
@@ -251,7 +254,7 @@
   SF-ADJUSTMENT "Shadow Size" '(8 0 16 1 10 0 0)
   SF-ADJUSTMENT "Shadow Opacity" '(50 0 100 1 10 0 0)
   SF-OPTION "Background Type" '("Technicolor-Dream" "Transparent")
-  SF-GRADIENT   "Background Effect Gradient" "Full saturation spectrum CCW"
+  SF-GRADIENT   "Background Effect Gradient" bggrad
   SF-ADJUSTMENT "Blend Repititions" '(12 0 20 1 1 0 0)
   SF-ADJUSTMENT "Displace Repititions" '(8 0 20 1 1 0 0)
   SF-TOGGLE     "Keep the Layers"   FALSE
@@ -407,12 +410,12 @@
   "Graechan - http://gimpchat.com"
   "May 2014"
   ""
-  SF-TEXT       "Text"    "PSYCHEDELIC"
+  SF-TEXT       "Text"    "Psychedelic"
   SF-OPTION "Justify" '("Centered" "Left" "Right") 
   SF-ADJUSTMENT "Letter Spacing" '(5 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Expand the Font if needed" '(0 0 12 1 1 0 1)
-  SF-FONT       "Font"               "QTFrankHeavy"
+  SF-FONT       "Font"               "QTHoboken"
   SF-ADJUSTMENT "Font size (pixels)" '(200 6 500 1 1 0 1)
   SF-COLOR		"Text Fill Color"			'(0 0 0)
   SF-GRADIENT   "Text Paint Splatter Gradient" "Tropical Colors"
@@ -423,7 +426,7 @@
   SF-ADJUSTMENT "Shadow Size" '(8 0 16 1 10 0 0)
   SF-ADJUSTMENT "Shadow Opacity" '(50 0 100 1 10 0 0)
   SF-OPTION "Background Type" '("Technicolor-Dream" "Transparent")
-  SF-GRADIENT   "Background Effect Gradient" "Full Saturation Spectrum CCW"
+  SF-GRADIENT   "Background Effect Gradient" bggrad
   SF-ADJUSTMENT "Blend Repititions" '(12 0 20 1 1 0 0)
   SF-ADJUSTMENT "Displace Repititions" '(8 0 20 1 1 0 0)
   SF-TOGGLE     "Keep the Layers"   FALSE
