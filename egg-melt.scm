@@ -127,7 +127,7 @@
             "October 10, 2023"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Egg\nMelt"   ;a string variable
-            SF-FONT        "Font"          "Franks Regular"    ;a font variable
+            SF-FONT        "Font"          "QTVagaRound-Bold"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 152 0)     ;color variable
 	     	     SF-COLOR       "Color2"         '(255 255 255)    ;color variable

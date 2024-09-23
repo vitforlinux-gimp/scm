@@ -14,7 +14,7 @@
             "October 27, 1997"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "HighLighted\nLogo"   ;a string variable
-            SF-FONT        "Font"          "DejaVu Sans Bold"    ;a font variable
+            SF-FONT        "Font"          "QTVagaRound-Bold"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 0 0)     ;color variable
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
