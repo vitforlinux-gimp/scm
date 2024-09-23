@@ -33,7 +33,9 @@
 
 
 
-
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "Walkway Bold,")
+  (define sffont "Walkyway Bold"	))
 
 
 
@@ -999,7 +1001,7 @@
 	""
 	SF-COLOR "Couleur fond / Background color" '(230 39 19) ; e62712
 	SF-STRING "Texte / Text" "Gimp 2.99.19"
-	SF-FONT "Police / Font" "Walkyway Bold," ; Serif Bold
+	SF-FONT "Police / Font" sffont  ; Serif Bold
 	SF-COLOR "Couleur encre / Color ink" '(255 255 255) ; blanc
 	SF-ADJUSTMENT "Taille Police / Font Size [pixels]" '(150 48 480 1 10 0 1)
 	SF-ADJUSTMENT "Grosseur du fond du texte [pixels]" '(10 10 64 1 4 0 1)
