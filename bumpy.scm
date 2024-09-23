@@ -321,7 +321,7 @@
 	"03/31/2005"
 	""
 	SF-TEXT "Enter your text" "BUMPY"
-	SF-FONT "Font Name" "Blippo Heavy"
+	SF-FONT "Font Name" "QTVagaRound-Bold"
 	SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
 	SF-OPTION "Justify" '("Centered" "Left" "Right")
 	SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)

@@ -142,10 +142,10 @@
     "2007, Scott Mosteller"
     ""
    SF-TEXT     _"Text"               "Dracula!"
-   SF-FONT       _"Font"               "URW Bookman Semi-Bold"
+   SF-FONT       _"Font"               "QTFraktur"
    SF-ADJUSTMENT _"Font Size (pixels)" '(150 2 1000 1 10 0 1)
    	SF-OPTION "Justify" '("Left" "Right" "Centered")
-	SF-ADJUSTMENT "Letter Spacing" '(-10 -100 100 1 5 0 0)
+	SF-ADJUSTMENT "Letter Spacing" '(-5 -100 100 1 5 0 0)
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
    SF-ADJUSTMENT _"Border Size"    '(7 1 99 1 1 0 1)
    SF-ADJUSTMENT _"Drip Size"    '(12 0 99 1 1 0 1)
