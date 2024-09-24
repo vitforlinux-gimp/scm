@@ -35,7 +35,7 @@
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "Walkway Bold,")
-  (define sffont "Walkyway Bold"	))
+  (define sffont "Walkway Bold"	))
 
 
 
