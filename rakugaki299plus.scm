@@ -12,6 +12,11 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfbrush '("Pencil Scratch" 1.0 20 0))
   (define sfbrush "Pencil Scratch")	)
+  
+  
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sfbggrad "Full saturation spectrum CCW")
+  (define sfbggrad "Full Saturation Spectrum CCW")	)
 
 (define (script-fu-rakugaki-plus299 image drawable randpoint brush brush-size rotation rsize ctype color gradient)
 
@@ -79,7 +84,7 @@ SF-ADJUSTMENT "Brush Max Size" '(35 1 1000 1 5 0 0)
 		      SF-TOGGLE	"Random size?"			FALSE
 		    SF-OPTION "Color type" '("Random Color" "Single Color" "Random from Gradient")
 		      SF-COLOR      "Color"         '(255 255 255)
-		      SF-GRADIENT		"Fill Gradient"		"Full saturation spectrum CCW"
+		      SF-GRADIENT		"Fill Gradient"		sfbggrad
 		      )
 
 (script-fu-menu-register "script-fu-rakugaki-plus299"

@@ -25,6 +25,10 @@
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 (cond ((not (defined? 'gimp-image-get-base-type)) (define gimp-image-get-base-type gimp-image-base-type)))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sfgrad "Full saturation spectrum CCW")
+  (define sfgrad "Full Saturation Spectrum CCW")	)
+
 (define (get-blending-mode mode)
   (let* ((modenumbers #(0 1 3 15 4 5 16 17 18 19 20 21 6 7 8 9 10 11 12 13 14)))
     (vector-ref modenumbers mode)
@@ -1409,7 +1413,7 @@
 		    "RGBA, GRAYA"
 		    SF-IMAGE		"Image"			0
 		    SF-DRAWABLE		"Drawable"		0
-		    SF-GRADIENT		_"Gradient"		"Full saturation spectrum CCW"
+		    SF-GRADIENT		_"Gradient"		sfgrad
 		    SF-OPTION		"Gradient Type"		'("Linear" "Bi-linear" "Radial" "Square" "Conical (sym)" "Conical (asym)" "Shaped (angular)" "Shaped (spherical)" "Shaped (dimpled)" "Spiral (cw)" "Spiral (ccw)")
 		    SF-OPTION		"Repeat"		'("None" "Sawtooth Wave" "Triangular Wave")
 		    SF-TOGGLE		"Reverse"		FALSE

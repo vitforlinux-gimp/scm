@@ -41,8 +41,8 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-        (define bggrad "Full saturation spectrum CCW")
-  (define bggrad "Full Saturation Spectrum CCW")	)
+        (define sfbggrad "Full saturation spectrum CCW")
+  (define sfbggrad "Full Saturation Spectrum CCW")	)
 
 (define (gimp-version-meets? check)
   (let ((c (map string->number (strbreakup check ".")))
@@ -254,7 +254,7 @@
   SF-ADJUSTMENT "Shadow Size" '(8 0 16 1 10 0 0)
   SF-ADJUSTMENT "Shadow Opacity" '(50 0 100 1 10 0 0)
   SF-OPTION "Background Type" '("Technicolor-Dream" "Transparent")
-  SF-GRADIENT   "Background Effect Gradient" bggrad
+  SF-GRADIENT   "Background Effect Gradient" sfbggrad
   SF-ADJUSTMENT "Blend Repititions" '(12 0 20 1 1 0 0)
   SF-ADJUSTMENT "Displace Repititions" '(8 0 20 1 1 0 0)
   SF-TOGGLE     "Keep the Layers"   FALSE
@@ -426,7 +426,7 @@
   SF-ADJUSTMENT "Shadow Size" '(8 0 16 1 10 0 0)
   SF-ADJUSTMENT "Shadow Opacity" '(50 0 100 1 10 0 0)
   SF-OPTION "Background Type" '("Technicolor-Dream" "Transparent")
-  SF-GRADIENT   "Background Effect Gradient" bggrad
+  SF-GRADIENT   "Background Effect Gradient" sfbggrad
   SF-ADJUSTMENT "Blend Repititions" '(12 0 20 1 1 0 0)
   SF-ADJUSTMENT "Displace Repititions" '(8 0 20 1 1 0 0)
   SF-TOGGLE     "Keep the Layers"   FALSE
