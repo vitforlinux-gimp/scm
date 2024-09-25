@@ -40,6 +40,10 @@
 ;(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTVagaRound Bold")
+  (define sffont "QTVagaRound-Bold"))
+
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
 				(gimp-selection-translate img x y)
@@ -402,7 +406,7 @@
   SF-OPTION "Fill type" '("Color" "Pattern" "Pattern+Color LIGHTEN ONLY" "Pattern+Color OVERLAY" "Pattern+Color MULTIPLY" "Pattern Desaturate +Color LIGHTEN ONLY" "Pattern Desaturate+Color OVERLAY" "Pattern Desaturate+Color MULTIPLY")
   SF-COLOR      "Text Color"         '(0 0 255)
   SF-PATTERN		"Text Pattern"				"Burlwood"
-  SF-FONT       "Font"               "QTVagaRound-Bold"
+  SF-FONT       "Font"            sffont
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 1)

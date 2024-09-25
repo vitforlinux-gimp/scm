@@ -8,6 +8,10 @@
 
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTVagaRound Bold")
+  (define sffont "QTVagaRound-Bold"))
+
 
 (define (script-fu-egg-shine image drawable
                               shadow-size
@@ -127,7 +131,7 @@
             "October 10, 2023"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Egg\nMelt"   ;a string variable
-            SF-FONT        "Font"          "QTVagaRound-Bold"    ;a font variable
+            SF-FONT        "Font"          sffont    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 152 0)     ;color variable
 	     	     SF-COLOR       "Color2"         '(255 255 255)    ;color variable

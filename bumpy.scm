@@ -36,6 +36,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTVagaRound Bold")
+  (define sffont "QTVagaRound-Bold"))
+
 
 (define
 	(
@@ -321,7 +325,7 @@
 	"03/31/2005"
 	""
 	SF-TEXT "Enter your text" "BUMPY"
-	SF-FONT "Font Name" "QTVagaRound-Bold"
+	SF-FONT "Font Name" sffont
 	SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
 	SF-OPTION "Justify" '("Centered" "Left" "Right")
 	SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)

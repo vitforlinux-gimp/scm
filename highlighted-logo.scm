@@ -1,6 +1,10 @@
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
+
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTVagaRound Bold")
+  (define sffont "QTVagaRound-Bold"))
   
   (script-fu-register
             "script-fu-highlighted-logo"                        ;function name
@@ -14,7 +18,7 @@
             "October 27, 1997"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "HighLighted\nLogo"   ;a string variable
-            SF-FONT        "Font"          "QTVagaRound-Bold"    ;a font variable
+            SF-FONT        "Font"          sffont    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 0 0)     ;color variable
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 

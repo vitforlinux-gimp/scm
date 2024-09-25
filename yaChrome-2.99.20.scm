@@ -48,6 +48,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTBasker Bold")
+  (define sffont "QTBasker-Bold"))
+
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
 				(gimp-selection-translate img x y)
@@ -287,7 +291,7 @@
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
-  SF-FONT       "Font"               "QTBasker-Bold"
+  SF-FONT       "Font"               sffont
   SF-ADJUSTMENT "Font size (pixels)" '(150 6 500 1 1 0 0)
     SF-OPTION "Metal Type" '("None" "Colorized" "Gold" "Silver" "Copper" "Bronze" "Brass" "Chrome" "Gold Shined")
   SF-COLOR      "Colorize"         "White"

@@ -36,6 +36,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTFloraline Bold")
+  (define sffont "QTFloraline-Bold"))
+
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
 				(gimp-selection-translate img x y)
@@ -215,7 +219,7 @@
   "June 2011"
   ""
   SF-TEXT     "Text"                  "Emap"
-  SF-FONT       "Font"               "QTFloraline-Bold"
+  SF-FONT       "Font"               sffont
   SF-ADJUSTMENT "Font size (pixels)" '(250 6 500 1 1 0 1)
   		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 0)

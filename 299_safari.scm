@@ -24,7 +24,9 @@
 				(gimp-context-set-pattern (car (gimp-pattern-get-by-name value)))
 				))))
 
-
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTFrizQuad Bold")
+  (define sffont "QTFrizQuad-Bold"	))
 
 
 (define (apply-safari-logo-299 image drawable size type relief grad-type gradient flou flou-r elevation depth conserv trans? bgcolor scolor sblur soff)
@@ -395,7 +397,7 @@
 		    ""
 		SF-TEXT	"Text String"      "Safari"
 		SF-ADJUSTMENT	"Font Size (pixels)" '(120 2 1000 1 10 0 1)
-		SF-FONT		"Font"             "QTFrizQuad-Bold"
+		SF-FONT		"Font"             sffont
 		  SF-OPTION "Justify" '("Centered" "Left" "Right") 
 		SF-OPTION	"Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION	"Relief" '("Simple" "Double")

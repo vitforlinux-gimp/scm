@@ -36,6 +36,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTBookmann Bold")
+  (define sffont "QTBookmann-Bold"))
+
 
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
 
@@ -170,7 +174,7 @@
   SF-OPTION "Justify" '("Centered" "Left" "Right")
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
-  SF-FONT       "Font"               "QTBookmann-Bold"
+  SF-FONT       "Font"               sffont
   SF-ADJUSTMENT "Font size (pixels)" '(175 6 500 1 1 0 1)
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
