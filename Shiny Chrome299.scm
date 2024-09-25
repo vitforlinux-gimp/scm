@@ -75,6 +75,7 @@
 									  line-spacing
                                       font-in 
                                       font-size
+				      shadow
                                       bkg-type 
                                       pattern
                                       bkg-color
@@ -146,6 +147,7 @@
 ;;;;start of script;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (gimp-image-undo-group-start image)
 	(script-fu-shiny-chrome image text-layer
+					shadow
                                        bkg-type 
                                        pattern
                                        bkg-color
@@ -176,6 +178,7 @@
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   SF-FONT       "Font"               sffont
   SF-ADJUSTMENT "Font size (pixels)" '(175 6 500 1 1 0 1)
+  SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         "Blue"
@@ -188,7 +191,8 @@
 (script-fu-menu-register "script-fu-shiny-chrome-logo" "<Image>/Script-Fu/Logos/")
 ;
  (define (script-fu-shiny-chrome image drawable
-                                       bkg-type 
+					shadow
+					bkg-type
                                        pattern
                                        bkg-color
 							           gradient
@@ -289,7 +293,7 @@
   (plug-in-gradmap 1 image 1 (vector chrome-copy))	)
 	(gimp-layer-set-mode chrome-copy LAYER-MODE-BURN-LEGACY)
 	(set! chrome (car (gimp-image-merge-down image chrome-copy EXPAND-AS-NECESSARY)))
-	(apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE)
+	(if (= shadow TRUE) (apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE))
 	
 	;;;;create the background layer
   (let* (
@@ -349,6 +353,7 @@
   "RGB*"
   SF-IMAGE      "image"      0
   SF-DRAWABLE   "drawable"   0
+  SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         "Blue"

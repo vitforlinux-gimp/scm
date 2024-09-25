@@ -158,6 +158,7 @@
 				      3d-height
 				      shined
 				      gradmap
+				      shadow
                                       bkg-type 
                                       pattern
                                       bkg-color
@@ -262,6 +263,7 @@
 					3d-height
 					shined
 					gradmap
+					shadow
                                        bkg-type 
                                        pattern
                                        bkg-color
@@ -300,6 +302,7 @@
 	SF-ADJUSTMENT "3d height" '(0 0 50 1 1 0 0)
 	  SF-TOGGLE     "Shined"   FALSE
   SF-OPTION "Gradmap" list-gradname-dir
+  SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         "Blue"
@@ -319,6 +322,7 @@
 				       3d-height
 				       shined
 				       gradmap
+				       shadow
 				       bkg-type 
                                        pattern
                                        bkg-color
@@ -483,7 +487,7 @@
 
 
 	(set! chrome (car (gimp-image-merge-down image chrome-copy EXPAND-AS-NECESSARY)))
-	(apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE)
+	(if (= shadow TRUE) (apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE))
 
 	
 		(if (= metal 2) (set! colorize '(253 208 23)));gold
@@ -585,6 +589,7 @@
 	SF-ADJUSTMENT "3d height" '(0 0 50 1 1 0 0)
 	SF-TOGGLE     "Shined"   FALSE
   SF-OPTION "Gradmap" list-gradname-dir
+  SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         "Blue"
