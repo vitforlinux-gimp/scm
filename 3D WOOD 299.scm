@@ -64,6 +64,7 @@
 									  azimuth
 									  elevation
 									  depth
+									  shadow
                                       bkg-type 
                                       pattern
                                       bkg-color
@@ -192,8 +193,8 @@
 	;(gimp-edit-blend bkg-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-SHAPEBURST-SPHERICAL 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE 0 0 width height))
 		(gimp-drawable-edit-gradient-fill bkg-layer GRADIENT-SHAPEBURST-SPHERICAL 0 1 1 0.0 FALSE 0 0 width height)
 ))
-    
-	(apply-drop-shadow image text-layer 8 8 15 '(0 0 0) 80 FALSE)	
+    (if (= shadow TRUE) 
+	(apply-drop-shadow image text-layer 8 8 15 '(0 0 0) 80 FALSE))	
 ;;;;resize the text-layer		
     ;(gimp-image-set-active-layer image text-layer)
 	(gimp-layer-resize-to-image-size text-layer)    
@@ -237,6 +238,7 @@
   SF-ADJUSTMENT "Pattern Azimuth" '(135 0 360 1 10 0 0)
   SF-ADJUSTMENT "Pattern Elevation" '(45 1 90 1 5 0 0)
   SF-ADJUSTMENT "Pattern Depth" '(3 1 65 1 5 0 0)
+  SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Pattern" "Color" "Gradient")
   SF-PATTERN    "Background Pattern"            "Pink Marble"
   SF-COLOR      "Background color"         '(153 153 153)

@@ -33,6 +33,7 @@
 			  bump-elevation
 			  bump-depth
 			  ;shadow settings
+			  shadow
 			  shadow-offset-X   ;offset x
 			  shadow-offset-Y   ;offset y
 			  shadow-blur-radius ;blur-radius
@@ -183,6 +184,7 @@
 							  0    ;type of map LINEAR (0), SPHERICAL (1), SINUSOIDAL (2)
 		)
 		;drops shadow of color-layer
+		 (if (= shadow TRUE) 
 		(apply-drop-shadow image pattern-layer
 								   shadow-offset-X   ;offset x
 								   shadow-offset-Y   ;offset y
@@ -190,7 +192,7 @@
 								   shadow-color       ;color
 								   shadow-opacity     ;opacity
 								   TRUE ;allow resizing
-		)
+		))
 	  ;DONE
 	  
 	
@@ -219,6 +221,7 @@
   SF-ADJUSTMENT "Bump Elevation"           '(33 0 100 1 10 0 0)
   SF-ADJUSTMENT "Bump Depth"               '(35 0 100 1 10 0 0)
   
+    SF-TOGGLE     "Shadow"   TRUE
   SF-ADJUSTMENT "Shadow Offset X" '(4 0 100 1 10 0 0)
   SF-ADJUSTMENT "Shadow Offset Y" '(4 0 100 1 10 0 0)
   SF-ADJUSTMENT "Shadow Blur Radius" '(15 0 100 1 10 0 0)
@@ -259,6 +262,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
   SF-ADJUSTMENT "Bump Elevation"           '(33 0 100 1 10 0 0)
   SF-ADJUSTMENT "Bump Depth"               '(35 0 100 1 10 0 0)
   
+    SF-TOGGLE     "Shadow"   TRUE
   SF-ADJUSTMENT "Shadow Offset X" '(4 0 100 1 10 0 0)
   SF-ADJUSTMENT "Shadow Offset Y" '(4 0 100 1 10 0 0)
   SF-ADJUSTMENT "Shadow Blur Radius" '(15 0 100 1 10 0 0)
@@ -269,7 +273,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	SF-TOGGLE     "Flatten" TRUE
   )
   (script-fu-menu-register "script-fu-double-bump-text" "<Image>/Script-Fu/Logos/")
-  (define (script-fu-double-bump-text inText inFont inFontSize  justification letter-spacing line-spacing grow-text outline color pattern  no-pattern bgcolor grow-distance blur-radius bump-azimuth bump-elevation  bump-depth  shadow-offset-X  shadow-offset-Y  shadow-blur-radius  shadow-color  shadow-opacity     inBufferAmount flatten)
+  (define (script-fu-double-bump-text inText inFont inFontSize  justification letter-spacing line-spacing grow-text outline color pattern  no-pattern bgcolor grow-distance blur-radius bump-azimuth bump-elevation  bump-depth shadow shadow-offset-X  shadow-offset-Y  shadow-blur-radius  shadow-color  shadow-opacity     inBufferAmount flatten)
     (let*
       (
         ; define our local variables
@@ -392,6 +396,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 			  bump-elevation
 			  bump-depth
 			  ;shadow settings
+			  shadow
 			  shadow-offset-X   ;offset x
 			  shadow-offset-Y   ;offset y
 			  shadow-blur-radius ;blur-radius
