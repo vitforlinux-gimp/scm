@@ -39,6 +39,10 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sfbggrad "Crown molding")
+  (define sfbggrad "Crown Molding")	)
+
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 (define (script-fu-lotr299-text   image
@@ -367,7 +371,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 		    ""
 	SF-TEXT   "Text String"		"Lord of the Rings"
 	SF-ADJUSTMENT "Font Size (pixels)"	'(120 2 1000 1 10 0 1)
-	SF-FONT     "Font"			"Bodoni MT"
+	SF-FONT     "Font"			"QTBodini"
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
@@ -386,7 +390,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 	SF-ADJUSTMENT "Opacity"			'(80 0 100 1 10 0 0)
 	SF-OPTION	"bg-mode"		'(_"color" _"gradient" _"pattern")
 	SF-COLOR	"Background Color"	'(210 215 184)
-	SF-GRADIENT	"Background Gradient"	"Crown molding"
+	SF-GRADIENT	"Background Gradient"	sfbggrad
 	SF-PATTERN 	"Background Pattern"	"Crinkled Paper"
 ;	SF-TOGGLE     "Keep Bump Map Layer?"	FALSE 
 )
