@@ -28,6 +28,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTAncientOlive Bold")
+  (define sffont "QTAncientOlive-Bold"))
 
 (define (script-fu-scanner-logo text size font text-color use-gradient? text-gradient cut-color bg-color)
   (let* ((img (car (gimp-image-new 256 256 RGB)))
@@ -100,7 +103,7 @@
 		    ""
 		    SF-STRING   "Text String"      "Scanner Logo"
 		    SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 10 0 1)
-		    SF-FONT     "Font"             "charter bold italic"
+		    SF-FONT     "Font"             sffont
 		    SF-COLOR    "Text Color"       '(66 3 122)
                     SF-TOGGLE   "Use Gradient"     TRUE
                     SF-GRADIENT "Gradient"         "Tropical Colors"

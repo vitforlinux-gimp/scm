@@ -12,6 +12,9 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTBodiniPoster Italic")
+  (define sffont "QTBodiniPoster-Italic"))
 
 
 (define (apply-reflex-logo image drawable grad-type gradient reverse displace merge)
@@ -333,7 +336,7 @@
         ""
         SF-TEXT     _"Text"               "Reflex"
         SF-ADJUSTMENT _"Font size (pixels)" '(200 2 1000 1 10 0 1)
-        SF-FONT       _"Font"               "Liberation Mono Bold"
+        SF-FONT       _"Font"               sffont
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
