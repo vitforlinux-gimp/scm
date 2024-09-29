@@ -37,6 +37,10 @@
 
 ;(cond ((not (defined? 'gimp-image-get-active-drawable)) (define (gimp-image-get-active-drawable image) (aref (cadr (gimp-image-get-selected-drawables image)) 0))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sfgrad "Crown molding")
+  (define sfgrad "Crown Molding")	)
+
 ;
 (define (script-fu-wrought-iron-299 image drawable
                                iron-size
@@ -177,7 +181,7 @@
   SF-COLOR      "Background color"         '(153 153 153)
   SF-TOGGLE     "Apply a Frame"   FALSE
   SF-ADJUSTMENT  "Frame-Size"        '(50 1 250 1 10 0 0)
-  SF-GRADIENT   "Border Gradient" "Crown molding"
+  SF-GRADIENT   "Border Gradient" sfgrad
   SF-TOGGLE     "Keep selection"    FALSE
   SF-TOGGLE     "Keep the Layers"   FALSE
  )
@@ -306,7 +310,7 @@
   SF-COLOR      "Background color"         '(153 153 153)
   SF-TOGGLE     "Apply a Frame"   FALSE
   SF-ADJUSTMENT  "Frame-Size"        '(50 1 250 1 10 0 0)
-  SF-GRADIENT   "Border Gradient" "Crown molding"
+  SF-GRADIENT   "Border Gradient" sfgrad
   SF-TOGGLE     "Keep the Layers"   FALSE
   )
 (script-fu-menu-register "script-fu-wrought-iron-299-logo" "<Image>/Script-Fu/Logos/")
