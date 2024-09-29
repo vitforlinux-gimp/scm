@@ -35,6 +35,10 @@
 
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTHelvetCnd-Black Heavy")
+  (define sffont "QTHelvetCnd-Black"))
+
 (define (script-fu-ocean-text inText
 	                      inFontSize
 	                      inFont
@@ -174,7 +178,7 @@
     ""
     SF-STRING     "Text"               "Ocean Text"
     SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 0 0 1)
-    SF-FONT       "Font"               "Sans Bold"
+    SF-FONT       "Font"               sffont
       SF-OPTION "Gradient Type" '("Default" "Manual")
       SF-GRADIENT   _"Gradient"           "Horizon 2"
       		    SF-TOGGLE "Gradient Reverse" FALSE
