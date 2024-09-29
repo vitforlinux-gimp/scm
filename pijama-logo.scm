@@ -4,6 +4,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTSchoolCentury Bold")
+  (define sffont "QTSchoolCentury-Bold"))
 
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
@@ -27,7 +30,7 @@
             "July 8, 2023"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Pijama\nlogo"   ;a string variable
-            SF-FONT        "Font"          "DejaVu Serif Bold"    ;a font variable
+            SF-FONT        "Font"          sffont    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(0 193 160)     ;color variable
 	     SF-COLOR       "Color 2"         '(255 255 255)     ;color variable
