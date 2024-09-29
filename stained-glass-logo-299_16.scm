@@ -10,6 +10,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTBookmann Bold")
+  (define sffont "QTBookmann-Bold"))
+
 (define (apply-super-logos04-effect image logo-layer tsize tspc random blur offset sf ft-color bg-color lwidth bgmosaic flatten)
 (let* (
 (bump-layer 0)
@@ -89,8 +93,10 @@ sf
 ; Convert text to path
 (gimp-image-select-item image 2  bump-layer) ;select text
 (plug-in-sel2path 1 image bump-layer) ;
-(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path image)) 0) "Path"))
-(else (gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path"))
+
+  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")  
+(gimp-item-set-name (aref (cadr (gimp-image-get-selected-path image)) 0) "Path")
 )
 ;(gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")
 ;(gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors image)) 0) "Path")
@@ -218,7 +224,7 @@ height
 ""
 SF-STRING "Text" "GIMP 2.99.18"
 SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
-SF-FONT "Font" "Sans Bold"
+SF-FONT "Font" sffont
 SF-ADJUSTMENT "Tile size" '(20 5 100 1 10 0 0)
 SF-ADJUSTMENT "Tile spacing" '(1 1 100 1 10 0 0)
 SF-ADJUSTMENT "Random seed" '(1000 0 2000 5 10 0 0)
