@@ -38,10 +38,6 @@
 (let* (
     (img (car (gimp-image-new size size RGB)))
     (theBgLayer (car (gimp-layer-new img size size RGB "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-    (oldfg (car (gimp-context-get-foreground)))
-    (oldbg (car (gimp-context-get-background)))
-    (oldgrad (car (gimp-context-get-gradient)))
-    (oldpat (car (gimp-context-get-pattern)))
     (theTextLayer)
     (theText)
     (theImageWidth)
@@ -230,10 +226,8 @@
 
     (if (= ft? TRUE) (gimp-image-merge-visible-layers img 0))
 
-    (gimp-context-set-foreground oldfg)
-    (gimp-context-set-background oldbg)
-	(gimp-context-set-gradient oldgrad)
-      (gimp-context-set-pattern oldpat)
+
+      
               (gimp-context-pop)
     (gimp-display-new img)
     (gimp-image-undo-enable img)))
@@ -247,7 +241,7 @@
                     ""
                     SF-TEXT        _"Text"            "Happy\nNew Year\n2025"
                     SF-ADJUSTMENT    _"Font size (pixels)"    '(100 2 1000 1 10 0 1)
-                    SF-FONT        _"Font"            "Baskerville Bold"
+                    SF-FONT        _"Font"            "QTAtchen"
            ; SF-COLOR        "Text Color"        '(255 128 0)
 					SF-ADJUSTMENT   _"Letter Spacing" '(0 -100 100 1 5 0 0)      
 					SF-ADJUSTMENT   _"Line Spacing" '(0 -200 200 1 5 0 0)

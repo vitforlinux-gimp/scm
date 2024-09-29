@@ -38,8 +38,6 @@
 (let* (
     (img (car (gimp-image-new size size RGB)))
     (theBgLayer (car (gimp-layer-new img size size RGB "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-    (oldfg (car (gimp-context-get-foreground)))
-    (oldbg (car (gimp-context-get-background)))
     (theTextLayer)
     (theText)
     (theImageWidth)
@@ -56,6 +54,8 @@
 
  
     (gimp-image-undo-disable img)
+        (gimp-context-push)
+    (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
     (gimp-image-insert-layer img theBgLayer 0 0)
     (gimp-context-set-background '(255 255 255))
     (gimp-context-set-foreground '(0 0 0))
@@ -160,8 +160,9 @@
 
     (if (= ft? TRUE) (gimp-image-merge-visible-layers img 0))
 
-    (gimp-context-set-foreground oldfg)
-    (gimp-context-set-background oldbg)
+
+      
+              (gimp-context-pop)
     (gimp-display-new img)
     (gimp-image-undo-enable img)))
 
@@ -174,7 +175,7 @@
                     ""
                     SF-STRING        _"Text"            "SNOWCRASH"
                     SF-ADJUSTMENT    _"Font size (pixels)"    '(100 2 1000 1 10 0 1)
-                    SF-FONT        _"Font"            "Baskerville Bold"
+                    SF-FONT        _"Font"            "QTAtchen"
             SF-COLOR        "Text Color"        '(255 128 0)
                     SF-ADJUSTMENT    _"Blur Value"        '(7 1 100 1 10 0 1)
                     SF-ADJUSTMENT    _"Displace how often?"    '(2 1 5 1 10 0 1)
