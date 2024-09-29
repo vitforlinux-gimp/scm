@@ -32,6 +32,9 @@
 
 
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTEurotype Bold")
+  (define sffont "QTEurotype-Bold"))
 
 (define (script-fu-exploding-logo299-happy-new-year-2025 text size font letter-spacing line-spacing  type tcolor tpattern tgrad blur displace_loop blur_toggle crop_toggle ft?)
 
@@ -241,7 +244,7 @@
                     ""
                     SF-TEXT        _"Text"            "Happy\nNew Year\n2025"
                     SF-ADJUSTMENT    _"Font size (pixels)"    '(100 2 1000 1 10 0 1)
-                    SF-FONT        _"Font"            "QTAtchen"
+                    SF-FONT        _"Font"            sffont
            ; SF-COLOR        "Text Color"        '(255 128 0)
 					SF-ADJUSTMENT   _"Letter Spacing" '(0 -100 100 1 5 0 0)      
 					SF-ADJUSTMENT   _"Line Spacing" '(0 -200 200 1 5 0 0)
