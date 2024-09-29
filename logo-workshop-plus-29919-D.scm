@@ -43,6 +43,10 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfrepeat '("None"  "Sawtooth"  "Triangular"  "Truncate"))
   (define sfrepeat '("None" "Truncate" "Sawtooth" "Triangular" ))	)
+  
+  		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "LobsterTwo Bold")
+  (define sffont "LobsterTwo-Bold"))
 ;Material start
 		(define (material-wksp-gradient fond image gradient gradient-type direction repeat reverse fond-color)  			(begin
 		        (define width (car (gimp-drawable-get-width fond)))
@@ -146,7 +150,7 @@
 							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+            (image-layer drawable)
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(layer-name (car (gimp-item-get-name image-layer)))
@@ -627,7 +631,7 @@
                     SF-ADJUSTMENT _"Shadow Offset X"      '(-6 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Offset Y"      '(4 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Opacity"       '(25 0 100 1 1 0 0)
-                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined")
+                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined 2.99 only")
                     SF-PATTERN    _"Added Effect Pattern" "Bricks"
                     SF-ADJUSTMENT _"Added Effect Depth"   '(7 0 50 1 1 0 0))
 
@@ -890,7 +894,7 @@
                     ""
                     SF-TEXT     _"Text"                 "Logo Workshop\nPlus\n2.99.19"
                     SF-ADJUSTMENT _"Font size (pixels)"   '(220 2 1000 1 10 0 0)
-                    SF-FONT       _"Font"                 "Comic Sans MS Bold"
+                    SF-FONT       _"Font"                 sffont
 		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 0)
                     SF-ADJUSTMENT _"Line Spacing"          '(-5 -300 300 1 10 0 0)
@@ -918,7 +922,7 @@
                     SF-ADJUSTMENT _"Shadow Offset X"      '(-6 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Offset Y"      '(4 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Opacity"       '(50 0 100 1 1 0 0)
-                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined")
+                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined 2.99 only")
                     SF-PATTERN    _"Added Effect Pattern" "Bricks"
                     SF-ADJUSTMENT _"Added Effect Depth"   '(7 0 50 1 1 0 0)
 		     SF-ADJUSTMENT  "Buffer amount" '(10 0 100 1 10 1 0) ;a slider
