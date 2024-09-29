@@ -6,6 +6,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTHelvet-Black Heavy")
+  (define sffont "QTHelvet-Black"))
 ; Define the function:
 
 (define (script-fu-skywriting inText inSize inFont  justification letter-spacing line-spacing grow-text outline color foption scolor grad pat)
@@ -86,7 +89,7 @@
     ""
     SF-TEXT		"Text"		"Skywriting"
     SF-ADJUSTMENT	"Font size"	'(200 2 1000 1 10 0 0)
-    SF-FONT		"Font"		"Roboto Heavy"
+    SF-FONT		"Font"		sffont
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
