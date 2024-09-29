@@ -54,6 +54,10 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 (cond ((not (defined? 'gimp-text-get-extents-fontname)) (define (gimp-text-get-extents-fontname efn1 efn2 PIXELS efn3) (gimp-text-get-extents-font efn1 efn2 efn3))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTBookmann Bold")
+  (define sffont "QTBookmann-Bold"))
+
 
 (define (
 				script-fu-sweet-candy-text299mod
@@ -701,7 +705,7 @@
 	""
 	SF-COLOR "Couleur du fond / Background color " '(255 255 255)
 	SF-TEXT "Texte / Text " "Sweet Candy"
-	SF-FONT "Police / Font " "URW Bookman Semi-Bold Italic" ; Serif Bold Italic
+	SF-FONT "Police / Font " sffont ;"URW Bookman Semi-Bold Italic" ; Serif Bold Italic
 	SF-ADJUSTMENT "Taille Police / Font Size [pixels] " '(300 12 480 1 10 0 1) 
 			                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 1)
