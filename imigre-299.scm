@@ -20,6 +20,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTSchoolCentury Bold")
+  (define sffont "QTSchoolCentury-Bold"))
+  
 (define (script-fu-imigre299-gunya2 text text-color frame-color font font-size frame-size)
   (let* (
         (img (car (gimp-image-new 256 256 RGB)))
@@ -106,7 +110,7 @@
   SF-TEXT     _"Text"               "GIMP 2.99"
   SF-COLOR      _"Text color"         "red"
   SF-COLOR      _"Frame color"        '(0 34 255)
-  SF-FONT       _"Font"               "Serif Bold"
+  SF-FONT       _"Font"               sffont
   SF-ADJUSTMENT _"Font size (pixels)" '(100 2 1000 1 10 0 1)
   SF-ADJUSTMENT _"Frame size"         '(2 1 20 1 5 0 1)
 )
