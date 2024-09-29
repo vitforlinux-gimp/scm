@@ -16,7 +16,9 @@
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (define sffont "QTBodiniPoster Italic")
+  (define sffont "QTBodiniPoster-Italic"))
 
 
 (define (script-fu-old-style-logo-299 text size font justification letter-spacing line-spacing text-color  use-second-col? text-color2 use-gradient?  text-gradient cut-color bg-color second 45deg worn shadow vignette conserve)
@@ -239,7 +241,7 @@
 		    ""
 		    SF-TEXT   "Text String"      "Old Style\nLogo"
 		    SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 10 0 0)
-		    SF-FONT     "Font"             "serif bold italic"
+		    SF-FONT     "Font"            sffont
 			SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 			SF-ADJUSTMENT _"Letter Spacing"        '(5 -50 50 1 5 0 0)
                     SF-ADJUSTMENT _"Line Spacing"          '(0 -300 300 1 10 0 0)
