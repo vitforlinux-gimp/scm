@@ -33,6 +33,8 @@
 (gimp-context-push)
    (gimp-image-undo-group-start image)
    		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
+		      (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics FALSE))
+(gimp-context-set-dynamics "Pressure Opacity")
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (gimp-context-set-brush (car  brush)) 
   (gimp-context-set-brush   brush)	)
