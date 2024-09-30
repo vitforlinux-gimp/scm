@@ -207,8 +207,11 @@
 (gimp-image-remove-layer image bkg-layer)
 	
 ;;;;create the shadow		
-	(gimp-image-remove-channel image img-channel)
-	(gimp-image-merge-down image img-layer 0)
+	;(gimp-image-remove-channel image img-channel)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(begin)		
+(gimp-image-merge-down image img-layer 0))
+
 	
 	(gimp-image-undo-group-end image)
 	(gimp-context-pop)
@@ -631,7 +634,7 @@
                     SF-ADJUSTMENT _"Shadow Offset X"      '(-6 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Offset Y"      '(4 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Opacity"       '(25 0 100 1 1 0 0)
-                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined 2.99 only")
+                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined")
                     SF-PATTERN    _"Added Effect Pattern" "Bricks"
                     SF-ADJUSTMENT _"Added Effect Depth"   '(7 0 50 1 1 0 0))
 
@@ -922,7 +925,7 @@
                     SF-ADJUSTMENT _"Shadow Offset X"      '(-6 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Offset Y"      '(4 -99 99 1 1 0 0)
                     SF-ADJUSTMENT _"Shadow Opacity"       '(50 0 100 1 1 0 0)
-                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined 2.99 only")
+                    SF-OPTION     _"Added Effect"         '("None" "Bump With Pattern" "Simple Gloss Layer" "Translucent/Glass Layer" "Double Bevel" "Double Stroke" "Cubism on Fill" "Oilify on Fill" "Plasma on fill" "Glitter on fill" "Shined")
                     SF-PATTERN    _"Added Effect Pattern" "Bricks"
                     SF-ADJUSTMENT _"Added Effect Depth"   '(7 0 50 1 1 0 0)
 		     SF-ADJUSTMENT  "Buffer amount" '(10 0 100 1 10 1 0) ;a slider
