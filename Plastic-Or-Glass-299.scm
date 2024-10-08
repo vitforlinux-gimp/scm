@@ -56,7 +56,7 @@
 				(gimp-selection-none img)
 			))
 ;scaled pattern fill procedure
-(define (scaled-pattern-fill image drawable pattern scale)
+(define (scaled-pattern-fill image drawable pattern scale seam)
   (let* (
 	      (width (car (gimp-pattern-get-info pattern)))
           (height (cadr (gimp-pattern-get-info pattern)))
@@ -70,7 +70,8 @@
 	(gimp-drawable-fill pat-layer FILL-PATTERN)
 	(gimp-image-scale pat-img new-width new-height)
 	(plug-in-unsharp-mask 1 pat-img pat-layer 5 .5 0)
-	;(plug-in-make-seamless 1 pat-img pat-layer)
+	(if (= seam 1)
+	(plug-in-make-seamless 1 pat-img pat-layer))
 	(gimp-edit-copy-visible pat-img)
 	;(gimp-context-set-pattern (caadr (gimp-patterns-list "")))
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
@@ -87,6 +88,7 @@
                                       color
 				      pattern
 				      pattern-scale
+				      seam
                                       font-in 
                                       font-size
 				      								 justification
@@ -101,6 +103,7 @@
 									  bkg-type 
                                       bkg-pattern
 				      bkg-pattern-scale
+				      bkg-seam
                                       bkg-color
 							          gradient
 							          gradient-type-in
@@ -230,7 +233,7 @@
 	(if (= bkg-type 1) 
 	(begin
 	;(gimp-drawable-fill bkg-layer FILL-PATTERN)
-	(scaled-pattern-fill image bkg-layer bkg-pattern bkg-pattern-scale)
+	(scaled-pattern-fill image bkg-layer bkg-pattern bkg-pattern-scale bkg-seam)
 	;(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_pattern" "_" pattern))
 	))		
     (if (= bkg-type 2) 
@@ -339,12 +342,12 @@
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	)
 	((= col-pat 2) 
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	(gimp-context-set-paint-mode LAYER-MODE-LIGHTEN-ONLY-LEGACY  )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
@@ -352,7 +355,7 @@
 	((= col-pat 3) 
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	(gimp-context-set-paint-mode LAYER-MODE-OVERLAY  )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
@@ -360,7 +363,7 @@
 	((= col-pat 4) 
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	(gimp-context-set-paint-mode LAYER-MODE-MULTIPLY-LEGACY )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
@@ -368,7 +371,7 @@
 	((= col-pat 5) 
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	(gimp-drawable-desaturate tint-layer DESATURATE-LIGHTNESS)
 	(gimp-context-set-paint-mode LAYER-MODE-LIGHTEN-ONLY-LEGACY  )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
@@ -377,7 +380,7 @@
 	((= col-pat 6) 
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	(gimp-drawable-desaturate tint-layer DESATURATE-LIGHTNESS)
 	(gimp-context-set-paint-mode LAYER-MODE-OVERLAY  )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
@@ -386,7 +389,7 @@
 	((= col-pat 7) 
 	;(gimp-context-set-pattern pattern)
 	;(gimp-drawable-edit-fill tint-layer FILL-PATTERN)
-	(scaled-pattern-fill image tint-layer pattern pattern-scale)
+	(scaled-pattern-fill image tint-layer pattern pattern-scale seam)
 	(gimp-drawable-desaturate tint-layer DESATURATE-LIGHTNESS)
 	(gimp-context-set-paint-mode LAYER-MODE-MULTIPLY-LEGACY )
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
@@ -442,6 +445,7 @@
   SF-COLOR      "Text Color"         '(0 0 255)
   SF-PATTERN		"Text Pattern"				"Burlwood"
       SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
+      SF-TOGGLE     "Seamless"   FALSE
   SF-FONT       "Font"            sffont
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
@@ -456,6 +460,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
   SF-OPTION     "Background Type" '( "None" "Pattern" "Color" "Gradient" "Random Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
     SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
+    SF-TOGGLE     "Seamless"   FALSE
   SF-COLOR      "Background color"         '(153 153 153)
   SF-GRADIENT   "Background Gradient" "Burning Transparency"
   SF-OPTION     "Gradient Shape if Bkg-type=gradient" '("GRADIENT-SHAPEBURST-ANGULAR" "GRADIENT-SHAPEBURST-SPHERICAL" "GRADIENT-SHAPEBURST-DIMPLED")
@@ -471,11 +476,13 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 			       color
 			       pattern
 			       pattern-scale
+			       seam
 							   Material
 							   opacity
 							   bkg-type 
                                bkg-pattern
 			       bkg-pattern-scale
+			       bkg-seam
                                bkg-color
 							   gradient
 							   gradient-type-in
@@ -561,7 +568,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(if (= bkg-type 1) 
 	(begin
 	;(gimp-drawable-fill bkg-layer FILL-PATTERN)
-	(scaled-pattern-fill image bkg-layer bkg-pattern bkg-pattern-scale)
+	(scaled-pattern-fill image bkg-layer bkg-pattern bkg-pattern-scale bkg-seam)
 	;(gimp-item-set-name bkg-layer (string-append (car (gimp-item-get-name bkg-layer)) "_pattern" "_" pattern))
 	))		
     (if (= bkg-type 2) 
@@ -730,7 +737,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(set! text-layer (car (gimp-image-merge-down image tint-layer EXPAND-AS-NECESSARY)))
 	(gimp-drawable-hue-saturation text-layer 0 0 0 26 50)
 	(gimp-image-remove-layer image bump-layer)))
-	(if (= drop-shadow TRUE) (script-fu-drop-shadow image text-layer 8 8 15 '(0 0 0) (- opacity 20) TRUE))
+	(if (= drop-shadow TRUE) (apply-drop-shadow image text-layer 8 8 15 '(0 0 0) (- opacity 20) TRUE))
     (gimp-image-select-item image 2 selection-channel)	
 	
 	(if (= conserve FALSE) (begin
@@ -765,11 +772,13 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
   SF-COLOR      "Tint Color"         '(0 0 255)
   SF-PATTERN		"Tint Pattern"				"Burlwood"
       SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
+      SF-TOGGLE     "Seamless"   FALSE
   SF-OPTION "Material Type" '("Plastic" "Glass")
   SF-ADJUSTMENT "Opacity" '(100 20 100 1 1 1 0)
   SF-OPTION     "Background Type" '( "None" "Pattern" "Color" "Gradient" "Random Gradient")
   SF-PATTERN    "Pattern"            "Pink Marble"
     SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
+    SF-TOGGLE     "Seamless"   FALSE
   SF-COLOR      "Background color"         '(153 153 153)
   SF-GRADIENT   "Background Gradient" "Burning Transparency"
   SF-OPTION     "Gradient Shape if Bkg-type=gradient" '("GRADIENT-SHAPEBURST-ANGULAR" "GRADIENT-SHAPEBURST-SPHERICAL" "GRADIENT-SHAPEBURST-DIMPLED")
