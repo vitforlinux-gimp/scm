@@ -187,6 +187,10 @@
 	(gimp-image-select-item image 2 text-layer)
  ))
  (gimp-image-resize-to-layers image)
+     (set! width (car (gimp-drawable-get-width text-layer)))
+    (set! height (car (gimp-drawable-get-height text-layer))) 
+         (set! final-width (car (gimp-drawable-get-width text-layer)))
+         (set! final-height (car (gimp-drawable-get-height text-layer)))    
  ;;;;text modify
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
@@ -449,7 +453,7 @@
   SF-FONT       "Font"            sffont
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
-SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 1)
+SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 150 1 5 0 1)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 1)
 SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
