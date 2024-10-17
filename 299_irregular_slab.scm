@@ -64,14 +64,16 @@
 (set! theText (car (gimp-text-fontname theImage theTextLayer 0 0 inText (+ 50 inBufferAmount) TRUE inFontSize PIXELS inFont)))
 
 ;2.4â¸ïœtheImageWidthzÅAtheImageHeightz
-          (set! theImageWidthz  (car (gimp-drawable-get-width  theText) ) )
-          (set! theImageHeightz (car (gimp-drawable-get-height theText) ) )
+         ; (set! theImageWidthz  (car (gimp-drawable-get-width  theText) ) )
+         ; (set! theImageHeightz (car (gimp-drawable-get-height theText) ) )
 	      (gimp-text-layer-set-letter-spacing theText letter-spacing)  ; Set Letter Spacing
    (gimp-text-layer-set-justification theText justification) ; Text Justification (Rev Value) 
-   (gimp-text-layer-set-line-spacing theText line-spacing)      ; Set Line Spacing    
+   (gimp-text-layer-set-line-spacing theText line-spacing)      ; Set Line Spacing  
+          (set! theImageWidthz  (car (gimp-drawable-get-width  theText) ) )
+          (set! theImageHeightz (car (gimp-drawable-get-height theText) ) )   
 
           (gimp-image-resize theImage theImageWidthz theImageHeightz 0 0)
-          (gimp-layer-resize theTextLayer theImageWidthz theImageHeightz 0 0)
+          ;(gimp-layer-resize theTextLayer theImageWidthz theImageHeightz 0 0)
           (gimp-floating-sel-anchor theText)
 	  (gimp-display-new theImage)
 	  (script-fu-chris-irregular-slab theImage theTextLayer inFontSize tcolor tgrad ttexture inDistressText inDistressSlab inGilt inTextColor inTextOpacity inBufferAmount inFollowShape inWoodLook btype inBGColor bgrad bpat)
@@ -98,7 +100,7 @@
     SF-FONT        "Font" "QTCaligulatype"
     SF-ADJUSTMENT _"Font Size(px)"   '(120 2 1000 1 2 0 1)
     SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
-    SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
+    SF-ADJUSTMENT  "Letter Spacing"        '(0 -100 100 1 5 0 0)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
     SF-COLOR       "Text Color"      '(190 190 0)
     SF-GRADIENT    "Gradient"        "Golden"
@@ -107,8 +109,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
     SF-TOGGLE "Distress Slab?" TRUE
     SF-TOGGLE "Gilt?" TRUE
     SF-COLOR "Paint Color (not used if gilt):"   '(0 0 0)
-    SF-ADJUSTMENT _"Paint Opacity(not used if gilt)"  '(50 1 100 1 2 0 0)
-    SF-ADJUSTMENT _"Buffer Amount"                    '(20 1 150 1 2 0 0)
+    SF-ADJUSTMENT _"Paint Opacity(not used if gilt)"  '(50 1 100 1 2 0 1)
+    SF-ADJUSTMENT _"Buffer Amount"                    '(20 1 150 1 2 0 1)
     SF-TOGGLE "Follow Shape of text?" TRUE
     SF-TOGGLE "Wood Splinter Effect?" FALSE
 ;    SF-TOGGLE "Add a background?" TRUE
