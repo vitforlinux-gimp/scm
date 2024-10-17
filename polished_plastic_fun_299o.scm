@@ -52,6 +52,31 @@
 						 (gimp-context-set-gradient value)
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
 				))))
+				
+;scaled pattern fill procedure
+(define (scaled-pattern-fill image drawable pattern scale)
+  (let* (
+	      (width (car (gimp-pattern-get-info pattern)))
+          (height (cadr (gimp-pattern-get-info pattern)))
+		  (pat-img (car (gimp-image-new (* 5 width) (* 5 height) RGB)))
+		  (pat-layer (car (gimp-layer-new pat-img (* 5 width) (* 5 height) RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))
+		  (new-width (* (/ (* 5 width) 100) scale))
+		  (new-height (* (/ (* 5 height) 100) scale))
+		  )
+	(gimp-image-insert-layer pat-img pat-layer 0 0)
+	(gimp-context-set-pattern pattern)
+	(gimp-drawable-fill pat-layer FILL-PATTERN)
+	(gimp-image-scale pat-img new-width new-height)
+	(plug-in-unsharp-mask 1 pat-img pat-layer 5 .5 0)
+	;(plug-in-make-seamless 1 pat-img pat-layer)
+	(gimp-edit-copy-visible pat-img)
+	;(gimp-context-set-pattern (caadr (gimp-patterns-list "")))
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+		(gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0))
+			(gimp-context-set-pattern (car (gimp-pattern-get-by-name (list-ref (car (gimp-patterns-get-list "")) 0))))
+	)
+	(gimp-image-delete pat-img))
+	(gimp-drawable-edit-fill drawable FILL-PATTERN))
 
 
 (define (fun-util-image-resize-from-layer image layer)
@@ -80,9 +105,11 @@
 			))
 			
 			
-		(define (material-pattern pattern fond) (begin
-				(gimp-context-set-pattern pattern)
-				(gimp-drawable-fill fond FILL-PATTERN)
+		(define (material-pattern image pattern fond scale) (begin
+				;(gimp-context-set-pattern pattern)
+				;(gimp-drawable-fill fond FILL-PATTERN)
+					(scaled-pattern-fill image fond pattern scale)
+
 			))
 		(define (material-gradient fond image gradient gradient-type direction reverse fond-color)  			(begin
 		        (define width (car (gimp-drawable-get-width fond)))
@@ -641,7 +668,7 @@
 		(define  (effect-ripple fond image) (begin
 				(plug-in-ripple 1 image fond 100 5 1 0 1 TRUE FALSE)               ; Add ripple effect
 			))
-		(define  (effect-bump-pattern fond image pattern)  (begin
+		(define  (effect-bump-pattern fond image pattern scale)  (begin
 
       ;  (set! effect-layer (car (gimp-layer-new-from-drawable fond image))) ; New effect Layer
        ; (gimp-image-insert-layer image effect-layer 0 3) ; Add it to image
@@ -649,8 +676,13 @@
 
 
         (define bump-layer (car (gimp-layer-new-from-drawable fond image))) ; New patten layer
+	(gimp-image-insert-layer image bump-layer 0 -1)
         (gimp-context-set-pattern pattern)                             ; Make bump pattern active         
-        (gimp-drawable-fill bump-layer FILL-PATTERN)                                     ; Fill with pattern
+        ;(gimp-drawable-fill bump-layer FILL-PATTERN)                                     ; Fill with pattern
+						;(scaled-pattern-fill image bump-layer pattern scale)
+						(material-pattern image pattern bump-layer scale)
+						
+
 ;
 ; Call bump map procedure (pattern bump)
 ;
@@ -669,6 +701,7 @@
                      TRUE           ; Compensate for darkening
                      FALSE          ; Invert bumpmap
                     0)        ; Type of map (0=linear, 1=spherical, 2=sinusoidal)
+		    (gimp-image-remove-layer image bump-layer)
       ))
 	(define  (effect-desat-chrome fond image) (begin
 				(gimp-drawable-desaturate fond 4 )
@@ -741,6 +774,7 @@
 		color
 		color2
 		pattern
+		pattern-scale
 		gradient
 		gradient-type
 		direction
@@ -751,6 +785,7 @@
 		fond-color
 		fond-color2
                 back-pattern
+		back-pattern-scale
 		back-gradient
 		 back-gradient-type
 		 blendir
@@ -800,7 +835,7 @@
 			;)
 		)
 	(if (= backtype 1) 
-				(material-pattern back-pattern fond)			
+				(material-pattern img back-pattern fond back-pattern-scale)			
 		)
 		(if (= backtype 2) ;START gradient
 	(material-gradient fond img back-gradient back-gradient-type blendir back-grad-rev fond-color))
@@ -925,7 +960,7 @@
 		(effect-ripple fond img)               ; Add ripple effect
 		)
 		(if (= effect-back 5) 
-		(effect-bump-pattern fond img back-pattern); Bump gradient
+		(effect-bump-pattern fond img back-pattern back-pattern-scale); Bump gradient
 		)
 		(if (= effect-back 6)
 		(effect-desat-chrome fond img)
@@ -968,7 +1003,7 @@
 			(material-color color basetext)
 		)
 		(if (= type 1) 
-			(material-pattern pattern basetext)
+			(material-pattern img pattern basetext pattern-scale)
 		)
 		(if (= type 2) ;QUESTO
 (material-gradient basetext img gradient gradient-type direction grad-rev color)
@@ -1231,7 +1266,7 @@
 		)
 		
 		 (if (= effect-fill 5)
-		(effect-bump-pattern basetext img pattern); Bump gradient
+		(effect-bump-pattern basetext img pattern pattern-scale); Bump gradient
   		  ) ; end
 		 (if (= effect-fill 6)
 		  (effect-desat-chrome basetext img)
@@ -1313,6 +1348,7 @@
 		color
 		color2
 		pattern
+		pattern-scale
 		gradient
 		gradient-type
 		direction
@@ -1323,6 +1359,7 @@
 		fond-color
 		fond-color2
                 back-pattern
+		back-pattern-scale
 		back-gradient
 									          back-gradient-type
 							          blendir
@@ -1334,14 +1371,14 @@
 	(begin
 		(gimp-image-undo-disable img)
 		(gimp-layer-resize-to-image-size text-layer)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction grad-rev backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir back-grad-rev vignette vignette-color applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern pattern-scale gradient gradient-type direction grad-rev backtype effect-back fond-color fond-color2 back-pattern back-pattern-scale back-gradient back-gradient-type blendir back-grad-rev vignette vignette-color applyMasks)
 		(gimp-image-undo-enable img)
 		(gimp-displays-flush)
 	)
 )
 
 
-
+				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 (script-fu-register 	
 	"script-fu-plastic-logo299o-alpha"
 	"Polished Plastic Fun 299o ALPHA..."
@@ -1364,6 +1401,7 @@
 	SF-COLOR		"Fill Color"			'(255 0 255)
 	SF-COLOR      "Fill Color  2 sometimes"         "White"
 	SF-PATTERN		"Fill Pattern"		"Warning!"
+	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
 	SF-GRADIENT		"Fill Gradient"		"Golden"
 	SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
 	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
@@ -1374,6 +1412,7 @@
     SF-COLOR      "Back Color"         "White"
     SF-COLOR      "Back Color 2 sometimes"         '(255 0 255)
   SF-PATTERN    "Back Pattern"            "Pink Marble"
+  SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
   SF-GRADIENT   "Back Gradient" "Abstract 3"
     SF-ENUM "Back  Gradient Mode" '("GradientType" "gradient-linear")
   SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
@@ -1382,7 +1421,49 @@
   	SF-COLOR		"Vignette Color"	'(0 0 0)
   SF-TOGGLE  "Apply Masks"    TRUE
 )
-
+(script-fu-register 	
+	"script-fu-plastic-logo299o-alpha"
+	"Polished Plastic Fun 299o ALPHA..."
+	"Create a polished plastic logo alpha object"
+	"Denis Bodor <lefinnois@lefinnois.net>"
+	"Denis Bodor"
+	"03/31/2005"
+	""
+	SF-IMAGE		"Image"			0
+	SF-DRAWABLE		"Drawable"		0
+	SF-COLOR		"Border Color"	'(0 0 0)
+	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 1)
+	SF-COLOR		"Refl Color"	'(255 255 255)
+	SF-ADJUSTMENT "Refl Opacity" '(70 0 100 1 1 0 1)
+	SF-OPTION  	"Refl Direction"    '("Up" "Down")
+	SF-COLOR		"Shadow Color"	'(50 50 50)
+	SF-OPTION		"Fill with"		list-fill-ppf-dir
+	SF-OPTION  	"Fill Effect"    list-effect-ppf-dir
+	SF-ADJUSTMENT "Fill Opacity" '(100 0 100 1 1 0 1)
+	SF-COLOR		"Fill Color"			'(255 0 255)
+	SF-COLOR      "Fill Color  2 sometimes"         "White"
+	SF-PATTERN		"Fill Pattern"		"Warning!"
+	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
+	SF-GRADIENT		"Fill Gradient"		"Golden"
+	SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
+	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
+	SF-TOGGLE  "Gradient reverse"    FALSE
+	;SF-TOGGLE  "Ripple"    FALSE
+					 SF-OPTION "Background Type" list-fill-ppf-dir
+	SF-OPTION  	"Back Effect"    list-effect-ppf-dir
+    SF-COLOR      "Back Color"         "White"
+    SF-COLOR      "Back Color 2 sometimes"         '(255 0 255)
+  SF-PATTERN    "Back Pattern"            "Pink Marble"
+  SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
+  SF-GRADIENT   "Back Gradient" "Abstract 3"
+    SF-ENUM "Back  Gradient Mode" '("GradientType" "gradient-linear")
+  SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
+  SF-TOGGLE  "Back Gradient reverse"    FALSE
+  SF-TOGGLE  "Apply Vignette"    FALSE
+  	SF-COLOR		"Vignette Color"	'(0 0 0)
+  SF-TOGGLE  "Apply Masks"    TRUE
+)
+)
 (script-fu-menu-register 
 	"script-fu-plastic-logo299o-alpha"
 	"<Image>/Filters/Alpha to Logo"
@@ -1414,6 +1495,7 @@
 		color
 		color2
 		pattern
+		pattern-scale
 		gradient
 		gradient-type
 		direction
@@ -1424,6 +1506,7 @@
 		     fond-color
 		     fond-color2
                 back-pattern
+		back-pattern-scale
 		back-gradient
 											          back-gradient-type
 							          blendir
@@ -1497,7 +1580,7 @@
 
 		(gimp-image-undo-disable img)
 		(gimp-item-set-name text-layer text)
-		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern gradient gradient-type direction grad-rev backtype effect-back fond-color fond-color2 back-pattern back-gradient back-gradient-type blendir back-grad-rev vignette vignette-color applyMasks)
+		(apply-plastic-logo-effect-299o img text-layer border-color border-size refl-color refl-opacity refl-dir shadow-color type effect-fill opacity color color2 pattern pattern-scale gradient gradient-type direction grad-rev backtype effect-back fond-color fond-color2 back-pattern back-pattern-scale back-gradient back-gradient-type blendir back-grad-rev vignette vignette-color applyMasks)
 
 		;(plug-in-waves 1 img text-layer 100 180 50 0 FALSE)
 		(gimp-image-undo-enable img)
@@ -1505,7 +1588,7 @@
     )
 )
 
-
+				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 (script-fu-register
 	"script-fu-plastic-logo299o"
 	"Polished Plastic Fun 299o LOGO"
@@ -1536,6 +1619,7 @@
 	SF-COLOR		"Fill Color"					'(255 0 255)
 	SF-COLOR      "Fill Color  2 sometimes"         "White"
 	SF-PATTERN		"Fill Pattern"				"Warning!"
+	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
 	SF-GRADIENT		"Fill Gradient"				"Golden"
 	 SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
 	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
@@ -1546,6 +1630,7 @@
 	SF-COLOR      "Back Color"         "White"
 	SF-COLOR      "Back Color 2 sometimes"         '(255 0 255)
 	SF-PATTERN    "Back Pattern"            "Pink Marble"
+	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
 	SF-GRADIENT   "Back Gradient" "Abstract 3"
 	  SF-ENUM "Back Gradient Mode" '("GradientType" "gradient-linear")
   SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
@@ -1555,7 +1640,58 @@
     SF-TOGGLE  "Apply Masks"    TRUE
 
 ) 
+(script-fu-register
+	"script-fu-plastic-logo299o"
+	"Polished Plastic Fun 299o LOGO"
+	"Create a polished plastic logo"
+	"Denis Bodor <lefinnois@lefinnois.net>"
+	"Denis Bodor"
+	"03/31/2005"
+	""
+	SF-FONT			"Font Name"				"QTBlimpo"
+		SF-ADJUSTMENT	"Font size (pixels)"	'(150 2 1000 1 10 0 1)
+	SF-TEXT		"Enter your text"		"PLASTIC FUN"
+	SF-OPTION "Justify" '("Centered" "Left" "Right")
+	SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
+	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
+	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
+	SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
+		SF-OPTION "Text deformation" '("None" "Corrugated" "Wave" "Electrized" "Rounded" "Right" )
+	SF-ADJUSTMENT _"Buffer"          '(1 1 20 1 10 0 1)
+	SF-COLOR		"Border Color"			'(0 0 0)
+	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 1)
+	SF-COLOR		"Refl Color"	'(255 255 255)
+	SF-ADJUSTMENT "Refl Opacity" '(70 0 100 1 1 0 1)
+	SF-OPTION  	"Refl Direction"    '("Up" "Down")
+	SF-COLOR		"Shadow Color"	'(50 50 50)
+	SF-OPTION		"Fill with"				list-fill-ppf-dir
+	SF-OPTION  	"Fill Effect"    list-effect-ppf-dir
+	SF-ADJUSTMENT "Fill Opacity" '(100 0 100 1 1 0 1)
+	SF-COLOR		"Fill Color"					'(255 0 255)
+	SF-COLOR      "Fill Color  2 sometimes"         "White"
+	SF-PATTERN		"Fill Pattern"				"Warning!"
+	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
+	SF-GRADIENT		"Fill Gradient"				"Golden"
+	 SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
+	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
+	SF-TOGGLE  "Gradient Reverse"    FALSE
+	;SF-TOGGLE  "Fill Ripple"    FALSE
+	SF-OPTION 		"Back Type" list-fill-ppf-dir
+	SF-OPTION  	"Back Effect"    list-effect-ppf-dir
+	SF-COLOR      "Back Color"         "White"
+	SF-COLOR      "Back Color 2 sometimes"         '(255 0 255)
+	SF-PATTERN    "Back Pattern"            "Pink Marble"
+	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
+	SF-GRADIENT   "Back Gradient" "Abstract 3"
+	  SF-ENUM "Back Gradient Mode" '("GradientType" "gradient-linear")
+  SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
+  	SF-TOGGLE  "Back Gradient Reverse"    FALSE
+    SF-TOGGLE  "Apply Vignette"    FALSE
+    	SF-COLOR		"Vignette Color"			'(0 0 0)
+    SF-TOGGLE  "Apply Masks"    TRUE
 
+) 
+)
 (script-fu-menu-register
 	"script-fu-plastic-logo299o"
 	; "<Toolbox>/Xtns/Logos"
