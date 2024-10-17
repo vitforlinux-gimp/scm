@@ -339,22 +339,22 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
                           inFont)
                       ))
         )
-      (set! theImageWidth   (car (gimp-drawable-get-width  theText) ) )
-      (set! theImageHeight  (car (gimp-drawable-get-height theText) ) )
-      (set! theBuffer (* theImageHeight (/ inBufferAmount 100) ) )
-      (set! theImageHeight (+ theImageHeight theBuffer theBuffer) )
-      (set! theImageWidth (+ theImageWidth theBuffer theBuffer) )
+     ; (set! theImageWidth   (car (gimp-drawable-get-width  theText) ) )
+      ;(set! theImageHeight  (car (gimp-drawable-get-height theText) ) )
+      ;(set! theBuffer (* theImageHeight (/ inBufferAmount 100) ) )
+      ;(set! theImageHeight (+ theImageHeight theBuffer theBuffer) )
+      ;(set! theImageWidth (+ theImageWidth theBuffer theBuffer) )
       ;;;;centre text on line
 	;(gimp-text-layer-set-justification theText 2)
 	      (gimp-text-layer-set-letter-spacing theText letter-spacing)  ; Set Letter Spacing
    (gimp-text-layer-set-justification theText justification) ; Text Justification (Rev Value) 
    (gimp-text-layer-set-line-spacing theText line-spacing)      ; Set Line Spacing   
-      (gimp-image-resize theImage theImageWidth theImageHeight 0 0)
-      (gimp-layer-resize theLayer theImageWidth theImageHeight 0 0)
+     ; (gimp-image-resize theImage theImageWidth theImageHeight 0 0)
+      ;(gimp-layer-resize theLayer theImageWidth theImageHeight 0 0)
 
 
 
-      (gimp-layer-set-offsets theText theBuffer theBuffer)
+     ; (gimp-layer-set-offsets theText theBuffer theBuffer)
       (gimp-floating-sel-to-layer theText)
 ;;;; shrink grow text
 (cond ((> grow-text 0)
@@ -384,7 +384,16 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	(gimp-drawable-edit-clear theText)
 	(gimp-image-select-item theImage 2 theText)
  ))
-      (gimp-layer-resize-to-image-size theText)
+     ; (gimp-layer-resize-to-image-size theText)
+     ;(gimp-image-resize-to-layers theImage)
+           (set! theImageWidth   (car (gimp-drawable-get-width  theText) ) )
+      (set! theImageHeight  (car (gimp-drawable-get-height theText) ) )
+      (set! theBuffer (* theImageHeight (/ inBufferAmount 100) ) )
+      (set! theImageHeight (+ theImageHeight theBuffer theBuffer) )
+      (set! theImageWidth (+ theImageWidth theBuffer theBuffer) )
+      (gimp-layer-set-offsets theText theBuffer theBuffer)
+            (gimp-image-resize theImage theImageWidth theImageHeight 0 0)
+      (gimp-layer-resize theLayer theImageWidth theImageHeight 0 0)
       (gimp-display-new theImage)
                   (script-fu-double-bump-map theImage theText 
               color
