@@ -300,6 +300,9 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 	(gimp-drawable-edit-clear text-layer)
 	(gimp-image-select-item img 2 text-layer)
  ))
+ 
+
+          (gimp-image-resize img (car (gimp-drawable-get-width  text-layer) ) (car (gimp-drawable-get-height text-layer) ) 0 0)
 (gimp-selection-none img)
     (gimp-layer-set-lock-alpha text-layer TRUE)
     (gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
