@@ -1378,7 +1378,6 @@
 )
 
 
-				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 (script-fu-register 	
 	"script-fu-plastic-logo299o-alpha"
 	"Polished Plastic Fun 299o ALPHA..."
@@ -1421,49 +1420,7 @@
   	SF-COLOR		"Vignette Color"	'(0 0 0)
   SF-TOGGLE  "Apply Masks"    TRUE
 )
-(script-fu-register 	
-	"script-fu-plastic-logo299o-alpha"
-	"Polished Plastic Fun 299o ALPHA..."
-	"Create a polished plastic logo alpha object"
-	"Denis Bodor <lefinnois@lefinnois.net>"
-	"Denis Bodor"
-	"03/31/2005"
-	""
-	SF-IMAGE		"Image"			0
-	SF-DRAWABLE		"Drawable"		0
-	SF-COLOR		"Border Color"	'(0 0 0)
-	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 1)
-	SF-COLOR		"Refl Color"	'(255 255 255)
-	SF-ADJUSTMENT "Refl Opacity" '(70 0 100 1 1 0 1)
-	SF-OPTION  	"Refl Direction"    '("Up" "Down")
-	SF-COLOR		"Shadow Color"	'(50 50 50)
-	SF-OPTION		"Fill with"		list-fill-ppf-dir
-	SF-OPTION  	"Fill Effect"    list-effect-ppf-dir
-	SF-ADJUSTMENT "Fill Opacity" '(100 0 100 1 1 0 1)
-	SF-COLOR		"Fill Color"			'(255 0 255)
-	SF-COLOR      "Fill Color  2 sometimes"         "White"
-	SF-PATTERN		"Fill Pattern"		"Warning!"
-	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
-	SF-GRADIENT		"Fill Gradient"		"Golden"
-	SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
-	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
-	SF-TOGGLE  "Gradient reverse"    FALSE
-	;SF-TOGGLE  "Ripple"    FALSE
-					 SF-OPTION "Background Type" list-fill-ppf-dir
-	SF-OPTION  	"Back Effect"    list-effect-ppf-dir
-    SF-COLOR      "Back Color"         "White"
-    SF-COLOR      "Back Color 2 sometimes"         '(255 0 255)
-  SF-PATTERN    "Back Pattern"            "Pink Marble"
-  SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
-  SF-GRADIENT   "Back Gradient" "Abstract 3"
-    SF-ENUM "Back  Gradient Mode" '("GradientType" "gradient-linear")
-  SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
-  SF-TOGGLE  "Back Gradient reverse"    FALSE
-  SF-TOGGLE  "Apply Vignette"    FALSE
-  	SF-COLOR		"Vignette Color"	'(0 0 0)
-  SF-TOGGLE  "Apply Masks"    TRUE
-)
-)
+
 (script-fu-menu-register 
 	"script-fu-plastic-logo299o-alpha"
 	"<Image>/Filters/Alpha to Logo"
@@ -1588,7 +1545,6 @@
     )
 )
 
-				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 (script-fu-register
 	"script-fu-plastic-logo299o"
 	"Polished Plastic Fun 299o LOGO"
@@ -1640,58 +1596,7 @@
     SF-TOGGLE  "Apply Masks"    TRUE
 
 ) 
-(script-fu-register
-	"script-fu-plastic-logo299o"
-	"Polished Plastic Fun 299o LOGO"
-	"Create a polished plastic logo"
-	"Denis Bodor <lefinnois@lefinnois.net>"
-	"Denis Bodor"
-	"03/31/2005"
-	""
-	SF-FONT			"Font Name"				"QTBlimpo"
-		SF-ADJUSTMENT	"Font size (pixels)"	'(150 2 1000 1 10 0 1)
-	SF-TEXT		"Enter your text"		"PLASTIC FUN"
-	SF-OPTION "Justify" '("Centered" "Left" "Right")
-	SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
-	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
-	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
-	SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
-		SF-OPTION "Text deformation" '("None" "Corrugated" "Wave" "Electrized" "Rounded" "Right" )
-	SF-ADJUSTMENT _"Buffer"          '(1 1 20 1 10 0 1)
-	SF-COLOR		"Border Color"			'(0 0 0)
-	SF-ADJUSTMENT "Border size" '(2 0 12 1 1 0 1)
-	SF-COLOR		"Refl Color"	'(255 255 255)
-	SF-ADJUSTMENT "Refl Opacity" '(70 0 100 1 1 0 1)
-	SF-OPTION  	"Refl Direction"    '("Up" "Down")
-	SF-COLOR		"Shadow Color"	'(50 50 50)
-	SF-OPTION		"Fill with"				list-fill-ppf-dir
-	SF-OPTION  	"Fill Effect"    list-effect-ppf-dir
-	SF-ADJUSTMENT "Fill Opacity" '(100 0 100 1 1 0 1)
-	SF-COLOR		"Fill Color"					'(255 0 255)
-	SF-COLOR      "Fill Color  2 sometimes"         "White"
-	SF-PATTERN		"Fill Pattern"				"Warning!"
-	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
-	SF-GRADIENT		"Fill Gradient"				"Golden"
-	 SF-ENUM "Fill Gradient Mode" '("GradientType" "gradient-linear")
-	SF-OPTION		"Fill gradient Direction" 		list-blend-ppf-dir
-	SF-TOGGLE  "Gradient Reverse"    FALSE
-	;SF-TOGGLE  "Fill Ripple"    FALSE
-	SF-OPTION 		"Back Type" list-fill-ppf-dir
-	SF-OPTION  	"Back Effect"    list-effect-ppf-dir
-	SF-COLOR      "Back Color"         "White"
-	SF-COLOR      "Back Color 2 sometimes"         '(255 0 255)
-	SF-PATTERN    "Back Pattern"            "Pink Marble"
-	SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 1)
-	SF-GRADIENT   "Back Gradient" "Abstract 3"
-	  SF-ENUM "Back Gradient Mode" '("GradientType" "gradient-linear")
-  SF-OPTION		"Blend Direction" 		list-blend-ppf-dir
-  	SF-TOGGLE  "Back Gradient Reverse"    FALSE
-    SF-TOGGLE  "Apply Vignette"    FALSE
-    	SF-COLOR		"Vignette Color"			'(0 0 0)
-    SF-TOGGLE  "Apply Masks"    TRUE
 
-) 
-)
 (script-fu-menu-register
 	"script-fu-plastic-logo299o"
 	; "<Toolbox>/Xtns/Logos"
