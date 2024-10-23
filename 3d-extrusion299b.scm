@@ -157,7 +157,7 @@
        (gimp-context-set-pattern extrusion-pattern)                          ; Make overlay pattern active
        (gimp-drawable-fill pattern-overlay FILL-PATTERN)                                ; Fill with pattern
        (gimp-layer-set-mode pattern-overlay LAYER-MODE-MULTIPLY)                   ; Set overlay pattern to Multiply Mode
-       (gimp-brightness-contrast drawable -0.5 -0.5)                           ; Make drawable white So Multiply acts like Fill
+       (gimp-drawable-brightness-contrast drawable -0.5 -0.5)                           ; Make drawable white So Multiply acts like Fill
        (set! drawable (car (gimp-image-merge-down img pattern-overlay 0)))   ; Merge pattern down
 
        (gimp-image-select-item img 2 saved-selection)                                 ; Restore Selection
@@ -298,7 +298,7 @@
        (gimp-context-set-pattern extrusion-pattern)                          ; Make overlay pattern active
        (gimp-drawable-fill temp-layer FILL-PATTERN)                                     ; Fill temp layer with pattern
        (gimp-layer-set-mode temp-layer LAYER-MODE-MULTIPLY)                        ; Set temp layer to Multiply Mode
-       (gimp-brightness-contrast pattern-overlay -0.5 -0.5)                    ; Make Pattern Overlay white So Multiply acts like Fill
+       (gimp-drawable-brightness-contrast pattern-overlay -0.5 -0.5)                    ; Make Pattern Overlay white So Multiply acts like Fill
        (set! pattern-overlay (car (gimp-image-merge-down img temp-layer 0))) ; Merge temp layer down
        (gimp-layer-set-mode pattern-overlay LAYER-MODE-OVERLAY)                    ; Set overlay pattern to Overlay-Mode
 
