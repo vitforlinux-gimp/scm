@@ -332,7 +332,7 @@
        blur-radius    ; Gaussian Blur Radius 
           auto-hsv    ; Autostretch HSV Flag
          turbulent)   ; Turbulance Flag
-	(set! bkg-layer (car (gimp-image-get-active-layer image)))	 
+	;(set! bkg-layer (car (gimp-image-get-active-layer image)))	 
 	
 	;(gimp-image-set-active-layer image layer)
 	
