@@ -35,7 +35,7 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 ;Fix code for 2.10 work in 2.99.12
-(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
+;(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
@@ -136,7 +136,7 @@
 
 ;;;;create the fur	
     (script-fu-furry image layer 0 tint-color motle-color motle-size motle blur-radius FALSE TRUE)
-	(set! layer (car (gimp-image-get-active-layer image)))	
+;	(set! layer (car (gimp-image-get-active-layer image)))	
     	
 ;;;;create the background layer    
 	(if (> bkg-type 0) (begin
@@ -154,13 +154,15 @@
 
 )));; GRADIENT-LINEAR ; GRADIENT-CONICAL-SYMMETRIC
               
-    (gimp-image-set-active-layer image layer)
+    ;(gimp-image-set-active-layer image layer)
+        (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector layer)))
+(else (gimp-image-set-active-layer image layer)))
 	(gimp-layer-resize-to-image-size layer)
 	
 ;;;;tidy the layers
     (if (= conserve FALSE) (gimp-image-remove-layer image layer))
     (if (and (= conserve FALSE) (> bkg-type 0)) (set! layer (car (gimp-image-merge-visible-layers image EXPAND-AS-NECESSARY))))	
-	(gimp-item-set-name (car (gimp-image-get-active-layer image)) text)
+	;(gimp-item-set-name (car (gimp-image-get-active-layer image)) text)
     
 	(gimp-context-pop)
     (gimp-display-new image)
@@ -265,7 +267,9 @@
 	)
 ;;;;create selection-channel (gimp-image-select-item image 2 selection)    
 	(set! selection (car (gimp-selection-save image)))	
-    (gimp-image-set-active-layer image layer)	
+    ;(gimp-image-set-active-layer image layer)	
+            (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector layer)))
+(else (gimp-image-set-active-layer image layer)))
 	
 ;;;;begin the script
 ;;;;create the fur layer	
@@ -349,7 +353,9 @@
 	(if (= conserve FALSE) (begin
 	(gimp-drawable-edit-clear layer)
 	(set! layer (car (gimp-image-merge-down image fur-layer EXPAND-AS-NECESSARY)))))
-	(gimp-image-set-active-layer image layer)
+	;(gimp-image-set-active-layer image layer)
+	        (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector layer)))
+(else (gimp-image-set-active-layer image layer)))
     (gimp-item-set-name layer layer-name)
     (if (= keep-selection TRUE) (gimp-image-select-item image 2 selection))
 	(gimp-image-remove-channel image selection)
