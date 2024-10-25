@@ -48,9 +48,9 @@
 
 		;vectors/paths related variables to create our own path and select it to cut after blur
 		(get-vectors-returned-values)
-		(vectors-count)
-		(vectors-array)
-		(current-vector)
+		(vectors-count 0)
+		(vectors-array 0)
+		(current-vector 0)
 
 		(color-layer)
 		(pattern-layer)
@@ -78,7 +78,7 @@
 			(set! get-vectors-returned-values (gimp-image-get-paths image)) )
 		(set! vectors-count (car  get-vectors-returned-values))
 		(set! vectors-array (cadr get-vectors-returned-values))
-		(set! current-vector (aref vectors-array 0))      ;top path, our own created from selection
+		(set! current-vector (vector-ref vectors-array 0))      ;top path, our own created from selection
 
 		;blurs white bump map
 		(gimp-selection-none image)
