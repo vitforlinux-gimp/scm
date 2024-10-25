@@ -35,7 +35,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-;(cond ((not (defined? 'gimp-image-get-active-drawable)) (define (gimp-image-get-active-drawable image) (aref (cadr (gimp-image-get-selected-drawables image)) 0))))
+(cond ((not (defined? 'gimp-image-get-active-drawable)) (define (gimp-image-get-active-drawable image) (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))))
+
+
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfgrad "Crown molding")
@@ -59,7 +61,10 @@
 							   conserve)							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+            ;(image-layer (car (gimp-image-get-active-layer image)))
+	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(alpha (car (gimp-drawable-has-alpha image-layer)))
@@ -72,7 +77,7 @@
 			(bkg-layer 0)
         )	
 	
-	(gimp-context-push)
+	;(gimp-context-push)
 	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)	
@@ -86,7 +91,7 @@
 ;;;;create selection-channel (gimp-selection-load selection-channel)
     (gimp-selection-save image)
 	;(set! selection-channel (car (gimp-image-get-active-drawable image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! selection-channel (car (gimp-image-get-active-drawable image)))
 	)
 )	
@@ -120,7 +125,15 @@
 	(gimp-drawable-curves-spline age-layer 0 12 #(0 0 0.117647058824 0.266666666667 0.270588235294 0.2862745098 0.501960784314 0.721568627451 0.729411764706 0.737254901961 1 1))
 	(set! image-layer (car (gimp-image-merge-down image age-layer 0)))
 	(the-wrought-iron-beveller image image-layer 18 0 0 bev-w 0 0 135 30 bev-d 3 10 FALSE)
-	(set! image-layer (car (gimp-image-merge-down image (car (gimp-image-get-active-layer image)) 0)))
+	
+	;(set! image-layer (car (gimp-image-merge-down image (car (gimp-image-get-active-layer image)) 0))) ; QUI GUASTO
+	
+	(set! image-layer (car (gimp-image-merge-down image
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-image-get-active-layer image))
+	(car (list (vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))
+	))))
+	
 	(gimp-drawable-curves-spline image-layer 0 22 #(0 0 0.0823529411765 0.541176470588 0.145098039216 0.870588235294 0.2431372549 1 0.325490196078 0.901960784314 0.41568627451 0.650980392157 0.576470588235 0.341176470588 0.678431372549 0.247058823529 0.780392156863 0.352941176471 0.874509803922 0.627450980392 1 1))
 	(gimp-drawable-brightness-contrast image-layer (/ brightness 127)  (/ contrast 127))	
 	
@@ -156,7 +169,7 @@
 	
 	(gimp-displays-flush)
 	(gimp-image-undo-group-end image)
-	(gimp-context-pop)
+	;(gimp-context-pop)
 
  )
 )
@@ -218,7 +231,7 @@
 		 (bkg-layer 0)         
          )
 		 
-    (gimp-context-push)
+    ;(gimp-context-push)
 	(gimp-context-set-paint-mode 0)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
@@ -256,7 +269,7 @@
 							TRUE)  ;conserve
 							
 	;(set! bkg-layer (car (gimp-image-get-active-layer image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! bkg-layer (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! bkg-layer (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! bkg-layer (car (gimp-image-get-active-layer image)))
 	)
 )
@@ -286,7 +299,7 @@
 	(set! text-layer (car (gimp-image-merge-visible-layers image EXPAND-AS-NECESSARY)))
 	(gimp-item-set-name text-layer text)))
 
-	(gimp-context-pop)
+	;(gimp-context-pop)
 
     (gimp-display-new image)
     )
@@ -330,7 +343,10 @@
 							      keep-selection-in)							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+            ;(image-layer (car (gimp-image-get-active-layer image)))
+	    			(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(alpha (car (gimp-drawable-has-alpha image-layer)))
@@ -353,7 +369,7 @@
 			(bounds-y2 0)						
         )	
 	
-	(gimp-context-push)
+	;(gimp-context-push)
 	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-foreground '(0 0 0))
@@ -376,7 +392,7 @@
 ;;;;save the selection    
 	(gimp-selection-save image)
 	;(set! image-channel (car (gimp-image-get-active-drawable image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! image-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! image-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! image-channel (car (gimp-image-get-active-drawable image)))
 	)
 )	
@@ -414,12 +430,12 @@
 ;;;;apply shape curve
     (if (or (< shape 0) (> shape 0))
 	(begin
-					(aset *newpoint* 0 0)    ; set the arrays
-					(aset *newpoint* 1 0)
-					(aset *newpoint* 2  (/(+ (/ shape 10) 127) 255))
-	                (aset *newpoint* 3 (+ shape 0.5))
-					(aset *newpoint* 4 1)
-					(aset *newpoint* 5 1)
+					(vector-set! *newpoint* 0 0)    ; set the arrays
+					(vector-set! *newpoint* 1 0)
+					(vector-set! *newpoint* 2  (/(+ (/ shape 10) 127) 255))
+	                (vector-set! *newpoint* 3 (+ shape 0.5))
+					(vector-set! *newpoint* 4 1)
+					(vector-set! *newpoint* 5 1)
 	(gimp-drawable-curves-spline bevel-layer 0 6 *newpoint*)
     )
     )	
@@ -443,22 +459,22 @@
                     (set! y5 (* 4.0 gloss))
                     (set! y6 (* 0.4 gloss))
 					
-					(aset *newpointx1* 0 0)    ; set the arrays
-					(aset *newpointx1* 1 0)
-					(aset *newpointx1* 2 0.247058823529)
-	                (aset *newpointx1* 3 (/ (+ 63 y1) 255))
-					(aset *newpointx1* 4 0.372549019608)
-					(aset *newpointx1* 5 (/(+ 95 y2) 255))
-					(aset *newpointx1* 6 0.5)
-					(aset *newpointx1* 7 (/ (- 127 y3) 255))
-					(aset *newpointx1* 8 0.611764705882)
-					(aset *newpointx1* 9 (/(+ 156 y4) 255))
-					(aset *newpointx1* 10 0.749019607843)
-					(aset *newpointx1* 11 (/(- 191 y5) 255))
-					(aset *newpointx1* 12 0.874509803922)
-					(aset *newpointx1* 13 (/(+ 223 y6) 255))
-					(aset *newpointx1* 14 1)
-					(aset *newpointx1* 15 1)
+					(vector-set! *newpointx1* 0 0)    ; set the arrays
+					(vector-set! *newpointx1* 1 0)
+					(vector-set! *newpointx1* 2 0.247058823529)
+	                (vector-set! *newpointx1* 3 (/ (+ 63 y1) 255))
+					(vector-set! *newpointx1* 4 0.372549019608)
+					(vector-set! *newpointx1* 5 (/(+ 95 y2) 255))
+					(vector-set! *newpointx1* 6 0.5)
+					(vector-set! *newpointx1* 7 (/ (- 127 y3) 255))
+					(vector-set! *newpointx1* 8 0.611764705882)
+					(vector-set! *newpointx1* 9 (/(+ 156 y4) 255))
+					(vector-set! *newpointx1* 10 0.749019607843)
+					(vector-set! *newpointx1* 11 (/(- 191 y5) 255))
+					(vector-set! *newpointx1* 12 0.874509803922)
+					(vector-set! *newpointx1* 13 (/(+ 223 y6) 255))
+					(vector-set! *newpointx1* 14 1)
+					(vector-set! *newpointx1* 15 1)
 					;(0,0, 63,(63 + y1), 95,(95 + y2), 127,(127 - y3), 156,(156 + y4), 191,(191 - y5), 223,(223 + y6), 255,255)
 	 
 	(gimp-drawable-curves-spline bevel-layer 0 16 *newpointx1*)
@@ -493,7 +509,7 @@
     
 	(gimp-displays-flush)
 	(gimp-image-undo-group-end image)
-	(gimp-context-pop)
+	;(gimp-context-pop)
 	
  )
 )
@@ -514,7 +530,10 @@
 							   conserve)							  
 
  (let* (
-        (image-layer (car (gimp-image-get-active-layer image)))
+        ;(image-layer (car (gimp-image-get-active-layer image)))
+	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))))
 		(old-width (car (gimp-drawable-get-width image-layer)))
         (old-height (car (gimp-drawable-get-height image-layer)))
 		(width (+ old-width (* xsize 2)))
@@ -536,7 +555,7 @@
 		(*newpoint-right* (cons-array 10 'double))
         )	
 	
-	(gimp-context-push)
+	;(gimp-context-push)
 	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)
@@ -545,7 +564,7 @@
     (if (= sel FALSE) (begin
     (gimp-selection-save image)
 	;(set! original-selection-channel (car (gimp-image-get-active-drawable image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! original-selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! original-selection-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! original-selection-channel (car (gimp-image-get-active-drawable image)))
 	)
 )	
@@ -571,7 +590,7 @@
 ;;;;create selection-channel (gimp-selection-load selection-channel)
     (gimp-selection-save image)
 	;(set! selection-channel (car (gimp-image-get-active-drawable image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! selection-channel (car (gimp-image-get-active-drawable image)))
 	)
 )	
@@ -615,49 +634,49 @@
 	(gimp-desaturate bump-layer)))
 	(gimp-selection-none image)
 	
-	(aset *newpoint-top* 0 0)    ; set the top arrays
-	(aset *newpoint-top* 1 0)
-	(aset *newpoint-top* 2 xsize)
-	(aset *newpoint-top* 3 ysize)
-	(aset *newpoint-top* 4 (+ xsize old-width))
-	(aset *newpoint-top* 5 ysize)
-	(aset *newpoint-top* 6 width)
-	(aset *newpoint-top* 7 0)
-	(aset *newpoint-top* 8 0)
-	(aset *newpoint-top* 9 0)
+	(vector-set! *newpoint-top* 0 0)    ; set the top arrays
+	(vector-set! *newpoint-top* 1 0)
+	(vector-set! *newpoint-top* 2 xsize)
+	(vector-set! *newpoint-top* 3 ysize)
+	(vector-set! *newpoint-top* 4 (+ xsize old-width))
+	(vector-set! *newpoint-top* 5 ysize)
+	(vector-set! *newpoint-top* 6 width)
+	(vector-set! *newpoint-top* 7 0)
+	(vector-set! *newpoint-top* 8 0)
+	(vector-set! *newpoint-top* 9 0)
 
-	(aset *newpoint-bot* 0 0)    ; set the bottom arrays
-	(aset *newpoint-bot* 1 height)
-	(aset *newpoint-bot* 2 xsize)
-	(aset *newpoint-bot* 3 (+ ysize old-height))
-	(aset *newpoint-bot* 4 (+ xsize old-width))
-	(aset *newpoint-bot* 5 (+ ysize old-height))
-	(aset *newpoint-bot* 6 width)
-	(aset *newpoint-bot* 7 height)
-	(aset *newpoint-bot* 8 0)
-	(aset *newpoint-bot* 9 height)
+	(vector-set! *newpoint-bot* 0 0)    ; set the bottom arrays
+	(vector-set! *newpoint-bot* 1 height)
+	(vector-set! *newpoint-bot* 2 xsize)
+	(vector-set! *newpoint-bot* 3 (+ ysize old-height))
+	(vector-set! *newpoint-bot* 4 (+ xsize old-width))
+	(vector-set! *newpoint-bot* 5 (+ ysize old-height))
+	(vector-set! *newpoint-bot* 6 width)
+	(vector-set! *newpoint-bot* 7 height)
+	(vector-set! *newpoint-bot* 8 0)
+	(vector-set! *newpoint-bot* 9 height)
 	
-	(aset *newpoint-left* 0 0)    ; set the left arrays
-	(aset *newpoint-left* 1 0)
-	(aset *newpoint-left* 2 xsize)
-	(aset *newpoint-left* 3 ysize)
-	(aset *newpoint-left* 4 xsize)
-	(aset *newpoint-left* 5 (+ ysize old-height))
-	(aset *newpoint-left* 6 0)
-	(aset *newpoint-left* 7 height)
-	(aset *newpoint-left* 8 0)
-	(aset *newpoint-left* 9 0)
+	(vector-set! *newpoint-left* 0 0)    ; set the left arrays
+	(vector-set! *newpoint-left* 1 0)
+	(vector-set! *newpoint-left* 2 xsize)
+	(vector-set! *newpoint-left* 3 ysize)
+	(vector-set! *newpoint-left* 4 xsize)
+	(vector-set! *newpoint-left* 5 (+ ysize old-height))
+	(vector-set! *newpoint-left* 6 0)
+	(vector-set! *newpoint-left* 7 height)
+	(vector-set! *newpoint-left* 8 0)
+	(vector-set! *newpoint-left* 9 0)
 	
-	(aset *newpoint-right* 0 width)    ; set the right arrays
-	(aset *newpoint-right* 1 0)
-	(aset *newpoint-right* 2 (+ xsize old-width))
-	(aset *newpoint-right* 3 ysize)
-	(aset *newpoint-right* 4 (+ xsize old-width))
-	(aset *newpoint-right* 5 (+ ysize old-height))
-	(aset *newpoint-right* 6 width)
-	(aset *newpoint-right* 7 height)
-	(aset *newpoint-right* 8 width)
-	(aset *newpoint-right* 9 0)
+	(vector-set! *newpoint-right* 0 width)    ; set the right arrays
+	(vector-set! *newpoint-right* 1 0)
+	(vector-set! *newpoint-right* 2 (+ xsize old-width))
+	(vector-set! *newpoint-right* 3 ysize)
+	(vector-set! *newpoint-right* 4 (+ xsize old-width))
+	(vector-set! *newpoint-right* 5 (+ ysize old-height))
+	(vector-set! *newpoint-right* 6 width)
+	(vector-set! *newpoint-right* 7 height)
+	(vector-set! *newpoint-right* 8 width)
+	(vector-set! *newpoint-right* 9 0)
 	
 	(gimp-context-set-gradient gradient)
 ;;;;create the top of border
@@ -709,7 +728,7 @@
 	
    	(gimp-displays-flush)
 	(gimp-image-undo-group-end image)
-	(gimp-context-pop)
+	;(gimp-context-pop)
 
  )
 )  
