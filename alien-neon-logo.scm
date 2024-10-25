@@ -102,7 +102,7 @@
 	   	       (let* (
            (pasted (gimp-edit-paste bands-layer-mask TRUE))
            (num-pasted (car pasted))
-           (floating-sel-anchor (aref (cadr pasted) (- num-pasted 1)))
+           (floating-sel-anchor (vector-ref (cadr pasted) (- num-pasted 1)))
           )))
 ))
 
