@@ -96,7 +96,7 @@ sf
 
   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 (gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")  
-(gimp-item-set-name (aref (cadr (gimp-image-get-selected-path image)) 0) "Path")
+(gimp-item-set-name (vector-ref (cadr (gimp-image-get-selected-paths image)) 0) "Path")
 )
 ;(gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")
 ;(gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors image)) 0) "Path")
@@ -209,8 +209,8 @@ height
 (define
 (set-pt a index x y)
 (begin
-(aset a (* index 2) x)
-(aset a (+ (* index 2) 1) y)
+(vector-set! a (* index 2) x)
+(vector-set! a (+ (* index 2) 1) y)
 )
 )
  
