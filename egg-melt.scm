@@ -21,7 +21,9 @@
 							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+			(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(sel (car (gimp-selection-is-empty image)))
@@ -56,7 +58,7 @@
 	;(set! img-channel (car (gimp-image-get-active-drawable image)))
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (set! img-channel (car (gimp-image-get-active-drawable image)))
-  (set! img-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)	
+  (set! img-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)	
 	(gimp-channel-set-opacity img-channel 100)	
 	(gimp-item-set-name img-channel "img-channel")
 	(gimp-image-set-active-layer image img-layer)	
@@ -95,7 +97,7 @@
 	;(set! shadow-layer (car (gimp-image-get-active-drawable image)))
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (set! shadow-layer (car (gimp-image-get-active-drawable image)))
-  (set! shadow-layer  (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+  (set! shadow-layer  (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-image-lower-item image shadow-layer)
 	
    )
@@ -136,8 +138,8 @@
 	     SF-COLOR       "Color"         '(255 152 0)     ;color variable
 	     	     SF-COLOR       "Color2"         '(255 255 255)    ;color variable
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
-SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
-SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
+SF-ADJUSTMENT  "Letter Spacing"        '(0 -100 100 1 5 0 0)
+SF-ADJUSTMENT  "Line Spacing"          '(0 -300 300 1 10 0 0)
 SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                                                         ;a spin-button
