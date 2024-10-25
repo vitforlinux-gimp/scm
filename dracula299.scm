@@ -53,8 +53,16 @@
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
-
-
+(if (<> (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+(define (prog1 form1 . form2)
+  (let ((a form1))
+    (if (not (null? form2))
+      form2
+    )
+    a
+  )
+)
+)
     (define oldFore (car(gimp-context-get-foreground)) )
     (define oldBack (car(gimp-context-get-background)) )
 
