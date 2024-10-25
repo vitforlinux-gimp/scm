@@ -180,7 +180,7 @@
 	;(set! img-channel (car (gimp-image-get-active-drawable image)))
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (set! img-channel (car (gimp-image-get-active-drawable image)))
-  (set! img-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)	
+  (set! img-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)	
 	(gimp-channel-set-opacity img-channel 100)	
 	(gimp-item-set-name img-channel "img-channel")
 	(gimp-image-set-active-layer image img-layer)	
