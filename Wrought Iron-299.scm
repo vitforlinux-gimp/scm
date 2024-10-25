@@ -77,7 +77,7 @@
 			(bkg-layer 0)
         )	
 	
-	;(gimp-context-push)
+	(gimp-context-push)
 	(gimp-context-set-paint-mode 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)	
@@ -132,7 +132,7 @@
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(car (gimp-image-get-active-layer image))
 	(car (list (vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))
-	))))
+	)0)))
 	
 	(gimp-drawable-curves-spline image-layer 0 22 #(0 0 0.0823529411765 0.541176470588 0.145098039216 0.870588235294 0.2431372549 1 0.325490196078 0.901960784314 0.41568627451 0.650980392157 0.576470588235 0.341176470588 0.678431372549 0.247058823529 0.780392156863 0.352941176471 0.874509803922 0.627450980392 1 1))
 	(gimp-drawable-brightness-contrast image-layer (/ brightness 127)  (/ contrast 127))	
@@ -169,7 +169,7 @@
 	
 	(gimp-displays-flush)
 	(gimp-image-undo-group-end image)
-	;(gimp-context-pop)
+	(gimp-context-pop)
 
  )
 )
@@ -231,7 +231,7 @@
 		 (bkg-layer 0)         
          )
 		 
-    ;(gimp-context-push)
+    (gimp-context-push)
 	(gimp-context-set-paint-mode 0)
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
@@ -299,7 +299,7 @@
 	(set! text-layer (car (gimp-image-merge-visible-layers image EXPAND-AS-NECESSARY)))
 	(gimp-item-set-name text-layer text)))
 
-	;(gimp-context-pop)
+	(gimp-context-pop)
 
     (gimp-display-new image)
     )
