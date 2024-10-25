@@ -55,8 +55,8 @@
         (DropsA (*  DropsA 2.55))
         (ShapeW (/  ShapeW 2))
         (theLayers)
-        (theLayersArray)
-        (DropShadow)
+        (theLayersArray 0)
+        (DropShadow 0)
         (activ_selection (car (gimp-selection-is-empty img)))
 	(Noise_calque (car (gimp-layer-new img width height RGBA-IMAGE "Noise" 100 3)))
 	(Background-Color_calque (car (gimp-layer-new img width height RGBA-IMAGE "Background-Color" 100
@@ -117,7 +117,7 @@
     (gimp-image-merge-down img Noise_calque 0)
     (set! theLayers (gimp-image-get-layers img))
     (set! theLayersArray (cadr theLayers))
-    (set! Bump-Layer (aref theLayersArray 0))
+    (set! Bump-Layer (vector-ref theLayersArray 0))
 
    ;Create floor texure 
     (gimp-context-set-background Black)
