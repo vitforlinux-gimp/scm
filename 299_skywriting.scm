@@ -215,7 +215,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	)
 
 	(gimp-context-set-foreground color)
-	(mapcar gen-distressed-bit 
+	(map gen-distressed-bit 
 		'(160 160 160 160 160 160 160 160 100 100 100 100)
 		'(000 000 000 000 000 000 000 000 000 000 000 000) )
 	;(gimp-image-select-item img 2 theText)
