@@ -94,7 +94,7 @@
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (plug-in-gradmap 1 image bump-layer)
-  (plug-in-gradmap 1 image 1 (vector bump-layer))	)
+  (plug-in-gradmap 1 image (vector bump-layer))	)
 
 
 ;(gimp-selection-layer-alpha drawable)
