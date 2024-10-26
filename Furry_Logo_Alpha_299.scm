@@ -155,7 +155,7 @@
 )));; GRADIENT-LINEAR ; GRADIENT-CONICAL-SYMMETRIC
               
     ;(gimp-image-set-active-layer image layer)
-        (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector layer)))
+        (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector layer)))
 (else (gimp-image-set-active-layer image layer)))
 	(gimp-layer-resize-to-image-size layer)
 	
@@ -268,7 +268,7 @@
 ;;;;create selection-channel (gimp-image-select-item image 2 selection)    
 	(set! selection (car (gimp-selection-save image)))	
     ;(gimp-image-set-active-layer image layer)	
-            (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector layer)))
+            (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector layer)))
 (else (gimp-image-set-active-layer image layer)))
 	
 ;;;;begin the script
@@ -338,7 +338,7 @@
 	(if (> blur-radius 0) (plug-in-gauss-iir2 1 image fur-layer blur-radius blur-radius))
 	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	(plug-in-gimpressionist 1 image fur-layer "Furry")
-		(plug-in-gimpressionist 1 image 1 (vector fur-layer) "Furry") )
+		(plug-in-gimpressionist 1 image (vector fur-layer) "Furry") )
 	(gimp-image-select-item image 2 fur-layer)
 	(gimp-selection-invert image)
 	(gimp-drawable-edit-clear fur-layer)
@@ -354,7 +354,7 @@
 	(gimp-drawable-edit-clear layer)
 	(set! layer (car (gimp-image-merge-down image fur-layer EXPAND-AS-NECESSARY)))))
 	;(gimp-image-set-active-layer image layer)
-	        (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector layer)))
+	        (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector layer)))
 (else (gimp-image-set-active-layer image layer)))
     (gimp-item-set-name layer layer-name)
     (if (= keep-selection TRUE) (gimp-image-select-item image 2 selection))

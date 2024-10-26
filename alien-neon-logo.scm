@@ -98,11 +98,11 @@
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
       (begin (gimp-edit-copy bands-layer)
       (gimp-floating-sel-anchor (car (gimp-edit-paste bands-layer-mask FALSE))))
-    (begin (gimp-edit-copy 1 (vector bands-layer))
+    (begin (gimp-edit-copy (vector bands-layer))
 	   	       (let* (
            (pasted (gimp-edit-paste bands-layer-mask TRUE))
            (num-pasted (car pasted))
-           (floating-sel-anchor (vector-ref (cadr pasted) (- num-pasted 1)))
+           ;(floating-sel-anchor (vector-ref (car pasted) (- num-pasted 1)))
           )))
 ))
 
@@ -116,7 +116,7 @@
     (gimp-item-set-visible logo-layer 0)
     (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
     (gimp-image-set-active-layer img bands-layer)
-    (gimp-image-set-selected-layers img 1 (vector bands-layer)))
+    (gimp-image-set-selected-layers img (vector bands-layer)))
     (gimp-displays-flush)
 
     (gimp-context-pop)
