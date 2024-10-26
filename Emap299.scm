@@ -369,7 +369,7 @@
 		(plug-in-lighting
 				1  ;ok
 	    	image              ; IMAGE ok
-		1    ;ok
+		;1    ;ok
 		(vector layer )             ; DRAWABLE ok
 		 bump-channel     ; BUMP MAP  (set to valid drawable)ok
 		bkg-layer          ; ENVIRONMENT MAP  (set to 0 if disabled)
@@ -582,7 +582,7 @@
     (begin 
  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 img drawable) 
-      (plug-in-gradmap 1 img 1 (vector drawable))   )              ; Map Gradient
+      (plug-in-gradmap 1 img (vector drawable))   )              ; Map Gradient
       (gimp-item-set-name drawable "EnviroMap: Topo") ; Name it
 )     
 ) ;endif
