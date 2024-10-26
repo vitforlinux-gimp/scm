@@ -116,7 +116,9 @@
     (gimp-image-raise-item-to-top img Noise_calque)
     (gimp-image-merge-down img Noise_calque 0)
     (set! theLayers (gimp-image-get-layers img))
+        (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
     (set! theLayersArray (cadr theLayers))
+    (set! theLayersArray (car theLayers)))
     (set! Bump-Layer (vector-ref theLayersArray 0))
 
    ;Create floor texure 
@@ -164,7 +166,7 @@
                        1 0.6 2 40 TRUE FALSE FALSE))
 	(else
 	(plug-in-lighting 
-                       inter img 1 (vector Highlight_up) Highlight_up  Highlight_up FALSE FALSE "bumpmap-sinusoidal" 0 "light-directional" White 1
+                       inter img  (vector Highlight_up) Highlight_up  Highlight_up FALSE FALSE "bumpmap-sinusoidal" 0 "light-directional" White 1
                        -1 -1 1 -4 -0 1 LightA 
                        1 0.6 0.5 40 FALSE TRUE FALSE FALSE  0.25))
 	)
@@ -186,7 +188,7 @@
                        0.2 0.6 0.5 27 TRUE FALSE FALSE))
 		       (else
 	    (plug-in-lighting 
-                       inter img 1 (vector Mosaic_calque) Mosaic_calque Mosaic_calque  FALSE FALSE "bumpmap-sinusoidal" 0 "light-point" White 1
+                       inter img  (vector Mosaic_calque) Mosaic_calque Mosaic_calque  FALSE FALSE "bumpmap-sinusoidal" 0 "light-point" White 1
                        -1 -1 1 -4 -0 1 LightA 
                        0.2 0.6 0.5 27 FALSE TRUE FALSE FALSE 0.25)
 		       ) 
