@@ -69,7 +69,10 @@
 							  
 
  (let* (
-        (image-layer (car (gimp-image-get-active-layer image)))
+       ; (image-layer (car (gimp-image-get-active-layer image)))
+       			(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 		(offx 0)
         (offy 0)
 		(text  text-in )
