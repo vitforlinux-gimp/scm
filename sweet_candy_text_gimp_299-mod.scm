@@ -325,7 +325,9 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sélection vers chemin
-	(set! chemin_texte_trace_avec_brosse (car (plug-in-sel2path 1 img calque_texte)))	
+					         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+	(set! chemin_texte_trace_avec_brosse (car (plug-in-sel2path 1 img calque_texte)))
+	(set! chemin_texte_trace_avec_brosse (car (plug-in-sel2path 1 img (vector calque_texte))))	)
 
 	; ne rien sélectionner
 	(gimp-selection-none img)
@@ -368,7 +370,9 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sélection vers chemin
-	(set! chemin_texte_effet (car (plug-in-sel2path 1 img calque_texte)))	
+						         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+	(set! chemin_texte_effet (car (plug-in-sel2path 1 img calque_texte)))
+	(set! chemin_texte_effet (car (plug-in-sel2path 1 img (vector calque_texte)))))
 	
 	
 
@@ -586,13 +590,18 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sélection vers chemin
+			(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
 	(plug-in-sel2path 1 img calque_texte)
+	(plug-in-sel2path 1 img (vector calque_texte)))
 	
 	; inverser la sélection
 	(gimp-selection-invert img)
 	
 	; sélection vers chemin
+			(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
 	(plug-in-sel2path 1 img calque_texte)
+	(plug-in-sel2path 1 img (vector calque_texte)))
+
 
 	; supprimer le contenu de la sélection sur le calque stripes
 	(gimp-drawable-edit-clear stripes)
