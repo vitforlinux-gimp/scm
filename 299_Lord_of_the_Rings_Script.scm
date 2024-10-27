@@ -88,7 +88,7 @@
 ; Set the active layer
 
 ;  (gimp-image-set-active-layer image drawable)
-  (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector drawable)))
+  (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector drawable)))
 (else (gimp-image-set-active-layer image drawable))
 )
 
@@ -98,7 +98,10 @@
 ; script, but results weren't as good.  The bumpMapLayer and OriginalLayer are linked for
 ; later movement around the canvas if so desired.
 
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
   (set! bumpMapLayer (car (gimp-image-get-active-layer image)))
+      (set! bumpMapLayer  (vector-ref (car (gimp-image-get-selected-layers image)) 0))
+  )
   (set! originalLayer (car (gimp-layer-copy bumpMapLayer TRUE)))
   (gimp-image-insert-layer image originalLayer 0 -1)
   (gimp-item-set-name bumpMapLayer "Bump Map Layer")
@@ -145,7 +148,7 @@
 ; Set the originalLayer as active
 
   ;(gimp-image-set-active-layer image originalLayer)
-  (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector originalLayer)))
+  (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector originalLayer)))
 (else (gimp-image-set-active-layer image originalLayer))
 )
 
@@ -186,9 +189,11 @@
 ; to the bumpMapLayer and OriginalLayer for later movement around the canvas if so desired.
 
 ;;;(set! position (car (gimp-image-get-item-position image originalLayer)))	;none 2.2
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 (set! shadowLayer (aref (cadr (gimp-image-get-layers image)) (+ position 1)))
+(set! shadowLayer (vector-ref (car (gimp-image-get-layers image)) (+ position 1))))
 ;(gimp-image-set-active-layer image shadowLayer)
-  (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector shadowLayer)))
+  (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector shadowLayer)))
 (else (gimp-image-set-active-layer image shadowLayer))
 )
 ;(gimp-item-set-linked shadowLayer TRUE)
@@ -202,7 +207,7 @@
 
 
   ;(gimp-image-set-active-layer image originalLayer)
-    (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector originalLayer)))
+    (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector originalLayer)))
 (else (gimp-image-set-active-layer image originalLayer))
 )
   
