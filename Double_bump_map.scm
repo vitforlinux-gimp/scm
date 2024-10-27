@@ -72,13 +72,19 @@
 		(gimp-selection-grow image grow-distance)
 		(gimp-selection-invert image)
 		(gimp-selection-feather image 2)
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 		(plug-in-sel2path RUN-NONINTERACTIVE image layer)
+		(plug-in-sel2path RUN-NONINTERACTIVE image (vector layer)))
 		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 			(set! get-vectors-returned-values (gimp-image-get-vectors image))
 			(set! get-vectors-returned-values (gimp-image-get-paths image)) )
 		(set! vectors-count (car  get-vectors-returned-values))
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 		(set! vectors-array (cadr get-vectors-returned-values))
-		(set! current-vector (vector-ref vectors-array 0))      ;top path, our own created from selection
+		(set! vectors-array (car get-vectors-returned-values)))
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+				(set! vectors-array (car get-vectors-returned-values))
+		(set! current-vector (vector-ref vectors-array 0))    )  ;top path, our own created from selection
 
 		;blurs white bump map
 		(gimp-selection-none image)
@@ -142,13 +148,13 @@
 		(gimp-image-select-item image CHANNEL-OP-REPLACE current-vector)
 				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (gimp-edit-cut  color-layer)
-		(gimp-edit-cut 1 (vector color-layer)) )
+		(gimp-edit-cut (vector color-layer)) )
 		(gimp-selection-none image)
 		;cur out pattern layer using previously created path
 		(gimp-image-select-item image CHANNEL-OP-REPLACE current-vector)
 						 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (gimp-edit-cut  pattern-layer)
-		(gimp-edit-cut 1 (vector pattern-layer)) )
+		(gimp-edit-cut (vector pattern-layer)) )
 		(gimp-selection-none image)
 		
 		;delete current-vector
