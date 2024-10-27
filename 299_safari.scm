@@ -155,7 +155,7 @@
 		;(plug-in-gradmap RUN-NONINTERACTIVE texture-safari-image texture-safari-layer) ;; appliqule drad
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 texture-safari-image texture-safari-layer) 
-      (plug-in-gradmap 1 texture-safari-image 1 (vector texture-safari-layer))   )              ; Map Gradient
+      (plug-in-gradmap 1 texture-safari-image (vector texture-safari-layer))   )              ; Map Gradient
 	(plug-in-displace RUN-NONINTERACTIVE texture-safari-image texture-safari-layer (* (/ size 121) 10) (* (/ size 120) 10) TRUE TRUE texture-terra-layer texture-terra-layer 1)
 
 	(if (= type 1) ;; cameleon malade
