@@ -329,7 +329,7 @@
 ;;;;resize the text-layer
 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 	(gimp-image-set-active-layer image text-layer)
-	(gimp-image-set-selected-layers image 1 (vector text-layer)))
+	(gimp-image-set-selected-layers image (vector text-layer)))
 	(script-fu-snow-cover299-alpha image 
                           text-layer
                           depth
