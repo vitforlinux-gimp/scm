@@ -120,7 +120,7 @@
 	    (layer))
     (set! layer-count 0)
     (while (< layer-count number-layers)
-           (set! layer (aref layer-array layer-count))
+           (set! layer (vector-ref layer-array layer-count))
            (gimp-item-set-visible layer FALSE)
            (set! layer-count (+ layer-count 1)))
 ))
@@ -138,7 +138,7 @@
     (gimp-image-undo-group-start image)
     (set! layer-count 0)
     (while (< layer-count number-layers)
-           (set! layer (aref layer-array layer-count))
+           (set! layer (vector-ref layer-array layer-count))
            (if (= (car (gimp-item-get-visible layer)) FALSE)
                (gimp-image-remove-layer image layer))
            (set! layer-count (+ layer-count 1)))
@@ -187,13 +187,13 @@
     
 ;;;;position the text lines
 ;;;;;	(if (= just 0) (gimp-text-layer-set-justification text-layer 2))	;none 2.4
-(if (symbol-bound? 'gimp-text-layer-set-justification (the-environment))		;change 2.4
-(begin
+	;change 2.4
+
     (if (= just 0) (gimp-text-layer-set-justification text-layer 2))			;change 2.4
     (if (= just 1) (gimp-text-layer-set-justification text-layer 0))
     (if (= just 2) (gimp-text-layer-set-justification text-layer 1))
-)
-    (gimp-message "\"gimp-text-layer-set-justification\" is not found! Can't use..."))	;change 2.4
+
+
 ;;;;;	(gimp-text-layer-set-letter-spacing text-layer (/ font-size 12))	;none 2.4
 	(gimp-text-layer-set-line-spacing text-layer space)			;none 2.4
 	(gimp-text-layer-set-letter-spacing text-layer lspace)			;none 2.4
@@ -318,7 +318,7 @@
 	(gimp-image-undo-disable img2)
 	(set! drawable2 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 				 (car (gimp-image-get-active-drawable img2))
-				(aref (cadr (gimp-image-get-selected-drawables img2)) 0)
+				(vector-ref (car (gimp-image-get-selected-drawables img2)) 0)
 				))
 	(script-fu-layers-view-current-only img2 drawable2)	;Tosi—l‚Ìscript-fu‚æ‚è
 	(script-fu-layers-delete-hidden img2 drawable2)		;Tosi—l‚Ìscript-fu‚æ‚è
@@ -448,13 +448,13 @@
 ;;;;create channel
 	(gimp-selection-save image)
 	;(set! selection-channel (car (gimp-image-get-active-drawable image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! selection-channel (car (gimp-image-get-active-drawable image)))
 	)	)
 	(gimp-channel-set-opacity selection-channel 100)	
 	(gimp-item-set-name selection-channel "Shape Selection")
 	;(gimp-image-set-active-layer image bkg-layer)
-	(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector bkg-layer)))
+	(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector bkg-layer)))
 (else (gimp-image-set-active-layer image bkg-layer))
 ) 
 	
@@ -470,13 +470,13 @@
 ;;;;create channel
 	(gimp-selection-save image)
 	;(set! img-channel (car (gimp-image-get-active-drawable image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! img-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! img-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! img-channel (car (gimp-image-get-active-drawable image)))
 	)	)
 	(gimp-channel-set-opacity img-channel 100)	
 	(gimp-item-set-name img-channel "img-channel")
 	;(gimp-image-set-active-layer image text-layer)
-	(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+	(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 ) 	
     (gimp-selection-shrink image wire-size)
