@@ -217,7 +217,7 @@
 	(gimp-image-remove-layer img logo-layer-blur)
 	(gimp-image-remove-channel img logo-selection)
 	;(gimp-image-set-active-layer img layer-value)
-	(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers img 1 (vector layer-value)))
+	(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers img (vector layer-value)))
 (else (gimp-image-set-active-layer img layer-value))
 )
 	;(gimp-context-set-background old-bg)
