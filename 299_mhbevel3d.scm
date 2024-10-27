@@ -28,7 +28,7 @@
       (plug-in-autostretch-hsv 1 image fond)
  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 image fond) 
-      (plug-in-gradmap 1 image 1 (vector fond))   )              ; Map Gradient
+      (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
 
 	))
 		(define  (material-mh-willwood fond img n1 n2) (begin
