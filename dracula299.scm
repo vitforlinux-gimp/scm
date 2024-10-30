@@ -53,6 +53,11 @@
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+
+
 (if (<> (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 (define (prog1 form1 . form2)
   (let ((a form1))
@@ -119,15 +124,15 @@
     (gimp-drawable-edit-fill bloodLayer FILL-BACKGROUND)
     (gimp-selection-none theImage)
 
-    (plug-in-gauss-iir TRUE theImage bloodLayer 4 TRUE TRUE)
+    (apply-gauss theImage bloodLayer 4 4)
     (plug-in-threshold-alpha TRUE theImage bloodLayer 127)
-     (plug-in-gauss-iir TRUE theImage bloodLayer 3 TRUE TRUE)
+     (apply-gauss theImage bloodLayer 3 3)
 
     (gimp-image-select-item theImage 0 bloodLayer)
     (gimp-context-set-foreground BorderColor)
     (gimp-drawable-edit-bucket-fill bloodLayer FILL-FOREGROUND 0 100)
     (gimp-selection-none theImage)
-    (plug-in-gauss-iir TRUE theImage bloodLayer 1 TRUE TRUE)
+    (apply-gauss theImage bloodLayer 1 1)
 
     (define oneLayer (car(gimp-image-flatten theImage)) )
    ; (plug-in-autocrop TRUE theImage oneLayer)
