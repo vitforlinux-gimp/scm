@@ -23,6 +23,9 @@
 						 (gimp-context-set-pattern value)
 				(gimp-context-set-pattern (car (gimp-pattern-get-by-name value)))
 				))))
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTFrizQuad Bold")
@@ -95,7 +98,7 @@
 		(gimp-image-insert-layer bump-image fond-map-layer 0 1)
 		(gimp-drawable-edit-fill fond-map-layer 0) ;; remplir de noir
 		(set! bump-layer (car (gimp-image-flatten bump-image))) ;; aplatir l'image map
-		(plug-in-gauss-rle2 RUN-NONINTERACTIVE bump-image bump-layer flou-r flou-r) ;; flou gaussien
+		(apply-gauss bump-image bump-layer flou-r flou-r) ;; flou gaussien
 		
 		;; *******************************************************************************
 		;; REPOUSSAGE
@@ -130,7 +133,7 @@
 				(gimp-image-select-item finale-image 2 text-layer) ;; alpha vers selection
 				(gimp-drawable-edit-fill flou-layer FILL-FOREGROUND) ;; remplir de noir
 				(gimp-selection-none finale-image)
-				(plug-in-gauss-rle2 RUN-NONINTERACTIVE finale-image flou-layer flou flou) ;; flou gaussien
+				(apply-gauss finale-image flou-layer flou flou) ;; flou gaussien
 			)
 		)
 		;; texture terra
@@ -204,7 +207,7 @@
 			(gimp-invert c-layer)						;add 2.0
 			(gimp-threshold c-layer 155 255)				;add 2.0
 			(gimp-layer-set-mode c-layer MULTIPLY)				;add 2.0
-			(plug-in-gauss-iir2 1 finale-image c-layer (* (/ size 120) 6) (* (/ size 120) 6))	;add 2.0
+			(apply-gauss finale-image c-layer (* (/ size 120) 6) (* (/ size 120) 6))	;add 2.0
 			(plug-in-unsharp-mask 1 finale-image c-layer 5 3 0)		;add 2.0
 			(set! duplicate-layer (car (gimp-image-merge-down finale-image c-layer 0)))	;add 2.0
 			(gimp-layer-set-mode duplicate-layer LAYER-MODE-HARDLIGHT-LEGACY)		;add 2.0
@@ -243,7 +246,7 @@
 		(gimp-context-set-foreground scolor)		;add
 		(gimp-drawable-edit-fill s-layer FILL-FOREGROUND)	;add
 		(gimp-selection-none finale-image)		;add
-		(if (>= sblur 1) (plug-in-gauss-iir2 1 finale-image s-layer sblur sblur))	;add
+		(if (>= sblur 1) (apply-gauss finale-image s-layer sblur sblur))	;add
 		(gimp-item-transform-translate s-layer soff soff)	;add
 
 		(set! width (car (gimp-image-get-width finale-image)))	;add
