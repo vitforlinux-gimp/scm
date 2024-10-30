@@ -44,7 +44,9 @@
 				(gimp-context-set-opacity 100)
 				(gimp-selection-none img)
 			))
-
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 (define (script-fu-3d-wood 
                                       text
@@ -136,14 +138,14 @@
 ;;;;text modify
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer blur blur)
+	(apply-gauss image text-layer blur blur)
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
 
 ;;;;create the guass-layer
     (set! guass-layer (car (gimp-layer-copy text-layer TRUE)))
     (gimp-image-insert-layer image guass-layer 0 1)
     (gimp-item-set-name guass-layer "Guass")
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image guass-layer 40 40)
+	(apply-gauss image guass-layer 40 40)
 	
 ;;;;create the motion-layer
     (set! motion-layer (car (gimp-layer-copy text-layer TRUE)))

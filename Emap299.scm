@@ -51,6 +51,10 @@
 				(gimp-context-set-opacity 100)
 				(gimp-selection-none img)
 			))
+			
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 
 ; Include layer Procedure
@@ -314,7 +318,7 @@
     ) ;endcond
 	(gimp-selection-none image)	
 ;;;;begin the script	
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image bump-channel 10 10) ;-------------------------------------blur the bump-channel
+	(apply-gauss image bump-channel 10 10) ;-------------------------------------blur the bump-channel
 	;(gimp-image-set-active-layer image layer)
 	(include-layer image bkg-layer layer 1)	;stack 0=above 1=below ;---------------------------------------add layer for environment map
 	
@@ -414,7 +418,7 @@
 	(else (gimp-item-set-name highlight-channel "highlight-channel"))
     ) ;endcond	
 	(gimp-selection-none image)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image highlight-channel 5 5)
+	(apply-gauss image highlight-channel 5 5)
 	;(gimp-image-set-active-layer image highlight)
 	(plug-in-bump-map RUN-NONINTERACTIVE image highlight highlight-channel 135 15 10 0 0 0 1 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	(plug-in-colortoalpha RUN-NONINTERACTIVE image highlight '(128 128 128))
@@ -557,16 +561,14 @@
 ; Gaussian Blur
 ;
 (if (> blur-radius 0)
-    (begin  
-      (plug-in-gauss                 
-                   1     ; Non-interactive 
+   
+      (apply-gauss                 
                  img     ; Image to apply blur 
             drawable     ; Layer to apply blur
          blur-radius     ; Blur Radius x  
          blur-radius     ; Blue Radius y 
-                   0     ; Method (IIR=0 RLE=1)
       )
-    )
+
 ) ;endif
 
 ;
