@@ -247,7 +247,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
           (gimp-selection-none theImage)
 	  
-          (if (* (/ inFontSize 120) 8) (apply-gauss theImage theShadowLayer (* (/ inFontSize 120) 8) 1 ))	;changed
+          (if (* (/ inFontSize 120) 8) (apply-gauss theImage theShadowLayer (* (/ inFontSize 120) 8) (* (/ inFontSize 120) 8) ))	;changed
           ;(plug-in-autocrop TRUE theImage theShadowLayer)
 
 	  (set! thePaintMask (car(gimp-layer-create-mask thePaintLayer ADD-MASK-ALPHA)))
@@ -294,7 +294,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 ;(gimp-display-new theImage)) (define fish  ()
 
-          (if (> (* (/ inFontSize 120) 2) 1) (apply-gauss theImage theSourceLayer (* (/ inFontSize 120) 2) 1))	;changed
+          (if (> (* (/ inFontSize 120) 2) 1) (apply-gauss theImage theSourceLayer (* (/ inFontSize 120) 2) (* (/ inFontSize 120) 2) ))	;changed
           (gimp-item-set-visible theShadowLayer FALSE)
           (gimp-item-set-visible thePattLayer FALSE)
           (gimp-item-set-visible thePaintLayer FALSE)
