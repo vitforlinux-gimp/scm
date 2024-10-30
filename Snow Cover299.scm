@@ -40,6 +40,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 ;
 ; Gradients blend direction list
@@ -119,7 +122,7 @@
 	(gimp-context-set-background '(243 243 255))
 	(gimp-drawable-edit-fill snowtop-layer FILL-BACKGROUND)
 	(gimp-selection-none image)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image snowtop-layer 3 3)
+	(apply-gauss image snowtop-layer 3 3)
 	(cond ((= ver 2.8)
 	(gimp-context-set-sample-threshold-int 25)
 	(gimp-context-set-antialias TRUE)
@@ -138,9 +141,9 @@
 	(gimp-selection-invert image)
     (gimp-drawable-edit-clear snowshadow-layer)
 	(gimp-selection-invert image)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image snowshadow-layer 10 10)
+	(apply-gauss image snowshadow-layer 10 10)
 	(gimp-selection-none image)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image snowtop-layer 3 3)
+	(apply-gauss image snowtop-layer 3 3)
 
 ;;;;finish the script	
     (if (= conserve FALSE) (begin
@@ -258,7 +261,7 @@
 		(gimp-context-set-foreground '(0 0 0))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
 		(gimp-selection-none image)
-		(plug-in-gauss-rle2 1 image innermap 6 6)
+		(apply-gauss image innermap 6 6)
 
 		(gimp-context-set-foreground color)
 		(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
@@ -284,7 +287,7 @@
 		(set! masktext (car (gimp-layer-create-mask text-layer ADD-MASK-SELECTION)))
 		(gimp-layer-add-mask text-layer masktext)
 		(gimp-selection-none image)
-		(plug-in-gauss-rle2 1 image masktext 1 1)
+		(apply-gauss image masktext 1 1)
 		(gimp-layer-remove-mask text-layer MASK-APPLY)
 		(gimp-image-remove-layer image innermap)
 		(gimp-image-remove-channel image text-selection)
