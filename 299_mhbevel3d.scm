@@ -7,6 +7,9 @@
 ; Fix code for gimp 2.10 working in 2.99.16
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 ;;mhbevel3d
 ;Kiki
@@ -16,13 +19,11 @@
 
 	(define  (material-mh-emap fond image gradient) (begin
 				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
-				      (plug-in-gauss                 
-                   1     ; Non-interactive 
+				      (apply-gauss                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
          5     ; Blur Radius x  
          5     ; Blue Radius y 
-                   0     ; Method (IIR=0 RLE=1)
       )
       (gimp-context-set-gradient gradient)
       (plug-in-autostretch-hsv 1 image fond)
@@ -182,7 +183,7 @@
     (gimp-context-set-foreground '(255 255 255))
     (gimp-drawable-edit-fill bump-layer FILL-FOREGROUND)
     (set! bump (car (gimp-image-merge-down img bcopy 0)))
-    (plug-in-gauss-iir2 1 img bump bmpblr bmpblr)
+    (apply-gauss img bump bmpblr bmpblr)
        
        
 

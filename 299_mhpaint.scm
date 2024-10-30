@@ -10,7 +10,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 1)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 1)  )))
 ;
 
 (define (script-fu-mhpaint text size font justify mode psize oil bg-mode bg-color bg-grad bg-pat s-color sblur soff)
@@ -63,7 +65,7 @@
 			SF-OPTION	"mode"		'(_"0(colorful)" _"1(red)" _"2(yellow)" 
 						_"3(green)" _"4(watercolor)" _"5(blue)" _"6(magenta)")
 			SF-ADJUSTMENT	"Paint size"	'(10 5 30 1 2 0 0)
-			SF-TOGGLE  "Oilfy"    TRUE
+			SF-TOGGLE  "Oilify"    TRUE
 			SF-OPTION	"bg mode"          '(_"color" _"gradient" _"pattern")
 			SF-COLOR	"Background Color"	'(255 232 252)
 			SF-GRADIENT "Background Gradient"     "Yellow Orange"
@@ -179,7 +181,7 @@
     (gimp-drawable-edit-fill drawable 0)
     (gimp-layer-set-lock-alpha drawable FALSE)
     (gimp-image-raise-item img paint-layer)
-    (if (>= sblur 1) (plug-in-gauss-iir2 1 img drawable sblur sblur))
+    (if (>= sblur 1) (apply-gauss img drawable sblur sblur))
     (gimp-item-transform-translate drawable soff soff)
     (gimp-layer-set-opacity drawable 75)
 
