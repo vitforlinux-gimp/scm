@@ -40,6 +40,10 @@
 ;(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTVagaRound Bold")
   (define sffont "QTVagaRound-Bold"))
@@ -194,11 +198,15 @@
  ;;;;text modify
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer blur blur)
-	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
+	(apply-gauss image text-layer blur blur)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
+		(assert `(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
+)
+	))
 
 ;;;;set the text clolor    
     (gimp-image-select-item image 2 text-layer)
@@ -207,14 +215,14 @@
 ;;;;create selection-channel (gimp-image-select-item image 2 selection-channel)
     (gimp-selection-save image)
 ;	(set! selection-channel (car (gimp-image-get-selected-drawables image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! selection-channel (car (gimp-image-get-active-drawable image)))
 	)
 )	
 	(gimp-channel-set-opacity selection-channel 100)	
 	(gimp-item-set-name selection-channel "selection-channel")
     ;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )    
 	(gimp-selection-none image)
@@ -224,7 +232,7 @@
 	(gimp-image-insert-layer image bump-layer -1 0)
 	(gimp-item-set-name bump-layer "Bump Layer")
 	(gimp-layer-flatten bump-layer)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image bump-layer pre-blur pre-blur)
+	(apply-gauss image bump-layer pre-blur pre-blur)
 	(gimp-item-set-visible bump-layer FALSE)
     
 ;;;;create the background layer    
@@ -288,13 +296,13 @@
 
 ;;;;prepare the text-layer
 	;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(gimp-drawable-colorize-hsl text-layer 180 0 70)
 	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)
 	(gimp-layer-set-lock-alpha text-layer TRUE)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer 3 3)
+	(apply-gauss image text-layer 3 3)
 	(gimp-layer-set-lock-alpha text-layer FALSE)
 
 
@@ -304,8 +312,11 @@
 	(gimp-item-set-name reflection1 "Reflection1")
 	(gimp-drawable-threshold reflection1 0 0 0.31372)
 	(plug-in-colortoalpha 1 image reflection1 '(0 0 0))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection1 15 15)
+	(apply-gauss image reflection1 15 15)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
+		(assert `(gimp-drawable-curves-spline reflection1 4  #(0 0 0.63529 0 0.69019 1 1 1)))
+)
 	(gimp-layer-set-opacity reflection1 30)
 	
 	(set! reflection2 (car (gimp-layer-copy text-layer TRUE)))
@@ -313,8 +324,11 @@
 	(gimp-item-set-name reflection2 "Reflection2")
 	(gimp-drawable-threshold reflection2 0 0.39215 0.50980)
 	(plug-in-colortoalpha 1 image reflection2 '(0 0 0))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection2 8 8)
+	(apply-gauss image reflection2 8 8)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
+		(assert `(gimp-drawable-curves-spline reflection2 4  #(0 0 0.73725 0 0.79607 1 1 1)))
+	)
 	(gimp-layer-set-opacity reflection2 60)
 	
 	(set! reflection3 (car (gimp-layer-copy text-layer TRUE)))
@@ -322,8 +336,11 @@
 	(gimp-item-set-name reflection3 "Reflection3")
 	(gimp-drawable-threshold reflection3 0 0.78431 1)
 	(plug-in-colortoalpha 1 image reflection3 '(0 0 0))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection3 15 15)
+	(apply-gauss image reflection3 15 15)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
+		(assert `(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1)))
+)
 	;(gimp-layer-set-opacity reflection3 70)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 (gimp-layer-set-opacity reflection3 70)	
@@ -334,7 +351,7 @@
 	(gimp-context-set-foreground color)
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
 	;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
@@ -410,7 +427,11 @@
 	(set! height (car (gimp-image-get-height image)))
 
 ;;;;create the glass effect	
-	(if (= Material 1) (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
+	(if (= Material 1)
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+(gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
+(assert `(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1))));max
+)
 ;;: change opacity text
 
 (cond ((< opacity 100) 
@@ -499,7 +520,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
  (let* (
 	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
  		(car (gimp-image-get-active-layer image))	
-        	(vector-ref (cadr (gimp-image-get-selected-layers image)) 0)))
+        	(vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 		(width (car (gimp-image-get-width image)))
 		(height (car (gimp-image-get-height image)))
 		(alpha (car (gimp-drawable-has-alpha image-layer)))
@@ -542,14 +563,14 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 ;;;;create selection-channel (gimp-image-select-item image 2 selection-channel)
     (gimp-selection-save image)
 ;	(set! selection-channel (car (gimp-image-get-selected-drawables image)))
-(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! selection-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 (else (set! selection-channel (car (gimp-image-get-active-drawable image)))
 	)
 )	
 	(gimp-channel-set-opacity selection-channel 100)	
 	(gimp-item-set-name selection-channel "selection-channel")
     ;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )      
 	(gimp-selection-none image)	
@@ -559,7 +580,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-image-insert-layer image bump-layer -1 0)
 	(gimp-item-set-name bump-layer "Bump Layer")
 	(gimp-layer-flatten bump-layer)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image bump-layer pre-blur pre-blur)
+	(apply-gauss image bump-layer pre-blur pre-blur)
 	(gimp-item-set-visible bump-layer FALSE)	
 
 ;;;;create the background layer    
@@ -621,13 +642,13 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	
 ;;;;prepare the text-layer
 	;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(gimp-drawable-colorize-hsl text-layer 180 0 70)
 	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)
 	(gimp-layer-set-lock-alpha text-layer TRUE)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image text-layer 3 3)
+	(apply-gauss image text-layer 3 3)
 	(gimp-layer-set-lock-alpha text-layer FALSE)	
 	
 ;;;;create the reflections	
@@ -636,8 +657,11 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-item-set-name reflection1 "Reflection1")
 	(gimp-drawable-threshold reflection1 0 0 0.31372)
 	(plug-in-colortoalpha 1 image reflection1 '(0 0 0))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection1 15 15)
+	(apply-gauss image reflection1 15 15)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
+		(assert `(gimp-drawable-curves-spline reflection1 4 #(0 0 0.63529 0 0.69019 1 1 1)))
+)
 	(gimp-layer-set-opacity reflection1 30)
 	
 	(set! reflection2 (car (gimp-layer-copy text-layer TRUE)))
@@ -645,8 +669,11 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-item-set-name reflection2 "Reflection2")
 	(gimp-drawable-threshold reflection2 0 0.39215 0.50980)
 	(plug-in-colortoalpha 1 image reflection2 '(0 0 0))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection2 8 8)
+	(apply-gauss image reflection2 8 8)
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
+	(assert `(gimp-drawable-curves-spline reflection2 4 #(0 0 0.73725 0 0.79607 1 1 1)))
+)
 	(gimp-layer-set-opacity reflection2 60)
 	
 	(set! reflection3 (car (gimp-layer-copy text-layer TRUE)))
@@ -654,8 +681,11 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-item-set-name reflection3 "Reflection3")
 	(gimp-drawable-threshold reflection3 0 0.78431 1)
 	(plug-in-colortoalpha 1 image reflection3 '(0 0 0))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image reflection3 15 15)
+	(apply-gauss image reflection3 15 15)
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
+		(assert `(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1)))
+)
 	;(gimp-layer-set-opacity reflection3 70)	
 	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 (gimp-layer-set-opacity reflection3 70)	
@@ -665,7 +695,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-image-select-item image 2 selection-channel)
 	(gimp-context-set-foreground color)
 	;(gimp-image-set-active-layer image text-layer)
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector text-layer)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
@@ -725,7 +755,13 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-selection-none image)	
 
 ;;;;create the glass effect	
-	(if (= Material 1) (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
+	(if (= Material 1)	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+	(gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
+			(assert `(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
+
+		)
+		)
+
 
 ;;: change opacity alpha
 ;(if (> 100 opacity) (gimp-message "oh no") (gimp-layer-set-opacity text-layer opacity) );max
