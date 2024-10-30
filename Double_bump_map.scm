@@ -82,9 +82,9 @@
 		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 		(set! vectors-array (cadr get-vectors-returned-values))
 		(set! vectors-array (car get-vectors-returned-values)))
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-				(set! vectors-array (car get-vectors-returned-values))
-		(set! current-vector (vector-ref vectors-array 0))    )  ;top path, our own created from selection
+
+
+		(set! current-vector (vector-ref vectors-array 0))      ;top path, our own created from selection
 
 		;blurs white bump map
 		(gimp-selection-none image)
