@@ -245,7 +245,7 @@
     ; samj Old code ->   (gimp-image-set-active-layer image drawable)
 	; samj New code for gimp-2.99.12
    ; (gimp-image-set-selected-layers image 1 (vector drawable))
-(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image 1 (vector drawable)))
+(cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector drawable)))
 (else (gimp-image-set-active-layer image drawable))
 )
 
@@ -255,7 +255,10 @@
 	(gimp-drawable-fill bkg-layer FILL-FOREGROUND)
 	(gimp-drawable-edit-fill bkg-layer FILL-BACKGROUND)
 	(gimp-selection-none image)
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image bkg-layer 5 5)
+		(plug-in-gauss RUN-NONINTERACTIVE image bkg-layer (* 5 0.32) (* 5 0.32) 1))
+
 	;(gimp-image-select-color image 2 bkg-layer '(0 0 0) )
 (gimp-image-select-item image 2 drawable)
 ;	(gimp-selection-invert image)
@@ -275,7 +278,10 @@
 	  (gimp-drawable-edit-gradient-fill chrome GRADIENT-LINEAR 0 0 1 0 0 (+ offx x1) (+ offy y2) (+ offx x1) (+ offy y1))
 	(gimp-selection-none image)
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 3 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
-	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(gimp-drawable-curves-spline chrome 0  12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
+	(assert `(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) ))	)
+
 	(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE)
 	(gimp-image-remove-layer image bkg-layer)
 	
@@ -290,7 +296,7 @@
 	;(plug-in-gradmap 1 image chrome-copy)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (plug-in-gradmap 1 image chrome-copy)
-  (plug-in-gradmap 1 image 1 (vector chrome-copy))	)
+  (plug-in-gradmap 1 image (vector chrome-copy))	)
 	(gimp-layer-set-mode chrome-copy LAYER-MODE-BURN-LEGACY)
 	(set! chrome (car (gimp-image-merge-down image chrome-copy EXPAND-AS-NECESSARY)))
 	(if (= shadow TRUE) (apply-drop-shadow image chrome 3 3 10 '(0 0 0) 80 FALSE))
