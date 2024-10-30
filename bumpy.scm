@@ -36,6 +36,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+ 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTVagaRound Bold")
   (define sffont "QTVagaRound-Bold"))
@@ -89,7 +93,7 @@
 		; waving/rippling the text
 		(if (= boolrippleh TRUE) (plug-in-ripple 1 img basetext 26 2 0 0 0 TRUE FALSE)) ; Horiz
 		(if (= boolripplev TRUE) (plug-in-ripple 1 img basetext 26 2 1 0 0 TRUE FALSE)) ; Vert
-		(plug-in-gauss-rle2 1 img basetext 1 1)
+		(apply-gauss img basetext 1 1)
 
 		; save se selection
 		(gimp-image-select-item img 2 basetext)
@@ -107,11 +111,11 @@
 		(gimp-context-set-foreground '(0 0 0))
 		(gimp-drawable-edit-fill damap FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img damap 27 27)
+		(apply-gauss img damap 27 27)
 		(gimp-image-select-item img 2  chantext)
 		(gimp-drawable-edit-fill damap FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img damap 2 2)
+		(apply-gauss img damap 2 2)
 
 		(gimp-context-set-foreground '(128 128 128))
 		(gimp-selection-all img)
@@ -150,7 +154,7 @@
 		(gimp-context-set-foreground '(0 0 0))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img innermap 6 6)
+		(apply-gauss img innermap 6 6)
 
 		(gimp-context-set-foreground text-color)
 		(gimp-drawable-edit-fill basetext FILL-FOREGROUND)
@@ -177,7 +181,7 @@
 		(set! masktext (car (gimp-layer-create-mask basetext ADD-MASK-SELECTION)))
 		(gimp-layer-add-mask basetext masktext)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img masktext 1 1)
+		(apply-gauss img masktext 1 1)
 
 		(gimp-image-raise-item img fond)
 		(gimp-image-raise-item img fond)

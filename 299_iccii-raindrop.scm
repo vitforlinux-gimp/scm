@@ -56,7 +56,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 	; 水玉(水滴)のような効果
 (define (apply-raindrop-299-logo-effect20
@@ -106,7 +108,7 @@
 	(gimp-selection-none img)
 	(set! logo-layer-blur (car (gimp-layer-copy logo-layer TRUE)))
 	(gimp-image-insert-layer img logo-layer-blur 0 -1)
-	(plug-in-gauss-iir2 1 img logo-layer-blur blur blur)
+	(apply-gauss img logo-layer-blur blur blur)
 
 	; 処理の本体部分
  (let* (;(old-fg (car (gimp-context-get-foreground)))
@@ -185,7 +187,7 @@
 	  (gimp-context-set-foreground '(0 0 0))
 	  (gimp-drawable-edit-fill layer-hilight FILL-FOREGROUND)
 	  (gimp-selection-none img)
-	  (plug-in-gauss-iir2 1 img layer-hilight (* 0.8 blur) (* 0.8 blur))
+	  (apply-gauss img layer-hilight (* 0.8 blur) (* 0.8 blur))
 	  (gimp-layer-remove-mask layer-hilight MASK-APPLY)))
 	  ((eqv? hi-option 1)	; オフセットのとき...さらなる改良が必要
         (begin
@@ -196,7 +198,7 @@
 		  (* (/ (* hilight-width (- 100 hi-width)) 100) (cos radians))
 		  (* (/ (* hilight-width (- 100 hi-width)) 100) (sin radians)))
 	  (gimp-layer-remove-mask layer-hilight MASK-APPLY)
-	  (plug-in-gauss-iir2 1 img layer-hilight (* 0.8 blur) (* 0.8 blur)))))
+	  (apply-gauss 1 img layer-hilight (* 0.8 blur) (* 0.8 blur)))))
 	  (set! mask-hilight2 (car (gimp-layer-create-mask logo-layer ADD-MASK-BLACK)))
 	  (gimp-layer-add-mask layer-hilight mask-hilight2)
 	  (gimp-image-select-item img 2 logo-selection)
