@@ -13,6 +13,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 ; Define the function:
 
 (define (script-fu-chris-slabtext inText inFont inFontSize justification letter-spacing line-spacing tcolor tgrad ttexture
@@ -179,7 +182,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	  	  	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	      (script-fu-distress-selection theImage theSourceLayer 127 2 1.5 2 TRUE TRUE)
 	      (script-fu-distress-selection theImage (vector theSourceLayer) 0.5 2 1.5 2 TRUE TRUE))
-              (plug-in-gauss-iir TRUE theImage theSourceLayer 1 TRUE TRUE) 
+              (apply-gauss theImage theSourceLayer 1 1) 
 	     ; (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
           )
           (gimp-context-set-background '(255 255 255) )
@@ -244,7 +247,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
           (gimp-selection-none theImage)
 	  
-          (if (* (/ inFontSize 120) 8) (plug-in-gauss-iir TRUE theImage theShadowLayer (* (/ inFontSize 120) 8) TRUE TRUE))	;changed
+          (if (* (/ inFontSize 120) 8) (apply-gauss theImage theShadowLayer (* (/ inFontSize 120) 8) 1 ))	;changed
           ;(plug-in-autocrop TRUE theImage theShadowLayer)
 
 	  (set! thePaintMask (car(gimp-layer-create-mask thePaintLayer ADD-MASK-ALPHA)))
@@ -291,7 +294,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 ;(gimp-display-new theImage)) (define fish  ()
 
-          (if (> (* (/ inFontSize 120) 2) 1) (plug-in-gauss-iir TRUE theImage theSourceLayer (* (/ inFontSize 120) 2) TRUE TRUE))	;changed
+          (if (> (* (/ inFontSize 120) 2) 1) (apply-gauss theImage theSourceLayer (* (/ inFontSize 120) 2) 1))	;changed
           (gimp-item-set-visible theShadowLayer FALSE)
           (gimp-item-set-visible thePattLayer FALSE)
           (gimp-item-set-visible thePaintLayer FALSE)
