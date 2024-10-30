@@ -39,6 +39,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 (define (script-fu-furry-logo 
                                       img-width
@@ -335,7 +338,7 @@
 	(gimp-drawable-edit-clear fur-layer)
 	(gimp-selection-none image)
 	
-	(if (> blur-radius 0) (plug-in-gauss-iir2 1 image fur-layer blur-radius blur-radius))
+	(if (> blur-radius 0) (apply-gauss image fur-layer blur-radius blur-radius))
 	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	(plug-in-gimpressionist 1 image fur-layer "Furry")
 		(plug-in-gimpressionist 1 image (vector fur-layer) "Furry") )
