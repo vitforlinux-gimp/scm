@@ -52,6 +52,9 @@
 						 (gimp-context-set-gradient value)
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
 				))))
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 				
 ;scaled pattern fill procedure
 (define (scaled-pattern-fill image drawable pattern scale)
@@ -263,7 +266,7 @@
 				(gimp-drawable-desaturate fond 1)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(gimp-selection-none image)
-				(plug-in-gauss-iir TRUE  image fond 20 TRUE TRUE)
+				(apply-gauss image fond 20 20)
 				(plug-in-randomize-hurl 0 image fond 50 50 TRUE 0)
 				(plug-in-mblur 0 image fond 0 25 0 0 0)
 				(gimp-drawable-colorize-hsl fond 0 0 10 )
@@ -299,7 +302,7 @@
 				(gimp-drawable-desaturate fond 1)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(gimp-selection-none image)
-				(plug-in-gauss-iir TRUE  image fond 20 TRUE TRUE)
+				(apply-gauss image fond 20 20)
 				(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)
 				(plug-in-mblur 0 image fond 0 25 0 0 0)
 				(gimp-drawable-colorize-hsl fond 0 0 10 )
@@ -333,7 +336,7 @@
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)
 				(gimp-drawable-desaturate fond 1)
-				(plug-in-gauss-iir TRUE image fond 3 TRUE TRUE)
+				(apply-gauss image fond 3 3)
 				;(gimp-drawable-colorize-hsl fond 230 36 20 )
 
 																(if (= col-opt 0) 
@@ -358,18 +361,18 @@
 			
 					(define (material-plasma fond image)  			(begin
           ;(gimp-layer-set-lock-alpha fond TRUE)
-             (plug-in-plasma 1 image fond (rand 999999999) 7) ; Add plasma
+             (plug-in-plasma 1 image fond (random 999999999) 7) ; Add plasma
 			))
 		(define (material-none fond)  	(gimp-drawable-edit-clear fond)	)
 		
 (define (material-patchwork  fond image)  			(begin
-	    (plug-in-plasma 1 image fond (rand 999999999) (+ 1 (random 3))) ; Rnd Plasma Fill
+	    (plug-in-plasma 1 image fond (random 999999999) (+ 1 (random 3))) ; Rnd Plasma Fill
 	    (plug-in-cubism 1 image fond 6 10 0)
 			))
 		(define (material-diffraction  fond image)  			(begin
               (set! *seed* (car (gettimeofday))) ; Random Number Seed From Clock (*seed* is global)
               (random-next)                      ; Next Random Number Using Seed
-	                    (plug-in-diffraction 1 image fond .815 1.221 1.123 (+ .821 (rand 2)) (+ .821 (rand 2)) (+ .974 (rand 2)) .610 .677 .636 .066 (+ 27.126 (rand 20)) (+ -0.437 (rand 1)))              
+	                    (plug-in-diffraction 1 image fond .815 1.221 1.123 (+ .821 (random 2)) (+ .821 (random 2)) (+ .974 (random 2)) .610 .677 .636 .066 (+ 27.126 (random 20)) (+ -0.437 (random 1)))              
 
 			))
 					(define (material-pizza fond image)  			(begin
@@ -585,19 +588,17 @@
 			
 	(define  (material-emap fond image gradient) (begin
 				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
-				      (plug-in-gauss                 
-                   1     ; Non-interactive 
+				      (apply-gauss                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
          5     ; Blur Radius x  
          5     ; Blue Radius y 
-                   0     ; Method (IIR=0 RLE=1)
       )
       (gimp-context-set-gradient gradient)
       (plug-in-autostretch-hsv 1 image fond)
  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 image fond) 
-      (plug-in-gradmap 1 image 1 (vector fond))   )              ; Map Gradient
+      (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
 
 	))
 	(define  (material-willwood fond img n1 n2) (begin
@@ -657,7 +658,7 @@
 ;;;;;;;MATERIAL END
 ;;;;;;;
 		(define  (effect-blur fond image) (begin
-				(plug-in-gauss-iir TRUE image fond 6 TRUE TRUE)
+				(apply-gauss image fond 6 6)
 			))
 		(define  (effect-oilify fond image) (begin
 					 (plug-in-oilify 1 image fond 20 0)              ; Add olify effect
@@ -705,16 +706,21 @@
       ))
 	(define  (effect-desat-chrome fond image) (begin
 				(gimp-drawable-desaturate fond 4 )
+					(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 					(gimp-drawable-curves-spline fond 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
-					(plug-in-gauss-iir TRUE image fond 3 TRUE TRUE)
+					(gimp-drawable-curves-spline fond 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
+
+					(apply-gauss image fond 3 3)
 
 
 			))
 	(define  (effect-desat-chrome-color fond image fond-color number) (begin
 				(gimp-drawable-desaturate fond 2 )
+					(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 					(gimp-drawable-curves-spline fond 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
+					(gimp-drawable-curves-spline fond 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 					(gimp-context-set-foreground fond-color)
-					(plug-in-gauss-iir TRUE image fond 3 TRUE TRUE)
+					(apply-gauss image fond 3 3)
 					(if (= number 0) (gimp-context-set-paint-mode LAYER-MODE-LIGHTEN-ONLY-LEGACY))
 					(if (= number 1) (gimp-context-set-paint-mode LAYER-MODE-MULTIPLY-LEGACY))
 					(if (= number 2) (gimp-context-set-paint-mode LAYER-MODE-OVERLAY-LEGACY))
@@ -1125,7 +1131,7 @@
 		(gimp-context-set-foreground '(255 255 255))
 		(gimp-drawable-edit-fill olight FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img olight 18 18)
+		(apply-gauss img olight 18 18)
 		(gimp-image-select-item img 0 chantext)
 		;(gimp-selection-invert img)
 		;(gimp-edit-cut olight)
@@ -1213,7 +1219,7 @@
 		(gimp-context-set-foreground '(255 255 255))
 		(gimp-drawable-edit-fill mapeux FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img mapeux 18 18)
+		(apply-gauss img mapeux 18 18)
 
 		; bumpmapping:displacing reflect to follow shape
 		(plug-in-displace 
@@ -1238,7 +1244,7 @@
 		(gimp-context-set-foreground shadow-color)
 		(gimp-drawable-edit-fill shad FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(plug-in-gauss-rle2 1 img shad 15 15)
+		(apply-gauss img shad 15 15)
 
 		
 		; correcting resizing effect on background
@@ -1249,7 +1255,6 @@
 		; final effects
 	
 		(if (= effect-fill 1) ;Blur
-			;(plug-in-gauss-iir TRUE img basetext 6 TRUE TRUE)
 			(effect-blur basetext img)
 		)
 		(if (= effect-fill 2) 
@@ -1530,8 +1535,11 @@
 		))
 		(if (= text-effect 3) (plug-in-waves  1 img text-layer 5 70 10 1 0 FALSE ))
 		(if (= text-effect 4) (begin (gimp-selection-none img)
-			(plug-in-gauss-rle2 RUN-NONINTERACTIVE img text-layer 20 20)
-(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
+			(apply-gauss img text-layer 20 20)
+		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
+(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
+))
  	(gimp-selection-none img)
 
 
