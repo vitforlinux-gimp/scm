@@ -304,7 +304,7 @@
   SF-OPTION "Metal Finish" '("None" "Hammered" "Cloudy")
         SF-ADJUSTMENT "depth (pixels)" '(3 1 60 1 1 0 0)
 	SF-ADJUSTMENT "3d height" '(0 0 50 1 1 0 0)
-	  SF-TOGGLE     "Shined"   TRUE
+	  SF-TOGGLE     "Shined"   FALSE
   SF-OPTION "Gradmap" list-gradname-dir
   SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
@@ -445,7 +445,7 @@
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 depth 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
-	(assert `(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))))
+	(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 	(if (= shined 1) (plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE))
 	(gimp-image-remove-layer image bkg-layer)
 	
@@ -524,11 +524,11 @@
 		(if (= metal 6) (gimp-drawable-brightness-contrast chrome 0.0905511811024 0.0905511811024));brass
 		(if (= metal 7) (begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
-(assert `(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
+(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 ) (gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss 1 image chrome 1 1)));chrome
 		(if (= metal 8)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 		(gimp-drawable-curves-spline chrome 0 14 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 ))
-		(assert `(gimp-drawable-curves-spline chrome 0 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 ))))
+		(gimp-drawable-curves-spline chrome 0 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 )))
 		(gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss image chrome 1 1)));chrome
 
 (gimp-layer-set-lock-alpha chrome TRUE)
@@ -603,7 +603,7 @@
    SF-OPTION "Metal Finish" '("None" "Hammered" "Cloudy")
          SF-ADJUSTMENT "depth (pixels)" '(3 1 60 1 1 0 0)
 	SF-ADJUSTMENT "3d height" '(0 0 50 1 1 0 0)
-	SF-TOGGLE     "Shined"   TRUE
+	SF-TOGGLE     "Shined"   FALSE
   SF-OPTION "Gradmap" list-gradname-dir
   SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
