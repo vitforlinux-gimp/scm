@@ -35,6 +35,10 @@
 
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTHelvetCnd-Black Heavy")
   (define sffont "QTHelvetCnd-Black"))
@@ -101,7 +105,7 @@
 (gimp-selection-none theImage)
 	(gimp-layer-set-lock-alpha shadowLayer FALSE)
 	(if (>= shadowBlur 1.0)
-	    (plug-in-gauss-rle 1 theImage shadowLayer shadowBlur TRUE TRUE)
+	    (apply-gauss theImage shadowLayer shadowBlur shadowBlur)
 	)	
 
 
@@ -125,7 +129,7 @@
 	            (/ (car (gimp-image-get-width theImage)) 2)
                     (car (gimp-image-get-height theImage)))	
 	(plug-in-ripple 1 theImage waveLayer 100 5 1 0 1 TRUE FALSE)
-	(plug-in-gauss-iir 1 theImage waveLayer 3.33334 TRUE TRUE)
+	(apply-gauss theImage waveLayer 3.33334 3.33334 )
 	; And make it a text
 	(define waveLayerMask (car (gimp-layer-create-mask waveLayer 1)))
 	(gimp-layer-add-mask waveLayer waveLayerMask)	
