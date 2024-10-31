@@ -10,6 +10,11 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfbrush '("Pencil Scratch" 1.0 20 0))
   (define sfbrush "Pencil Scratch")	)
+  
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+
 
 (define (script-fu-zahnpasta-plus-logo text size font justify  brush brush-size fore outype outl  bgcol)
 
@@ -97,7 +102,7 @@
    ; (gimp-drawable-edit-stroke-selection theBlurLayer)
     (gimp-selection-none img)
 
-    (plug-in-gauss-rle 1 img theBlurLayer 5.0 TRUE TRUE)
+    (apply-gauss img theBlurLayer 5.0 5.0)
 
     (gimp-item-set-visible theBlurLayer FALSE)
     (gimp-item-set-visible theBlur2Layer FALSE)
