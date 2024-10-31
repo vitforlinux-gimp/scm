@@ -19,6 +19,10 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTBodiniPoster Italic")
   (define sffont "QTBodiniPoster-Italic"))
+  
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 
 (define (script-fu-old-style-logo-299 text size font justification letter-spacing line-spacing text-color  use-second-col? text-color2 use-gradient?  text-gradient cut-color bg-color second 45deg worn shadow vignette conserve)
@@ -59,7 +63,7 @@
 
 	 (plug-in-solid-noise 1 img textmask FALSE TRUE 0 1 4 4)
 	 		(gimp-drawable-brightness-contrast textmask 0.5 0.5 )
-			(plug-in-gauss-iir TRUE img textmask 6 TRUE TRUE)
+			(apply-gauss img textmask 6 6)
 			(gimp-drawable-invert textmask TRUE)
 ))
 
