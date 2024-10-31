@@ -11,6 +11,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTBodiniPoster Italic")
@@ -60,7 +63,7 @@
 (gimp-context-set-background '(255 255 255))
 (gimp-drawable-edit-fill white-layer 1)
 (set! blur-layer (car (gimp-image-merge-down image text-layer 0)))
-(plug-in-gauss-rle2 1 image blur-layer (/ area 70) (/ area 70))
+(apply-gauss image blur-layer (/ area 70) (/ area 70))
 
 	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 						 (gimp-context-set-gradient "Horizon 2")
@@ -83,7 +86,7 @@
 (gimp-context-set-foreground '(152 152 152))
 (gimp-drawable-edit-fill bump-layer 0)
 (plug-in-bump-map 1 image bump-layer blur-layer 135 27 7 0 0 0 0 TRUE TRUE 2)
-(plug-in-gauss-rle2 1 image bump-layer 1 1)
+(apply-gauss image bump-layer 1 1)
 (gimp-image-remove-layer image blur-layer)
 ;(gimp-context-set-gradient "Three bars sin")
 
