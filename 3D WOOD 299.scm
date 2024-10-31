@@ -139,7 +139,11 @@
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
 	(apply-gauss image text-layer blur blur)
-	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))))
+	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
+	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
+
+	))
 
 ;;;;create the guass-layer
     (set! guass-layer (car (gimp-layer-copy text-layer TRUE)))
