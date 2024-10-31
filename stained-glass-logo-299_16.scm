@@ -13,6 +13,10 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTBookmann Bold")
   (define sffont "QTBookmann-Bold"))
+  
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 (define (apply-super-logos04-effect image logo-layer tsize tspc random blur offset sf ft-color bg-color lwidth bgmosaic flatten)
 (let* (
@@ -86,17 +90,23 @@ sf
 (set-pt v_point 1 0.25098 0.25098 )
 (set-pt v_point 2 0.5 0.88627 )
 (set-pt v_point 3 1 1 )
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 (gimp-drawable-curves-spline logo-layer HISTOGRAM-VALUE 8 v_point)
+(gimp-drawable-curves-spline logo-layer HISTOGRAM-VALUE v_point))
+
 (gimp-selection-none image)
 
 ; draw outline
 ; Convert text to path
 (gimp-image-select-item image 2  bump-layer) ;select text
-(plug-in-sel2path 1 image bump-layer) ;
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(plug-in-sel2path 1 image bump-layer)
+(plug-in-sel2path 1 image (vector bump-layer))) ;
+
 
   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 (gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")  
-(gimp-item-set-name (vector-ref (cadr (gimp-image-get-selected-paths image)) 0) "Path")
+(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths image)) 0) "Path")
 )
 ;(gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")
 ;(gimp-item-set-name (aref (cadr (gimp-image-get-selected-vectors image)) 0) "Path")
@@ -173,9 +183,9 @@ height
 (plug-in-bump-map 1 image outline-layer outline-layer 135 45 3 0 0 0 0 1 0 0 )
  (plug-in-oilify 1 image outline-layer 2 1)
  ;(gimp-layer-set-lock-alpha outline-layer TRUE)
- (plug-in-gauss-iir2 1 image outline-layer 2 2)
+ (apply-gauss image outline-layer 2 2)
  (gimp-drawable-brightness-contrast outline-layer 0 0.2)
-(plug-in-gauss-iir2 1 image path-layer blur blur)
+(apply-gauss image path-layer blur blur)
 (gimp-layer-set-offsets path-layer offset offset)
 
 (gimp-selection-none image) ;no selection
