@@ -36,13 +36,17 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
-(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
+(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfbggrad "Full saturation spectrum CCW")
   (define sfbggrad "Full Saturation Spectrum CCW")	)
+  
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 (define (gimp-version-meets? check)
   (let ((c (map string->number (strbreakup check ".")))
@@ -161,7 +165,10 @@
 	(set! cnt (- cnt 1))
 	)
 	(gimp-selection-none image)
-	(gimp-drawable-curves-spline paint-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(gimp-drawable-curves-spline paint-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))
+	(gimp-drawable-curves-spline paint-layer 0 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1)))	
+	
 	(set! drawable (car (gimp-image-merge-down image paint-layer EXPAND-AS-NECESSARY)))
 	
 	(gimp-image-select-item image 2 selection-channel)	
@@ -183,7 +190,10 @@
 				0 ;inBlur 
 				FALSE)
 	
-    (set! drawable (car (gimp-image-get-active-layer image)))
+    ;(set! drawable (car (gimp-image-get-active-layer image)))
+    	(set! drawable (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 ;	(gimp-curves-spline drawable 0 10 #(0 0 86 50 128 129 172 207 255 255))	
 	
 	(easy-3d image drawable
@@ -193,7 +203,9 @@
 							   FALSE ;keep-selection-in
 							   FALSE) ;conserve
     
-	(set! drawable (car (gimp-image-get-active-layer image)))
+	    	(set! drawable (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 	
     (psychedelic-shine image drawable
                 shadow-size
@@ -201,7 +213,9 @@
 				FALSE ;keep-selection-in
 				FALSE) ;conserve
 
-	(set! drawable (car (gimp-image-get-active-layer image)))	
+    	(set! drawable (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 	
 ;;;;create the background layer
     (set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY))) 
@@ -214,7 +228,10 @@
 							   blend-repititions
 							   displace-repititions
 							   FALSE) ;keep-selection
-	(gimp-drawable-curves-spline bkg-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(gimp-drawable-curves-spline bkg-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))
+	(gimp-drawable-curves-spline bkg-layer 0 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	)
+	
 	)) ;endcond						   
 	;end	
 	
@@ -369,7 +386,10 @@
 						displace-repititions
 						FALSE) ;conserve					   
 
-	(set! text-layer (car (gimp-image-get-active-layer image)))
+	;(set! text-layer (car (gimp-image-get-active-layer image)))
+	       			(set! text-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 	
 ;;;;Scale Image to it's final size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (set! aspect (/ final-width (car (gimp-image-get-width image)))) 
@@ -388,7 +408,10 @@
 							   blend-repititions
 							   displace-repititions
 							   FALSE) ;keep-selection
-	(gimp-drawable-curves-spline bkg-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	
+			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(gimp-drawable-curves-spline bkg-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))
+	(gimp-drawable-curves-spline bkg-layer 0 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	
+)	
 	)) ;endcond						   
 	;end
 ;(plug-in-oilify 1 image text-layer 4 0) 
@@ -501,7 +524,7 @@
 	(set! varLoopCounter 1)
 	(while (<= varLoopCounter inWidth)
 	  ;inCurve of 0 will be flat, inCurve of 1 is a quarter round, inCurve of -1 is a quarter round fillet
-	  (set! varFillValue (* (pow (+ (* (- (sin (* (/ varLoopCounter inWidth) (tan 1))) (/ varLoopCounter inWidth)) inCurve) (/ varLoopCounter inWidth)) (pow 2 inPow)) 255))
+	  (set! varFillValue (* (expt (+ (* (- (sin (* (/ varLoopCounter inWidth) (tan 1))) (/ varLoopCounter inWidth)) inCurve) (/ varLoopCounter inWidth)) (expt 2 inPow)) 255))
 	  
 	  ;avoid distortion
 	  (gimp-image-select-item img 2 varBlurredSelection)	
@@ -588,7 +611,7 @@
 	  (if (= inLocation 1)
 	    (gimp-selection-invert img)
 	  )	
-	  (plug-in-gauss RUN-NONINTERACTIVE img varBevelLayer inBlur inBlur 0)
+	  (apply-gauss img varBevelLayer inBlur inBlur)
 	  (gimp-selection-none img) 
 	)
 	
@@ -631,7 +654,10 @@
 							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+            ;(image-layer (car (gimp-image-get-active-layer image)))
+	    	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(alpha (car (gimp-drawable-has-alpha image-layer)))
@@ -681,7 +707,7 @@
 		(gimp-context-set-foreground '(0 0 0))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
 		(gimp-selection-none image)
-		(plug-in-gauss-rle2 1 image innermap 6 6)
+		(apply-gauss image innermap 6 6)
 
 ;		(gimp-context-set-foreground color)
 ;		(gimp-drawable-edit-fill image-layer FILL-FOREGROUND)
@@ -707,7 +733,7 @@
 		(set! image-mask (car (gimp-layer-create-mask image-layer ADD-MASK-SELECTION)))
 		(gimp-layer-add-mask image-layer image-mask)
 		(gimp-selection-none image)
-		(plug-in-gauss-rle2 1 image image-mask 1 1)
+		(apply-gauss image image-mask 1 1)
 		(gimp-layer-remove-mask image-layer MASK-APPLY)
 		(gimp-image-remove-layer image innermap)
 
@@ -806,7 +832,10 @@
 							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+            ;(image-layer (car (gimp-image-get-active-layer image)))
+	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(sel (car (gimp-selection-is-empty image)))
@@ -841,7 +870,7 @@
 ;	(set! img-channel (car (gimp-image-get-active-drawable image)))	
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (set! img-channel (car (gimp-image-get-active-drawable image)))
-  (set! img-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+  (set! img-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-channel-set-opacity img-channel 100)	
 	(gimp-item-set-name img-channel "img-channel")
 	(gimp-image-set-active-layer image img-layer)	
@@ -854,13 +883,13 @@
 ;;;;apply the image effects
     (gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image img-layer 12 12)
+	(apply-gauss image img-layer 12 12)
 	(plug-in-emboss RUN-NONINTERACTIVE image img-layer 225 84 10 TRUE)	
 	(gimp-selection-invert image)
 	(gimp-drawable-edit-clear img-layer)
 	(gimp-selection-invert image)
 	(plug-in-colortoalpha RUN-NONINTERACTIVE image img-layer '(254 254 254));;fefefe
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image img-channel 15 15)
+	(apply-gauss image img-channel 15 15)
 	;(plug-in-blur RUN-NONINTERACTIVE image img-layer)
 	(gimp-image-set-active-layer image bkg-layer)
 (plug-in-displace RUN-NONINTERACTIVE image bkg-layer 8 8 TRUE TRUE img-channel img-channel 1)
@@ -879,7 +908,7 @@
 ;	(set! shadow-layer (car (gimp-image-get-active-drawable image)))
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (set! shadow-layer (car (gimp-image-get-active-drawable image)))
-  (set! shadow-layer (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+  (set! shadow-layer (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-image-lower-item image shadow-layer)
 	
    )
