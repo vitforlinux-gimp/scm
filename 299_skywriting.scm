@@ -9,6 +9,10 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTHelvet-Black Heavy")
   (define sffont "QTHelvet-Black"))
+  
+  		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 ; Define the function:
 
 (define (script-fu-skywriting inText inSize inFont  justification letter-spacing line-spacing grow-text outline color foption scolor grad pat)
@@ -220,8 +224,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 		'(000 000 000 000 000 000 000 000 000 000 000 000) )
 	;(gimp-image-select-item img 2 theText)
 	;(gimp-bucket-fill clouds1 FG-BUCKET-FILL LAYER-MODE-NORMAL-LEGACY 10 0 0 0 0)
-	(plug-in-gauss-rle TRUE img clouds1 6 TRUE TRUE)
-	(plug-in-gauss-rle TRUE img clouds1 6 TRUE TRUE)
+	(apply-gauss img clouds1 6 6)
+	(apply-gauss img clouds1 6 6)
 
 	(gimp-image-remove-layer img theText)
 ;	(gimp-layer-delete theText)		;none 2.2
