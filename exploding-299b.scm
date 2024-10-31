@@ -30,7 +30,9 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 
 (define (script-fu-exploding-logo299b text size font tcolor blur displace_loop blur_toggle crop_toggle ft?)
@@ -79,7 +81,7 @@
     (define theBuffer (/ (- theImageSize (car(gimp-drawable-get-height theText))) 2 ))
     (gimp-layer-set-offsets theText 50 theBuffer)
     (gimp-floating-sel-anchor theText)
-    (plug-in-gauss-iir 1 img theTextLayer blur TRUE TRUE)
+    (apply-gauss img theTextLayer blur blur)
 
     (define (set-pt a index x y)
       (begin
@@ -92,9 +94,11 @@
         (set-pt a 1 127 255)
         (set-pt a 2 255 0)
         a))
-
-    (gimp-drawable-curves-spline theTextLayer 0 6 (spline-exploding))
-    (gimp-drawable-curves-spline theTextLayer 0 6 (spline-exploding))
+		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+    (begin(gimp-drawable-curves-spline theTextLayer 0 6 (spline-exploding))
+    (gimp-drawable-curves-spline theTextLayer 0 6 (spline-exploding)))
+    (begin (gimp-drawable-curves-spline theTextLayer 0 (spline-exploding))
+    (gimp-drawable-curves-spline theTextLayer 0 (spline-exploding))))
 
     (define thePolarLayer (car (gimp-layer-copy theTextLayer 0)))
     (gimp-item-set-name thePolarLayer "Polar")
@@ -124,13 +128,13 @@
 
     (plug-in-displace 1 img thePolarLayer 0.000 -100.000 FALSE TRUE theMergedLayer theMergedLayer 1)
   ;;(plug-in-blur 1 img thePolarLayer)
-;;    (plug-in-gauss-iir 1 img thePolarLayer blur TRUE TRUE)
+;;    (plug-in-gauss img thePolarLayer blur TRUE TRUE)
 
     (define i displace_loop)
     (cond (> i 1)
         (plug-in-displace 1 img thePolarLayer 0.000 -100.000 FALSE TRUE theMergedLayer theMergedLayer 1)
         (if (= TRUE blur_toggle)
-        (plug-in-gauss-iir 1 img thePolarLayer blur TRUE TRUE))
+        (apply-gauss img thePolarLayer blur blur))
         (define i (- i 1)))
     
     (plug-in-polar-coords 1 img thePolarLayer 100.000 0.000 FALSE TRUE TRUE)
@@ -149,7 +153,7 @@
     )
 
 ;è¿½å 
-    (plug-in-gauss-iir2 1 img thePolarLayer 2 2)
+    (apply-gauss img thePolarLayer 2 2)
     (define clayer (car (gimp-layer-copy thePolarLayer 0)))
     (gimp-image-insert-layer img clayer 0 0)
     (gimp-context-set-foreground tcolor)
