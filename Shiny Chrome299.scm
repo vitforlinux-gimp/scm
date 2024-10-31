@@ -280,7 +280,7 @@
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 3 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 	(gimp-drawable-curves-spline chrome 0  12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
-	(assert `(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) ))	)
+	(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) )	)
 
 	(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE)
 	(gimp-image-remove-layer image bkg-layer)

@@ -204,7 +204,7 @@
 	(apply-gauss image text-layer blur blur)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
-		(assert `(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
+		(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 )
 	))
 
@@ -315,7 +315,7 @@
 	(apply-gauss image reflection1 15 15)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
-		(assert `(gimp-drawable-curves-spline reflection1 4  #(0 0 0.63529 0 0.69019 1 1 1)))
+		(gimp-drawable-curves-spline reflection1 4  #(0 0 0.63529 0 0.69019 1 1 1))
 )
 	(gimp-layer-set-opacity reflection1 30)
 	
@@ -327,7 +327,7 @@
 	(apply-gauss image reflection2 8 8)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
-		(assert `(gimp-drawable-curves-spline reflection2 4  #(0 0 0.73725 0 0.79607 1 1 1)))
+		(gimp-drawable-curves-spline reflection2 4  #(0 0 0.73725 0 0.79607 1 1 1))
 	)
 	(gimp-layer-set-opacity reflection2 60)
 	
@@ -339,7 +339,7 @@
 	(apply-gauss image reflection3 15 15)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
-		(assert `(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1)))
+		(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1))
 )
 	;(gimp-layer-set-opacity reflection3 70)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
@@ -430,7 +430,7 @@
 	(if (= Material 1)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
-(assert `(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1))));max
+(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
 )
 ;;: change opacity text
 
@@ -660,7 +660,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(apply-gauss image reflection1 15 15)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
-		(assert `(gimp-drawable-curves-spline reflection1 4 #(0 0 0.63529 0 0.69019 1 1 1)))
+		(gimp-drawable-curves-spline reflection1 4 #(0 0 0.63529 0 0.69019 1 1 1))
 )
 	(gimp-layer-set-opacity reflection1 30)
 	
@@ -672,7 +672,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(apply-gauss image reflection2 8 8)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
-	(assert `(gimp-drawable-curves-spline reflection2 4 #(0 0 0.73725 0 0.79607 1 1 1)))
+	(gimp-drawable-curves-spline reflection2 4 #(0 0 0.73725 0 0.79607 1 1 1))
 )
 	(gimp-layer-set-opacity reflection2 60)
 	
@@ -684,7 +684,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(apply-gauss image reflection3 15 15)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
-		(assert `(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1)))
+		(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1))
 )
 	;(gimp-layer-set-opacity reflection3 70)	
 	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
@@ -757,7 +757,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 ;;;;create the glass effect	
 	(if (= Material 1)	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 	(gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
-			(assert `(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
+			(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
 
 		)
 		)
