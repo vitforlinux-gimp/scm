@@ -31,7 +31,12 @@
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
 ; Fix code for gimp 2.10 working in 2.99.16
-(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
+(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
+
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+
 
 
 (define (script-fu-shine299 image drawable
@@ -42,7 +47,9 @@
 							  
 
  (let* (
-            (image-layer (car (gimp-image-get-active-layer image)))
+       			(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+             (car (gimp-image-get-active-layer image))
+	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
 			(sel (car (gimp-selection-is-empty image)))
@@ -68,9 +75,9 @@
 ;;;;create channel
 	(gimp-selection-save image)
 	;(set! img-channel (car (gimp-image-get-active-drawable image)))
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-        (set! img-channel (car (gimp-image-get-active-drawable image)))
-  (set! img-channel (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)	
+(cond ((defined? 'gimp-image-get-selected-layers) (set! img-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! img-channel (car (gimp-image-get-active-drawable image)))
+	)	)	
 	(gimp-channel-set-opacity img-channel 100)	
 	(gimp-item-set-name img-channel "img-channel")
 	(gimp-image-set-active-layer image img-layer)	
@@ -83,15 +90,15 @@
 ;;;;apply the image effects
     (gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image img-layer 12 12)
+	(apply-gauss image img-layer 12 12)
 	(plug-in-emboss RUN-NONINTERACTIVE image img-layer 225 84 10 TRUE)	
 	(gimp-selection-invert image)
 	(gimp-drawable-edit-clear img-layer)
 	(gimp-selection-invert image)
 	(plug-in-colortoalpha RUN-NONINTERACTIVE image img-layer '(254 254 254));;fefefe
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE image img-channel 15 15)
+	(apply-gauss image img-channel 15 15)
 	;(plug-in-blur RUN-NONINTERACTIVE image img-layer)
-	(plug-in-gauss-iir TRUE  image img-layer shining TRUE TRUE)
+	(apply-gauss  image img-layer shining shining)
 	(gimp-image-set-active-layer image bkg-layer)
 (plug-in-displace RUN-NONINTERACTIVE image bkg-layer 8 8 TRUE TRUE img-channel img-channel 1)
 (gimp-image-remove-layer image bkg-layer)
@@ -105,9 +112,9 @@
 	(gimp-image-raise-item image tmp-layer)
     (gimp-image-merge-down image tmp-layer CLIP-TO-IMAGE)
 	;(set! shadow-layer (car (gimp-image-get-active-drawable image)))
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-        (set! shadow-layer (car (gimp-image-get-active-drawable image)))
-  (set! shadow-layer (aref (cadr (gimp-image-get-selected-drawables image)) 0))	)
+(cond ((defined? 'gimp-image-get-selected-layers) (set! shadow-layer (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
+(else (set! shadow-layer (car (gimp-image-get-active-drawable image)))
+	)	)
 	(gimp-image-lower-item image shadow-layer)
 	
    )
