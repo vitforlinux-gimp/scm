@@ -6,6 +6,10 @@
         (define sffont "QTVagaRound Bold")
   (define sffont "QTVagaRound-Bold"))
   
+  		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  
   (script-fu-register
             "script-fu-highlighted-logo"                        ;function name
             "HighLighted LOGO"                                  ;menu label
@@ -178,11 +182,11 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0);a spin-button
 		;(gimp-layer-resize-to-image-size highlight-channel)
 
 	(gimp-selection-none theImage)
-	(plug-in-gauss-rle2 RUN-NONINTERACTIVE theImage highlight 5 5)
+	(apply-gauss theImage highlight 5 5)
 	;(gimp-image-set-active-layer image highlight)
 	(plug-in-bump-map RUN-NONINTERACTIVE theImage highlight highlight-channel 135 15 10 0 0 0 1 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	(plug-in-colortoalpha RUN-NONINTERACTIVE theImage highlight '(128 128 128))
-		(plug-in-gauss-rle2 RUN-NONINTERACTIVE theImage highlight 1.5 1.5)
+		(apply-gauss theImage highlight 1.5 1.5)
 		;(gimp-image-remove-layer theImage highlight-channel)
 
       
