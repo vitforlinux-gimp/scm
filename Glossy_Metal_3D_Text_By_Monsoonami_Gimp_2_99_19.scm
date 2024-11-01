@@ -537,13 +537,14 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sauvegarder cette sélection dans un chemin
-	(plug-in-sel2path 1 img calque_texte)
+	(plug-in-sel2path 1 img (vector calque_texte))
 	
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1")
-(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_1"))
-(else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1"))
-)
+  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1")  
+(gimp-item-set-name (vector-ref  (car (gimp-image-get-selected-paths img)) 0) "Texte_1"))
+
 
 
 
@@ -568,13 +569,15 @@
 	(gimp-selection-grow img Grosseur_du_fond_du_texte)
 	
 	; sauvegarder cette sélection dans un chemin
-	(plug-in-sel2path 1 img calque_texte_2)
+	(plug-in-sel2path 1 img (vector calque_texte_2))
 	
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2")
-	(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_2"))
-(else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2"))
-)
+  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+   (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2")
+	(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "Texte_2"))
+
+
 
 
 	; remplir le calque calque_motif avec la couleur de PP
@@ -708,13 +711,15 @@
 	(gimp-selection-grow img (round (/ Grosseur_du_fond_du_texte 5)))
 	
 	; sauvegarder cette sélection dans un chemin
-	(plug-in-sel2path 1 img calque_texte_3)
+	(plug-in-sel2path 1 img (vector calque_texte_3))
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3")
-	(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_3"))
-(else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3"))
-)
+  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3")
+	(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "Texte_3"))
+
+
 	
 	; remplir le calque calque_motif avec la couleur de PP
 	(gimp-drawable-edit-fill 
@@ -745,13 +750,15 @@
 	)	
 	
 	; sauvegarder cette sélection dans un chemin
-	(plug-in-sel2path 1 img calque_texte_3)
+	(plug-in-sel2path 1 img (vector calque_texte_3))
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour")
-		(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "Texte_3_contour"))
-(else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour"))
-)
+  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+   (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour")
+		(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "Texte_3_contour"))
+
+
 
 
 	
@@ -885,13 +892,15 @@
 	)
 	
 	; sauvegarder cette sélection dans un chemin
-	(plug-in-sel2path 1 img demi_texte_haut)
+	(plug-in-sel2path 1 img (vector demi_texte_haut))
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut")
-	(cond ((defined? 'gimp-image-get-selected-path) (gimp-item-set-name (aref (cadr (gimp-image-get-selected-path img)) 0) "demi_texte_haut"))
-(else (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut"))
-)
+  (if (= (string->number (substring (car (gimp-version)) 0 3)) 2.10)
+(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut")
+	(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "demi_texte_haut"))
+
+
 
 
 
