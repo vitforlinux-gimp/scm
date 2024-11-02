@@ -45,7 +45,9 @@
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
 
 (define (Aply-script-fu-Liquid-Water-299 img Bump-Layer Back-color ShapeW DropsA LightA sh-op inter)
   (let* ((width (car (gimp-drawable-get-width Bump-Layer)))
@@ -109,9 +111,9 @@
     (gimp-context-set-foreground White)
     (gimp-drawable-edit-fill Bump-Layer 0) 
     (gimp-selection-all img) 
-    (plug-in-gauss 1 img Noise_calque 20 20 0)
+    (apply-gauss img Noise_calque 20 20)
     (gimp-drawable-threshold Noise_calque 0 (/ DropsA 255) 1)    ;
-    (plug-in-gauss 1 img Bump-Layer  ShapeW ShapeW 0)   
+    (apply-gauss img Bump-Layer  ShapeW ShapeW)   
     (gimp-drawable-threshold Bump-Layer 0 0.764705882353 1)
     (gimp-image-raise-item-to-top img Noise_calque)
     (gimp-image-merge-down img Noise_calque 0)
@@ -149,8 +151,8 @@
     (gimp-drawable-edit-fill Highlight_down 0)
     (gimp-drawable-edit-fill Highlight_fill 0)
     (gimp-selection-all img)
-    (plug-in-gauss 1 img Bump-Layer 20 20 0)
-    (plug-in-gauss 1 img Shadow 10 10 0)
+    (apply-gauss img Bump-Layer 20 20)
+    (apply-gauss img Shadow 10 10)
     (gimp-layer-set-offsets Shadow 4 3)
  
     ;Bumping an Highlight
