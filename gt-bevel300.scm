@@ -41,6 +41,10 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
+		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      (plug-in-gauss  1  img drawable x y 0)
+ (plug-in-gauss 1 img drawable (* x 0.32)  (* y 0.32) 0)  )))
+
 ;Define Main Procedure
 ;
 (define (script-fu-gt-bevel300 
@@ -55,6 +59,7 @@
                            bump-ambient      ; Bump Ambient Light
                            stretch-contrast  ; Stretch Contrast
                            bump-invert       ; Bump Invert Flag
+			   inBlur ; after effect Blur
                            keep-layers       ; Keep Bumpmap
         )
 ;
@@ -167,6 +172,12 @@
 		;(gimp-layer-set-mode bevel-layer LAYER-MODE-VIVID-LIGHT )
 
         ;(gimp-image-set-active-layer img bevel-layer)           ; Make Bevel Layer Active
+; After effect blur	
+	(if (> inBlur 0)
+      (gimp-image-select-item img 2 bevel-layer)	
+	  (apply-gauss img bevel-layer inBlur inBlur )
+	  (gimp-selection-none img) 
+	)
 ;
 ; Remove Bumpmap
 ;
@@ -182,7 +193,8 @@
         (if (= saved-flag TRUE)
           (begin
             (gimp-image-select-item img 0 saved-selection) ; Restore Selection
-          )
+          )	  (gimp-selection-none img) 
+
         )
 ;
 ; End Undo Group
@@ -222,6 +234,7 @@
             SF-ADJUSTMENT   _"Ambient Light"       '(.5 0 1 .01 0.05 2 0)
             SF-TOGGLE       _"Stretch Contrast"     FALSE
             SF-TOGGLE       _"Invert Bumpmap"       FALSE
+                    SF-ADJUSTMENT "Post Effect Blur" '(0 0 20 1 5 0 0)					
             SF-TOGGLE       _"Keep Layers"          FALSE
 ) ;End register 
 (script-fu-menu-register "script-fu-gt-bevel300"
