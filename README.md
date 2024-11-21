@@ -1,11 +1,11 @@
-# Various SCM scripts for Gimp updated to at least version 2.10, some to 2.99
-Various SCM scripts for Gimp updated to at least version 2.10, some to 2.99
+# Various SCM scripts for Gimp updated to at least version 2.10, some to 2.99 and 3.0 rc1
+Various SCM scripts for Gimp updated to at least version 2.10, some to 2.99 and 3.0rc1 (300 in file name).
 
 Attention the filters are for 2.10 or latest 2.99.19, need fresh install, old releases are left in the repo for study purposes.
 
 If you use versions of Gimp equal to or higher than 2.99 the code for previous Gimp versions must be updated.
 
-The scripts in this repo try to support Gimp 2.10 and possibly the latest 2.99.xx.
+The scripts in this repo try to support Gimp 2.10 and possibly the latest 2.99.xx. and 3.0 rc1
 
 In many scripts the fonts have been replaced with fonts under the OFL or GPL license. The downloader can be found here:
 https://github.com/vitforlinux-gimp/font-downloader... There is also a collection of GPL or OFL fonts in .zip in the releases.
