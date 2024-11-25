@@ -169,7 +169,7 @@
 		(if (= type 2) ;; tigre grincheux
 			(begin
 
-		(if (symbol-bound? 'plug-in-cartoon (the-environment))
+		(if (defined? 'plug-in-cartoon (the-environment))
 			(plug-in-cartoon RUN-NONINTERACTIVE texture-safari-image texture-safari-layer (* (/ size 120) 7.0) 0.200)	;changed
 			)
 
@@ -335,7 +335,7 @@
             SF-IMAGE      "Image" 0
             SF-DRAWABLE   "Drawable" 0
 		SF-ADJUSTMENT	"Size (pixels)" '(120 2 1000 1 10 0 1)
-		SF-OPTION "Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
+		SF-OPTION "Type" '("Cameleon paisible" "Cameleon malade"); "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION "Relief" '("Simple" "Double")
 		SF-OPTION "Gradient type" '("Desert (Shadows 1)" "Jungle (Greens)" "Urban (Four Bars)" "User choice")
 		SF-GRADIENT _"Gradient User choice" "Shadows 1"
@@ -402,7 +402,7 @@
 		SF-ADJUSTMENT	"Font Size (pixels)" '(120 2 1000 1 10 0 1)
 		SF-FONT		"Font"             sffont
 		  SF-OPTION "Justify" '("Centered" "Left" "Right") 
-		SF-OPTION	"Type" '("Cameleon paisible" "Cameleon malade" "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
+		SF-OPTION	"Type" '("Cameleon paisible" "Cameleon malade"); "Tigre grincheux" "Serpent facetieux" "Himpala harmonieux")
 		SF-OPTION	"Relief" '("Simple" "Double")
 		SF-OPTION "Gradient type" '("Desert (Shadows 1)" "Jungle (Greens)" "Urban (Four Bars)" "User choice")
 		SF-GRADIENT	"Gradient User choice" "Shadows 1"
