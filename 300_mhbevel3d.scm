@@ -10,6 +10,12 @@
 		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
       (plug-in-gauss  1  img drawable x y 0)
  (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+ 
+(cond ((not (defined? 'gimp-context-set-gradient-ng)) (define (gimp-context-set-gradient-ng value) 
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+						 (gimp-context-set-gradient value)
+				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
+				))))
 
 ;;mhbevel3d
 ;Kiki
@@ -33,6 +39,25 @@
  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
+
+	))
+(define  (material-mh-vitwood fond image) (begin
+				;(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
+					(plug-in-solid-noise 0 image fond 1 0 (random 65535) 2 9 1)
+
+				      (apply-gauss                 
+                 image     ; Image to apply blur 
+            fond     ; Layer to apply blur
+         5     ; Blur Radius x  
+         5     ; Blue Radius y 
+      )
+      (gimp-context-set-gradient-ng "Wood 2")
+
+ (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+(plug-in-gradmap 1 image fond) 
+      (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
+     ; (plug-in-oilify 1 image fond 2 0)
+     (apply-gauss image fond 2 0)
 
 	))
 		(define  (material-mh-willwood fond img n1 n2) (begin
@@ -114,7 +139,8 @@
        )
                   ((= foption 4)
        (gimp-image-select-item img 2 text-layer)
-	(material-willwood text-layer img 9 1)
+	;(material-willwood text-layer img 9 1)
+	(material-mh-vitwood text-layer img )
        (gimp-selection-none img)
        )
 )
@@ -143,11 +169,11 @@
 		SF-ADJUSTMENT  "Buffer"  	'(1 1 70 1 2 0 1)
 		    SF-ADJUSTMENT "3D"			'(10 1 600 1 2 0 1)
                     SF-OPTION     "logo-direction"            '(_"right-bottom" _"vertical-bottom" _"left-bottom" _"left-horizontal" _"left-top" _"vertical-top" _"right-top" _"right-horizontal")
-                    SF-OPTION     "fg-mode"            '(_"color" _"gradient" _"pattern" "emap")
+                    SF-OPTION     "fg-mode"            '(_"color" _"gradient" _"pattern" "emap" "vitwood")
 		    SF-COLOR      "Color"              '(222 200 156)
                     SF-GRADIENT   "Gradient"           "Pastel Rainbow"
                     SF-PATTERN    "Pattern"            "Dried mud"
-                    SF-OPTION     "bg-mode"            '(_"color" _"gradient" _"pattern" "emap")
+                    SF-OPTION     "bg-mode"            '(_"color" _"gradient" _"pattern" "emap" "vitwood")
 		    SF-COLOR      "Background Color"   '(243 255 222)
                     SF-GRADIENT   "Background Gradient" "Greens"
                     SF-PATTERN    "Background Pattern"  "Fibers"
@@ -369,7 +395,8 @@
        )
                      ((= bg-md 4)
        (gimp-selection-all img)
-	(material-willwood bg-layer img 9 1)
+	;(material-willwood bg-layer img 9 1)
+	(material-mh-vitwood bg-layer img)
        (gimp-selection-none img)
        )
        )
