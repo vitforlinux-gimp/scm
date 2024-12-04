@@ -7,7 +7,7 @@
 ; Copyright (C) 2001 Iccii <iccii(@)hotmail.com>
 ; 
 ; --------------------------------------------------------------------
-; version 0.1  by Iccii 2001/01/30
+; version 0.1  by Iccii 2001/01/30(else 
 ;     - Initial relase
 ;       This is "FIXME" version, which is spaghetti program code
 ; version 0.2  by Iccii 2001/02/09
@@ -162,9 +162,15 @@
 	(gimp-layer-set-mode layer-shadow LAYER-MODE-SUBTRACT-LEGACY)
 	(gimp-layer-set-mode layer-shadow-inn LAYER-MODE-MULTIPLY-LEGACY)
 	(gimp-layer-set-mode layer-color LAYER-MODE-NORMAL-LEGACY)
+	(cond ((not (defined? 'OFFSET-COLOR))
 	(gimp-drawable-offset layer-hilight-inn FALSE OFFSET-BACKGROUND (- sh-xoffset) (- sh-yoffset))
 	(gimp-drawable-offset layer-shadow      FALSE OFFSET-TRANSPARENT sh-xoffset sh-yoffset)
-	(gimp-drawable-offset layer-shadow-inn  FALSE OFFSET-BACKGROUND sh-xoffset sh-yoffset)
+	(gimp-drawable-offset layer-shadow-inn  FALSE OFFSET-BACKGROUND sh-xoffset sh-yoffset))
+	(else
+	(gimp-drawable-offset layer-hilight-inn FALSE OFFSET-COLOR (car(gimp-context-get-background)) (- sh-xoffset) (- sh-yoffset))
+	(gimp-drawable-offset layer-shadow      FALSE OFFSET-TRANSPARENT (car(gimp-context-get-background)) sh-xoffset sh-yoffset)
+	(gimp-drawable-offset layer-shadow-inn  FALSE OFFSET-COLOR (car(gimp-context-get-background)) sh-xoffset sh-yoffset)
+	))
 
 	; ハイライトレイヤーの処理
 	(gimp-image-select-item img 2 mask-hilight)
@@ -176,8 +182,13 @@
 	(gimp-selection-none img)
 	(set! hi-xoffset (- (/ (* (* hi-offset (cos radians)) hilight-width) 100)))
 	(set! hi-yoffset (- (/ (* (* hi-offset (sin radians)) hilight-width) 100)))
+		(cond ( (not (defined? 'OFFSET-COLOR))
 	(gimp-drawable-offset layer-hilight FALSE OFFSET-BACKGROUND hi-xoffset hi-yoffset)
-	(gimp-drawable-offset mask-hilight  FALSE OFFSET-BACKGROUND hi-xoffset hi-yoffset)
+	(gimp-drawable-offset mask-hilight  FALSE OFFSET-BACKGROUND hi-xoffset hi-yoffset))
+	(else
+	(gimp-drawable-offset layer-hilight FALSE OFFSET-COLOR (car(gimp-context-get-background)) hi-xoffset hi-yoffset)
+	(gimp-drawable-offset mask-hilight  FALSE OFFSET-COLOR (car(gimp-context-get-background)) hi-xoffset hi-yoffset)
+	))
 	(cond
 	  ((eqv? hi-option 0)	; 縮めるとき
 	    (begin
@@ -191,12 +202,21 @@
 	  (gimp-layer-remove-mask layer-hilight MASK-APPLY)))
 	  ((eqv? hi-option 1)	; オフセットのとき...さらなる改良が必要
         (begin
+		(cond ((not (defined? 'OFFSET-COLOR))
 	  (gimp-drawable-offset layer-hilight FALSE OFFSET-BACKGROUND
 		  (* (/ (* hilight-width (- 100 hi-width)) 100) (- (cos radians)))
 		  (* (/ (* hilight-width (- 100 hi-width)) 100) (- (sin radians))))
 	  (gimp-drawable-offset mask-hilight FALSE OFFSET-BACKGROUND
 		  (* (/ (* hilight-width (- 100 hi-width)) 100) (cos radians))
+		  (* (/ (* hilight-width (- 100 hi-width)) 100) (sin radians))))
+		  (else
+	  (gimp-drawable-offset layer-hilight FALSE OFFSET-COLOR (car(gimp-context-get-background))
+		  (* (/ (* hilight-width (- 100 hi-width)) 100) (- (cos radians)))
+		  (* (/ (* hilight-width (- 100 hi-width)) 100) (- (sin radians))))
+	  (gimp-drawable-offset mask-hilight FALSE OFFSET-COLOR (car(gimp-context-get-background))
+		  (* (/ (* hilight-width (- 100 hi-width)) 100) (cos radians))
 		  (* (/ (* hilight-width (- 100 hi-width)) 100) (sin radians)))
+))
 	  (gimp-layer-remove-mask layer-hilight MASK-APPLY)
 	  (apply-gauss 1 img layer-hilight (* 0.8 blur) (* 0.8 blur)))))
 	  (set! mask-hilight2 (car (gimp-layer-create-mask logo-layer ADD-MASK-BLACK)))
@@ -281,7 +301,7 @@
 	SF-OPTION		"higlight option"	'(_"shrink" _"staggering")
 	SF-ADJUSTMENT		"shadow offset"		'(5 0 50 1 5 0 1)
 	SF-ADJUSTMENT		_"reflections width"	'(5 0 50 1 5 0 1)
-	SF-TOGGLE		_"antialias"		FALSE)
+	SF-TOGGLE		_"antialias"		TRUE)
 (script-fu-menu-register "script-fu-raindrop-300-logo-alpha"
                          "<Image>/Script-Fu/Alpha-to-Logo")
 
@@ -358,7 +378,7 @@
 	SF-OPTION	"Higlight option"		'(_"reduction" _"displace")
 	SF-ADJUSTMENT	_"Shadow offset"		'(5 0 50 1 5 0 1)
 	SF-ADJUSTMENT	_"Reflections width"		'(5 0 50 1 5 0 1)
-	SF-TOGGLE	_"Antialias"			 FALSE)
+	SF-TOGGLE	_"Antialias"			 TRUE)
 
 (script-fu-menu-register "script-fu-raindrop-300-logo"
                          "<Image>/File/Create/Logos")
