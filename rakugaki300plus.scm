@@ -19,7 +19,7 @@
         (define sfbggrad "Full saturation spectrum CCW")
   (define sfbggrad "Full Saturation Spectrum CCW")	)
 
-(define (script-fu-rakugaki-plus299 image drawable randpoint brush brush-size rotation rsize ctype color gradient)
+(define (script-fu-rakugaki-plus300 image drawable randpoint brush brush-size rotation rsize ctype color gradient)
 
 (let* (
        (width (car (gimp-drawable-get-width drawable)))
