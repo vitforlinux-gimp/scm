@@ -20,9 +20,13 @@
         (define sffont "QTBodiniPoster Italic")
   (define sffont "QTBodiniPoster-Italic"))
   
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 
 
 (define (script-fu-old-style-logo-300 text size font justification letter-spacing line-spacing text-color  use-second-col? text-color2 use-gradient?  text-gradient cut-color bg-color second 45deg worn shadow vignette conserve)
@@ -60,10 +64,15 @@
 	(begin
    (define textmask (car (gimp-layer-create-mask text-layer ADD-MASK-WHITE)))
    (gimp-layer-add-mask text-layer textmask)
-
-	 (plug-in-solid-noise 1 img textmask FALSE TRUE 0 1 4 4)
+					  (cond ((not (defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter textmask "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 1 "x-size" 4 "y-size" 4
+                                                                                                       "width" width "height" height))
+												       (else
+	 (plug-in-solid-noise 1 img textmask FALSE TRUE 0 1 4 4)))
 	 		(gimp-drawable-brightness-contrast textmask 0.5 0.5 )
-			(apply-gauss img textmask 6 6)
+			(apply-gauss2 img textmask 6 6)
 			(gimp-drawable-invert textmask TRUE)
 ))
 
@@ -262,7 +271,7 @@
 		    SF-COLOR    "Background Color" '(255 255 255)
 		    SF-OPTION   "Style"     '("Default" "Lined" "Lined slim" "Light")
 		    SF-TOGGLE   "Use lines 45 degrees"     FALSE
-		    SF-TOGGLE   "Fake worn"     FALSE
+		    SF-TOGGLE   "Fake worn (not use!)"     FALSE
 		    SF-TOGGLE   "Use Shadow"     FALSE
 		    SF-TOGGLE   "Use Vignette"     TRUE
 		    SF-TOGGLE   "Merge Layers"     TRUE
