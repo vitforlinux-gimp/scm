@@ -49,9 +49,13 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
  
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTBasker Bold")
@@ -401,7 +405,7 @@
 	(gimp-drawable-fill bkg-layer FILL-FOREGROUND)
 	(gimp-drawable-edit-fill bkg-layer FILL-BACKGROUND)
 	(gimp-selection-none image)
-	(apply-gauss image bkg-layer 5 5)
+	(apply-gauss2 image bkg-layer 5 5)
 
 	;(gimp-image-select-color image 2 bkg-layer '(0 0 0) )
 (gimp-image-select-item image 2 drawable)
@@ -431,22 +435,54 @@
 	(gimp-drawable-edit-fill hammered FILL-BACKGROUND)
 	(gimp-context-set-background '(0 0 0 ))
 	 ;(plug-in-mosaic 1 image hammered 10 10 3 0 FALSE 175 0.3 TRUE FALSE 1 0 1)
-(plug-in-cubism 1 image hammered 10 3 0) 
-	 (apply-gauss image hammered 6 6)
+	 (cond ((not(defined? 'plug-in-cubism))
+	             (gimp-drawable-merge-new-filter hammered "gegl:cubism" 0 LAYER-MODE-REPLACE 1.0
+		     "tile-size" 10 "tile-saturation" 3 "bg-color" '(0 0 0)))
+		     (else
+(plug-in-cubism 1 image hammered 10 3 0) ))
+	 (apply-gauss2 image hammered 6 6)
 	 (gimp-selection-none image)
-	 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome hammered 135 30 5 0 0 0 0 TRUE FALSE 1) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)})
+	 	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new chrome "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" depth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" hammered)
+      (gimp-drawable-merge-filter chrome filter)
+    ))
+    (else
+	 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome hammered 135 30 5 0 0 0 0 TRUE FALSE 1))) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)})
 			)
 				)
 					  (if (= metal-finish 2)
+					  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter chrome "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 1 "x-size" 4 "y-size" 4
+                                                                                                       "width" width "height" height))
+												       (else
 	 (plug-in-solid-noise 1 image chrome FALSE TRUE 0 1 4 4)
-	 );
+	 )));
 	(gimp-selection-none image)
 	(if (> 3d-height 0)
 	;(plug-in-mblur 1 image bkg-layer 0 3d-height 90 (/ width 2) (/ height 2))
-	(apply-gauss image bkg-layer 3d-height 0)
+	(apply-gauss2 image bkg-layer 3d-height 0)
 	)
-	      (apply-gauss image bkg-layer 2 2)
-	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 depth 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
+	      (apply-gauss2 image bkg-layer 2 2)
+	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new chrome "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" depth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bkg-layer)
+      (gimp-drawable-merge-filter chrome filter)
+    ))
+    (else
+	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 depth 0 0 0 0 TRUE FALSE 0))) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 	(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
@@ -481,7 +517,7 @@
 
 (if (> gradmap 0)
     (begin
-(apply-gauss image chrome-copy 1 1)
+(apply-gauss2 image chrome-copy 1 1)
 ;(if (= gradmap 3)(plug-in-gauss-iir2 1 image chrome-copy 2 2))
   ; (gimp-context-set-gradient gradient)
   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
@@ -491,8 +527,12 @@
  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 image chrome-copy) 
       (plug-in-gradmap 1 image (vector chrome-copy))   )              ; Map Gradient
-      (plug-in-oilify 1 image chrome-copy 3 1)
-      (apply-gauss image chrome-copy 2 2)
+(cond((not(defined? 'plug-in-oilify))
+    (gimp-drawable-merge-new-filter chrome-copy "gegl:oilify" 0 LAYER-MODE-REPLACE 1.0
+    "mask-radius" 1 "use-inten" FALSE) )
+(else    
+     (plug-in-oilify 1 image chrome-copy 3 1)))
+      (apply-gauss2 image chrome-copy 2 2)
 )     
 ) ;endif
 
@@ -530,15 +570,15 @@
 		(if (= metal 7) (begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 (gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
-) (gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss 1 image chrome 1 1)));chrome
+) (gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss2 1 image chrome 1 1)));chrome
 		(if (= metal 8)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 		(gimp-drawable-curves-spline chrome 0 14 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 ))
 		(gimp-drawable-curves-spline chrome 0 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 )))
-		(gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss image chrome 1 1)));chrome
+		(gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss2 image chrome 1 1)));chrome
 
 (gimp-layer-set-lock-alpha chrome TRUE)
 (if (= shined 1)          
- (apply-gauss image chrome 3 3)
+ (apply-gauss2 image chrome 3 3)
 )
 ;(gimp-drawable-hue-saturation chrome image 0 0 56 50 50)
 ;; effets
