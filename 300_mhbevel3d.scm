@@ -7,9 +7,13 @@
 ; Fix code for gimp 2.10 working in 2.99.16
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
  
 (cond ((not (defined? 'gimp-context-set-gradient-ng)) (define (gimp-context-set-gradient-ng value) 
 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
@@ -23,9 +27,15 @@
 ;http://kikidide.yuki-mura.net/GIMP/engimp.htm
 ;
 
-	(define  (material-mh-emap fond image gradient) (begin
-				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
-				      (apply-gauss                 
+	(define  (material-mh-emap fond image gradient width height) (begin
+						  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter fond "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 1 "x-size" 9 "y-size" 3
+                                                                                                       "width" width "height" height))
+												       (else
+				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)))
+				      (apply-gauss2                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
          5     ; Blur Radius x  
@@ -41,11 +51,17 @@
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
 
 	))
-(define  (material-mh-vitwood fond image) (begin
+(define  (material-mh-vitwood fond image width height) (begin
 				;(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
-					(plug-in-solid-noise 0 image fond 1 0 (random 65535) 2 9 1)
+							(cond((not(defined? 'plug-in-solid-noise))
+					(gimp-drawable-merge-new-filter fond "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 2 "x-size" 9 "y-size" 1
+                                                                                                       "width" width "height" height))
+												       (else
+					(plug-in-solid-noise 0 image fond 1 0 (random 65535) 2 9 1)))
 
-				      (apply-gauss                 
+				      (apply-gauss2                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
          5     ; Blur Radius x  
@@ -57,7 +73,7 @@
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
      ; (plug-in-oilify 1 image fond 2 0)
-     (apply-gauss image fond 2 0)
+     (apply-gauss2 image fond 2 0)
 
 	))
 		(define  (material-mh-willwood fond img n1 n2) (begin
@@ -134,13 +150,13 @@
        )
            ((= foption 3)
        (gimp-image-select-item img 2 text-layer)
-	(material-mh-emap text-layer img text-gradient)
+	(material-mh-emap text-layer img text-gradient width height)
        (gimp-selection-none img)
        )
                   ((= foption 4)
        (gimp-image-select-item img 2 text-layer)
 	;(material-willwood text-layer img 9 1)
-	(material-mh-vitwood text-layer img )
+	(material-mh-vitwood text-layer img width height)
        (gimp-selection-none img)
        )
 )
@@ -212,34 +228,122 @@
     (gimp-context-set-foreground '(255 255 255))
     (gimp-drawable-edit-fill bump-layer FILL-FOREGROUND)
     (set! bump (car (gimp-image-merge-down img bcopy 0)))
-    (apply-gauss img bump bmpblr bmpblr)
+    (apply-gauss2 img bump bmpblr bmpblr)
        
        
 
     (cond((= 0 md)
-	(plug-in-bump-map 1 img drawable bump 135 45 bmpmp 0 0 0 0 TRUE TRUE 0)
+    	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
+	(plug-in-bump-map 1 img drawable bump 135 45 bmpmp 0 0 0 0 TRUE TRUE 0)))
 	)
        ((= 1 md)
+           	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 135 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
        ((= 2 md)
+                  	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 45 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 45 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
        ((= 3 md)
+			(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 45 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 45 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
        ((= 4 md)
+			(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 225 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 225 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
        ((= 5 md)
+       			(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 225 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 225 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
        ((= 6 md)
+       			(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 225 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 225 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
        ((= 7 md)
+       			(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new drawable "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" bmpmp
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump)
+      (gimp-drawable-merge-filter drawable filter)
+    ))
+    (else
 	(plug-in-bump-map 1 img drawable bump 135 45 bmpmp 0 0 0 0 TRUE TRUE 0)
-	)
+	)))
      )
 
     (gimp-image-remove-layer img bump)
@@ -390,13 +494,13 @@
        )
               ((= bg-md 3)
        (gimp-selection-all img)
-	(material-mh-emap bg-layer img bggrad)
+	(material-mh-emap bg-layer img bggrad width height)
        (gimp-selection-none img)
        )
                      ((= bg-md 4)
        (gimp-selection-all img)
 	;(material-willwood bg-layer img 9 1)
-	(material-mh-vitwood bg-layer img)
+	(material-mh-vitwood bg-layer img width height)
        (gimp-selection-none img)
        )
        )
