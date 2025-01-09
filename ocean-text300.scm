@@ -35,9 +35,13 @@
 
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTHelvetCnd-Black Heavy")
@@ -105,7 +109,7 @@
 (gimp-selection-none theImage)
 	(gimp-layer-set-lock-alpha shadowLayer FALSE)
 	(if (>= shadowBlur 1.0)
-	    (apply-gauss theImage shadowLayer shadowBlur shadowBlur)
+	    (apply-gauss2 theImage shadowLayer shadowBlur shadowBlur)
 	)	
 
 
@@ -127,10 +131,14 @@
 	(gimp-drawable-edit-gradient-fill waveLayer 0 0 0 1 0 0 
 	            (/ (car (gimp-image-get-width theImage)) 2) 0
 	            (/ (car (gimp-image-get-width theImage)) 2)
-                    (car (gimp-image-get-height theImage)))	
-	;(plug-in-ripple 1 theImage waveLayer 100 5 1 0 1 TRUE FALSE)
-	(plug-in-waves  1 theImage waveLayer 10 0 25 0 0)
-	(apply-gauss theImage waveLayer 3.33334 3.33334 )
+                    (car (gimp-image-get-height theImage)))
+		    (cond((not(defined? 'plug-in-ripple))
+		 		     (gimp-drawable-merge-new-filter waveLayer "gegl:ripple" 0 LAYER-MODE-REPLACE 1.0
+"amplitude" 5 "period" 100 "phi" 0 "angle" 0 "sampler-type" "cubic" "wave-type" "sine" "abyss-policy" "none" "tileable" FALSE))		    
+	(else
+	(plug-in-ripple 1 theImage waveLayer 100 5 1 0 1 TRUE FALSE)))
+	;(plug-in-waves  1 theImage waveLayer 10 0 25 0 0)
+	(apply-gauss2 theImage waveLayer 3.33334 3.33334 )
 	; And make it a text
 	(define waveLayerMask (car (gimp-layer-create-mask waveLayer 1)))
 	(gimp-layer-add-mask waveLayer waveLayerMask)	
@@ -143,8 +151,19 @@
 	(gimp-image-set-active-layer theImage textLayer)
 	(gimp-item-set-name textLayer "Bevel")
 	(gimp-layer-set-mode textLayer 5)
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new textLayer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 225 "elevation" 20 "depth" 5
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.120
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" textLayer)
+      (gimp-drawable-merge-filter textLayer filter)
+    ))
+    (else
 	(plug-in-bump-map 1 theImage textLayer textLayer 225 20 5 0 0 0 0.120
-                          TRUE FALSE 0)
+                          TRUE FALSE 0)))
 
 	; Restore palette
 	;(gimp-context-set-foreground '(128 128 128))
