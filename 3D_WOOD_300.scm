@@ -44,9 +44,16 @@
 				(gimp-context-set-opacity 100)
 				(gimp-selection-none img)
 			))
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto")
+      )
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+))
+
+ )
 
 (define (script-fu-3d-wood-300 
                                       text
@@ -138,7 +145,7 @@
 ;;;;text modify
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
-	(apply-gauss image text-layer blur blur)
+	(apply-gauss2 image text-layer blur blur)
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
@@ -149,18 +156,26 @@
     (set! guass-layer (car (gimp-layer-copy text-layer TRUE)))
     (gimp-image-insert-layer image guass-layer 0 1)
     (gimp-item-set-name guass-layer "Guass")
-	(apply-gauss image guass-layer 40 40)
+	(apply-gauss2 image guass-layer 40 40)
 	
 ;;;;create the motion-layer
     (set! motion-layer (car (gimp-layer-copy text-layer TRUE)))
     (gimp-image-insert-layer image motion-layer 0 2)
     (gimp-item-set-name motion-layer "Motion")
 	;(plug-in-mblur 1 image motion-layer 0 3d-height 90 (/ width 2) (/ height 2))
-	(apply-gauss image motion-layer 0 3d-height)
+	(apply-gauss2 image motion-layer 0 3d-height)
 ;;;;create the noise-layer
 	(set! noise-layer (car (gimp-layer-new image width height RGBA-IMAGE "Noise" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image noise-layer 0 3)
-	(if (= texture 0) (plug-in-solid-noise 1 image noise-layer FALSE TRUE 0 1 16.0 0.6))
+	(if (= texture 0)
+					  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter noise-layer "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 1 "x-size" 16 "y-size" 0.6
+                                                                                                       "width" width "height" height))
+												       (else
+	(plug-in-solid-noise 1 image noise-layer FALSE TRUE 0 1 16.0 0.6)))
+	)
 	(if (= texture 1) (begin
 	(gimp-context-set-pattern texture-pattern)
 	(gimp-drawable-fill noise-layer FILL-PATTERN)
@@ -172,10 +187,61 @@
 	(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
 	(gimp-selection-none image)
 
-	(plug-in-bump-map 1 image text-layer guass-layer 267.69 21.92 16 0 0 1 0.37647 TRUE FALSE 0)
-	(if (= texture 0) (plug-in-bump-map 1 image text-layer noise-layer 0 21.92 3 0 0 0 0 TRUE FALSE 0))
-	(if (= texture 1) (plug-in-bump-map 1 image text-layer noise-layer azimuth elevation depth 0 0 0 0 TRUE FALSE 0))
-	(plug-in-bump-map 1 image text-layer motion-layer 156.92 21.92 8 0 0 0.86274 0.69411 TRUE FALSE 0)
+	 	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 267.69 "elevation" 21.92 "depth" 16
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 1.0 "ambient" 0.37647
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" guass-layer)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image text-layer guass-layer 267.69 21.92 16 0 0 1 0.37647 TRUE FALSE 0)))
+	(if (= texture 0)
+	 	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 0 "elevation" 21.92 "depth" 3
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" noise-layer)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image text-layer noise-layer 0 21.92 3 0 0 0 0 TRUE FALSE 0)
+	)))
+	
+	
+	(if (= texture 1)
+	 	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" azimuth "elevation" elevation "depth" depth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" noise-layer)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image text-layer noise-layer azimuth elevation depth 0 0 0 0 TRUE FALSE 0)
+	)))
+	
+	 	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 156.92 "elevation" 21.92 "depth" 8
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" motion-layer)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image text-layer motion-layer 156.92 21.92 8 0 0 0.86274 0.69411 TRUE FALSE 0)))
     
 ;;;;Scale Image to it's original size;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     (gimp-image-scale image final-width final-height )
