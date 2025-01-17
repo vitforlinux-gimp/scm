@@ -13,9 +13,13 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 ; Define the function:
 
 (define (script-fu-chris-slab300text inText inFont inFontSize justification letter-spacing line-spacing tcolor tgrad ttexture
@@ -182,7 +186,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	  	  	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	      (script-fu-distress-selection theImage theSourceLayer 127 2 1.5 2 TRUE TRUE)
 	      (script-fu-distress-selection theImage (vector theSourceLayer) 0.5 2 1.5 2 TRUE TRUE))
-              (apply-gauss theImage theSourceLayer 1 1) 
+              (apply-gauss2 theImage theSourceLayer 1 1) 
 	     ; (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
           )
           (gimp-context-set-background '(255 255 255) )
@@ -247,7 +251,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
           (gimp-selection-none theImage)
 	  
-          (if (* (/ inFontSize 120) 8) (apply-gauss theImage theShadowLayer (* (/ inFontSize 120) 8) (* (/ inFontSize 120) 8) ))	;changed
+          (if (* (/ inFontSize 120) 8) (apply-gauss2 theImage theShadowLayer (* (/ inFontSize 120) 8) (* (/ inFontSize 120) 8) ))	;changed
           ;(plug-in-autocrop TRUE theImage theShadowLayer)
 
 	  (set! thePaintMask (car(gimp-layer-create-mask thePaintLayer ADD-MASK-ALPHA)))
@@ -294,7 +298,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 ;(gimp-display-new theImage)) (define fish  ()
 
-          (if (> (* (/ inFontSize 120) 2) 1) (apply-gauss theImage theSourceLayer (* (/ inFontSize 120) 2) (* (/ inFontSize 120) 2) ))	;changed
+          (if (> (* (/ inFontSize 120) 2) 1) (apply-gauss2 theImage theSourceLayer (* (/ inFontSize 120) 2) (* (/ inFontSize 120) 2) ))	;changed
           (gimp-item-set-visible theShadowLayer FALSE)
           (gimp-item-set-visible thePattLayer FALSE)
           (gimp-item-set-visible thePaintLayer FALSE)
@@ -308,7 +312,18 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	  
 	            (gimp-selection-none theImage)
 
-	(plug-in-bump-map TRUE theImage thePattLayer2 theBumpLayer2 135 45 (+ (* (/ inFontSize 120) 2) 1) 0 0 0 0.50 TRUE TRUE 1 )
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new thePattLayer2 "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" 60
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.50
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" theBumpLayer2)
+      (gimp-drawable-merge-filter thePattLayer2 filter)
+    ))
+    (else
+	(plug-in-bump-map TRUE theImage thePattLayer2 theBumpLayer2 135 45 (+ (* (/ inFontSize 120) 2) 1) 0 0 0 0.50 TRUE TRUE 1 )))
 	;(plug-in-bump-map TRUE theImage thePattLayer2 theBumpLayer2 135 45 60 0 0 0 0.50 TRUE TRUE 1 )
 
           (gimp-image-remove-layer theImage theBumpLayer2)
