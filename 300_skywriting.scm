@@ -10,9 +10,13 @@
         (define sffont "QTHelvet-Black Heavy")
   (define sffont "QTHelvet-Black"))
   
-  		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 ; Define the function:
 
 (define (script-fu-skywriting-300 inText inSize inFont  justification letter-spacing line-spacing grow-text outline color foption scolor grad pat)
@@ -227,8 +231,8 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 		'(000 000 000 000 000 000 000 000 000 000 000 000) )
 	;(gimp-image-select-item img 2 theText)
 	;(gimp-bucket-fill clouds1 FG-BUCKET-FILL LAYER-MODE-NORMAL-LEGACY 10 0 0 0 0)
-	(apply-gauss img clouds1 6 6)
-	(apply-gauss img clouds1 6 6)
+	(apply-gauss2 img clouds1 6 6)
+	(apply-gauss2 img clouds1 6 6)
 
 	(gimp-image-remove-layer img theText)
 ;	(gimp-layer-delete theText)		;none 2.2
