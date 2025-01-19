@@ -29,6 +29,7 @@
 ; Rel 299 - Port to Gimp 2.99.8 and 2.10.30 also compatibility OFF by vitforlinux
 ; Rel 299b - added opacity control
 ; Rel 299c fixed image/layer size with letter-spacing/line-spacing>40
+; Rel 300 fix Gimp 3.0 rc2
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
@@ -40,9 +41,13 @@
 ;(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
  
  		(define (remove-color img  fond color)(begin
 		;(plug-in-colortoalpha RUN-NONINTERACTIVE image highlight '(128 128 128))
@@ -209,7 +214,7 @@
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
-	(apply-gauss image text-layer blur blur)
+	(apply-gauss2 image text-layer blur blur)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 		(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
@@ -240,7 +245,7 @@
 	(gimp-image-insert-layer image bump-layer -1 0)
 	(gimp-item-set-name bump-layer "Bump Layer")
 	(gimp-layer-flatten bump-layer)
-	(apply-gauss image bump-layer pre-blur pre-blur)
+	(apply-gauss2 image bump-layer pre-blur pre-blur)
 	(gimp-item-set-visible bump-layer FALSE)
     
 ;;;;create the background layer    
@@ -308,9 +313,21 @@
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(gimp-drawable-colorize-hsl text-layer 180 0 70)
-	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)
+	
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 250 "elevation" 45 "depth" 50
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)))
 	(gimp-layer-set-lock-alpha text-layer TRUE)
-	(apply-gauss image text-layer 3 3)
+	(apply-gauss2 image text-layer 3 3)
 	(gimp-layer-set-lock-alpha text-layer FALSE)
 
 
@@ -320,7 +337,7 @@
 	(gimp-item-set-name reflection1 "Reflection1")
 	(gimp-drawable-threshold reflection1 0 0 0.31372)
 	(remove-color image reflection1 '(0 0 0))
-	(apply-gauss image reflection1 15 15)
+	(apply-gauss2 image reflection1 15 15)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection1 4  #(0 0 0.63529 0 0.69019 1 1 1))
@@ -332,7 +349,7 @@
 	(gimp-item-set-name reflection2 "Reflection2")
 	(gimp-drawable-threshold reflection2 0 0.39215 0.50980)
 	(remove-color image reflection2 '(0 0 0))
-	(apply-gauss image reflection2 8 8)
+	(apply-gauss2 image reflection2 8 8)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
 		(gimp-drawable-curves-spline reflection2 4  #(0 0 0.73725 0 0.79607 1 1 1))
@@ -344,7 +361,7 @@
 	(gimp-item-set-name reflection3 "Reflection3")
 	(gimp-drawable-threshold reflection3 0 0.78431 1)
 	(remove-color image reflection3 '(0 0 0))
-	(apply-gauss image reflection3 15 15)
+	(apply-gauss2 image reflection3 15 15)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1))
@@ -588,7 +605,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-image-insert-layer image bump-layer -1 0)
 	(gimp-item-set-name bump-layer "Bump Layer")
 	(gimp-layer-flatten bump-layer)
-	(apply-gauss image bump-layer pre-blur pre-blur)
+	(apply-gauss2 image bump-layer pre-blur pre-blur)
 	(gimp-item-set-visible bump-layer FALSE)	
 
 ;;;;create the background layer    
@@ -654,9 +671,21 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(gimp-drawable-colorize-hsl text-layer 180 0 70)
-	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)
+
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 250 "elevation" 45 "depth" 50
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image text-layer bump-layer 250 45 50 0 0 0 0 TRUE FALSE 0)))
 	(gimp-layer-set-lock-alpha text-layer TRUE)
-	(apply-gauss image text-layer 3 3)
+	(apply-gauss2 image text-layer 3 3)
 	(gimp-layer-set-lock-alpha text-layer FALSE)	
 	
 ;;;;create the reflections	
@@ -665,7 +694,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-item-set-name reflection1 "Reflection1")
 	(gimp-drawable-threshold reflection1 0 0 0.31372)
 	(remove-color image reflection1 '(0 0 0))
-	(apply-gauss image reflection1 15 15)
+	(apply-gauss2 image reflection1 15 15)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection1 4 #(0 0 0.63529 0 0.69019 1 1 1))
@@ -677,7 +706,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-item-set-name reflection2 "Reflection2")
 	(gimp-drawable-threshold reflection2 0 0.39215 0.50980)
 	(remove-color image reflection2 '(0 0 0))
-	(apply-gauss image reflection2 8 8)
+	(apply-gauss2 image reflection2 8 8)
 			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
 	(gimp-drawable-curves-spline reflection2 4 #(0 0 0.73725 0 0.79607 1 1 1))
@@ -689,7 +718,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-item-set-name reflection3 "Reflection3")
 	(gimp-drawable-threshold reflection3 0 0.78431 1)
 	(remove-color image reflection3 '(0 0 0))
-	(apply-gauss image reflection3 15 15)
+	(apply-gauss2 image reflection3 15 15)
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1))
