@@ -198,7 +198,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 	;(gimp-display-new img)      ; make the image appear
 
-	(define clouds1 (car (gimp-layer-new img imwidth imheight RGBA-IMAGE "Clouds1" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(define clouds1 (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new img imwidth imheight RGBA-IMAGE "Clouds1" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new img "Clouds1" imwidth imheight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 	(gimp-image-insert-layer img clouds1 0 0)
 	(gimp-selection-all img)
 	(gimp-drawable-edit-clear clouds1)
@@ -239,7 +241,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	(gimp-selection-none img)
 	;(define cloudText (car (gimp-image-merge-visible-layers img CLIP-TO-BOTTOM-LAYER)))
 
-	(define bgLayer (car (gimp-layer-new img imwidth imheight RGBA-IMAGE "Blue" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(define bgLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new img imwidth imheight RGBA-IMAGE "Blue" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new img "Blue" imwidth imheight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 	(gimp-image-insert-layer img bgLayer 0 1)
 	(gimp-selection-all img)
 	(gimp-context-set-foreground scolor)
