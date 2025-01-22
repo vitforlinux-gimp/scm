@@ -18,13 +18,10 @@
   		(define (apply-gauss2 img drawable x y)
        (cond ((not(defined? 'plug-in-gauss))
            (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
-                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto")
-      )
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
        (else
 	(plug-in-gauss 1 img drawable x y 0)
-))
-
- )
+)))
   
   (script-fu-register
             "script-fu-highlighted-logo-300"                        ;function name
@@ -80,7 +77,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0);a spin-button
         )
         (theText)             ;a declaration for the text
         (theBuffer)           ;create a new layer for the image
-        (theLayer
+        (theLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
                   (car
                       (gimp-layer-new
                         theImage
@@ -91,10 +88,28 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0);a spin-button
                         100
                         LAYER-MODE-NORMAL
                       )
+                  ))
+(else
+                  (car
+                      (gimp-layer-new
+                        theImage
+			"layer 1"
+                        theImageWidth
+                        theImageHeight
+                        RGB-IMAGE
+                        100
+                        LAYER-MODE-NORMAL
+                      )
                   )
+))
         )
-				(highlight (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight" 100 LAYER-MODE-NORMAL-LEGACY)))
-				(highlight-channel (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight-chan" 100 LAYER-MODE-NORMAL-LEGACY)))
+				(highlight (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+				(car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight" 100 LAYER-MODE-NORMAL-LEGACY)))
+				(else (car (gimp-layer-new theImage  "Highlight" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
+
+				(highlight-channel (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+				(car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight-chan" 100 LAYER-MODE-NORMAL-LEGACY)))
+ 				(else (car (gimp-layer-new theImage "Highlight-chan" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 
 	  (justification (cond ((= justification 0) 2)
 						       ((= justification 1) 0)
