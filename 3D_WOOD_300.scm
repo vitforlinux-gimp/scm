@@ -165,7 +165,9 @@
 	;(plug-in-mblur 1 image motion-layer 0 3d-height 90 (/ width 2) (/ height 2))
 	(apply-gauss2 image motion-layer 0 3d-height)
 ;;;;create the noise-layer
-	(set! noise-layer (car (gimp-layer-new image width height RGBA-IMAGE "Noise" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! noise-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Noise" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new image "Noise" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image noise-layer 0 3)
 	(if (= texture 0)
 					  (cond((not(defined? 'plug-in-solid-noise))
@@ -251,7 +253,9 @@
 ;;;;create the background layer    
 	(if (> bkg-type 0)
 	(begin
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new image "Background" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image bkg-layer 0 1)))
 	(gimp-context-set-pattern pattern)
 	(gimp-context-set-background bkg-color)
