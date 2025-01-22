@@ -52,7 +52,9 @@
 
 (gimp-image-undo-disable theImage)
 
-          (set! theTextLayer (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Text Layer" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+          (set! theTextLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	  (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Text Layer" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+	  (else (car (gimp-layer-new theImage "Text Layer" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
           (gimp-image-insert-layer theImage theTextLayer 0 0)
 
 ;’Ç‰Á
@@ -195,11 +197,16 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-selection-all theImage)
 
 
-          (set! thePattLayer (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Pattern Layer" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+          (set! thePattLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	  (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Pattern Layer" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+	(else (car (gimp-layer-new theImage "Pattern Layer" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
+
           (gimp-image-insert-layer theImage thePattLayer 0 0)
           (gimp-drawable-edit-clear thePattLayer)
 
-          (set! theBumpLayer (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "BumpMap Layer 1" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+          (set! theBumpLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	  (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "BumpMap Layer 1" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+	  (else  (car (gimp-layer-new theImage "BumpMap Layer 1" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
 	  (gimp-context-set-background '(255 255 255))
           (gimp-image-insert-layer theImage theBumpLayer 0 2)
           (gimp-drawable-edit-fill theBumpLayer FILL-BACKGROUND)
@@ -268,7 +275,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 ;;LIGHTEN-ONLY-MODE‚Ågimp-edit-blend‚ðŽÀs‚·‚é‚Æ‚¨‚©‚µ‚­‚È‚é‚Ì‚Å•ÏX‚µ‚½
 
-		(set! thenewLayer (car(gimp-layer-new theImage theImageWidth theImageHeight RGB-IMAGE "T Layer" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(set! thenewLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(car (gimp-layer-new theImage theImageWidth theImageHeight RGB-IMAGE "T Layer" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(else (car (gimp-layer-new theImage "T Layer" theImageWidth theImageHeight RGB-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 ;;;;;		(set! thenewLayer (car(gimp-layer-copy thePaintLayer FALSE)))	;;’Ç‰Á
 		;(gimp-image-add-layer theImage thenewLayer 0)			;;’Ç‰Á
 		       (gimp-image-insert-layer theImage thenewLayer 0 0) ; Add it to image
@@ -329,7 +338,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-image-remove-layer theImage theBumpLayer2)
 ;	  (if (= inBG TRUE)
 ;              (begin
-                 (set! theBackground (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+                 (set! theBackground (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+		 (else (car (gimp-layer-new theImage "Background" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
                  (gimp-context-set-background inBGColor )
           	 (gimp-selection-all theImage)
                  (gimp-image-insert-layer theImage theBackground 0 2)
