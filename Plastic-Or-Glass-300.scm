@@ -77,7 +77,9 @@
 	      (width (car (gimp-pattern-get-info pattern)))
           (height (cadr (gimp-pattern-get-info pattern)))
 		  (pat-img (car (gimp-image-new (* 5 width) (* 5 height) RGB)))
-		  (pat-layer (car (gimp-layer-new pat-img (* 5 width) (* 5 height) RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))
+		  (pat-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		  (car (gimp-layer-new pat-img (* 5 width) (* 5 height) RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))
+		  (else (car (gimp-layer-new pat-img  "Pattern" (* 5 width) (* 5 height) RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 		  (new-width (* (/ (* 5 width) 100) scale))
 		  (new-height (* (/ (* 5 height) 100) scale))
 		  )
@@ -250,7 +252,9 @@
     
 ;;;;create the background layer    
 	(if (> bkg-type 0) (begin
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new image "Background" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image bkg-layer 0 2)))
 	(gimp-context-set-pattern bkg-pattern)
 	(gimp-context-set-background bkg-color)
@@ -379,7 +383,9 @@
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
-	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
+	(set! tint-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
+	(else (car (gimp-layer-new image "Tint" width height RGBA-IMAGE 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))))
     (gimp-image-insert-layer image tint-layer 0 -1)
     	(gimp-layer-resize-to-image-size tint-layer)
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND) ;QUI!!!
@@ -573,7 +579,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)
 	
-	(set! text-layer (car (gimp-layer-new image width height RGBA-IMAGE "Copy" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! text-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Copy" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new image "Copy" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image text-layer 0 -1)
     (gimp-item-set-name text-layer "Copy Layer")	
 	
@@ -610,7 +618,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 
 ;;;;create the background layer    
 	(if (> bkg-type 0) (begin
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(else (car (gimp-layer-new image "Background" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image bkg-layer 2 0)))
 	;(gimp-context-set-pattern bkg-pattern)
 	(gimp-context-set-background bkg-color)
@@ -735,7 +745,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
-	(set! tint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
+	(set! tint-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
+	(else (car (gimp-layer-new image "Tint" width height RGBA-IMAGE 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))))
     (gimp-image-insert-layer image tint-layer 0 -1)
 	(gimp-drawable-edit-fill tint-layer FILL-FOREGROUND)
 		(cond
