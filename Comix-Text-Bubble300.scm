@@ -49,6 +49,11 @@
 				(gimp-context-set-opacity 100)
 				(gimp-selection-none img)
 			))
+  
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 (define (script-fu-comix-text-bubble300 image drawable
                                 text-in 
@@ -106,7 +111,7 @@
 
 ;;;;resize the image	
 	;(gimp-layer-resize text-layer width height 0 0)
-	(set! bkg-layer (car (gimp-layer-new image width (+ height (/ height 1.85)) RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (car (gimp-layer-new-ng image width (+ height (/ height 1.85)) RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bkg-layer 0 -1 );trick
 (gimp-image-lower-item image bkg-layer )
 
