@@ -109,7 +109,7 @@
 	    (let* ((filter (car (gimp-drawable-filter-new bump-layer "gegl:bump-map" ""))))
       (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
                                       "azimuth" 135 "elevation" 27 "depth" 7
-                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.120
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
                                       "compensate" TRUE "invert" TRUE "type" "sinusoidal"
                                       "tiled" FALSE)
       (gimp-drawable-filter-set-aux-input filter "aux" blur-layer)
