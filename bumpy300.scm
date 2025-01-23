@@ -36,6 +36,11 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+(define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
+
   		(define (apply-gauss2 img drawable x y)
        (cond ((not(defined? 'plug-in-gauss))
            (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
@@ -68,9 +73,9 @@
 		(
 			(width (car (gimp-drawable-get-width basetext)))
 			(height (car (gimp-drawable-get-height basetext)))
-			(fond (car (gimp-layer-new   img width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(damap (car (gimp-layer-new  img width height RGB-IMAGE "Map" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(innermap (car (gimp-layer-new  img width height RGB-IMAGE "iMap" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(fond (car (gimp-layer-new-ng   img width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(damap (car (gimp-layer-new-ng  img width height RGB-IMAGE "Map" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(innermap (car (gimp-layer-new-ng  img width height RGB-IMAGE "iMap" 100 LAYER-MODE-NORMAL-LEGACY)))
 			(chantext)
 			(masktext)
 		)
