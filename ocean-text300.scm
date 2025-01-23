@@ -46,6 +46,11 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTHelvetCnd-Black Heavy")
   (define sffont "QTHelvetCnd-Black"))
+  
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 (define (script-fu-ocean-text inText
 	                      inFontSize
@@ -78,7 +83,7 @@
 	                      inFont)))
 	(gimp-image-resize theImage (car (gimp-drawable-get-width textLayer))
 	                   (car (gimp-drawable-get-height textLayer)) 0 0)
-	(define background (car (gimp-layer-new theImage
+	(define background (car (gimp-layer-new-ng theImage
 	                       (car (gimp-image-get-width theImage))
 	                       (car (gimp-image-get-height theImage))
 	                       1 "Background" 100 0)))
@@ -121,7 +126,7 @@
 	(gimp-context-set-gradient gradient))
 			(gimp-context-set-gradient-reverse grad-rvs)
 	(gimp-image-set-active-layer theImage textLayer)
-	(define waveLayer (car (gimp-layer-new theImage
+	(define waveLayer (car (gimp-layer-new-ng theImage
 	                      (car (gimp-image-get-width theImage))
 	                      (car (gimp-image-get-height theImage))
 	                      1 inText 100 0)))
@@ -198,7 +203,7 @@
     "Creates a text banner with an ocean wave inside."
     "Alexander Melchers; Art Wade"
     "2002, Alexander Melchers, xMedia; 2008 Art Wade; Vitforlinux 2021"
-    "14th December 2002; February 22, 2008; 21 Gen 2021 "
+    "14th December 2002; February 22, 2008; 21 Gen 2021> 9 gen 2025 "
     ""
     SF-STRING     "Text"               "Ocean Text"
     SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 0 0 1)
