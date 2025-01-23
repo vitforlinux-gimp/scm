@@ -6,6 +6,11 @@
         (define sffont "QTVagaRound Bold")
   (define sffont "QTVagaRound-Bold"))
   
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
+  
   		(define (remove-color2 img  fond color)(begin
 		 (cond((not(defined? 'plug-in-colortoalpha))
 		 		     (gimp-drawable-merge-new-filter fond "gegl:color-to-alpha" 0 LAYER-MODE-REPLACE 1.0
@@ -77,9 +82,9 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0);a spin-button
         )
         (theText)             ;a declaration for the text
         (theBuffer)           ;create a new layer for the image
-        (theLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+        (theLayer  
                   (car
-                      (gimp-layer-new
+                      (gimp-layer-new-ng
                         theImage
                         theImageWidth
                         theImageHeight
@@ -88,28 +93,11 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0);a spin-button
                         100
                         LAYER-MODE-NORMAL
                       )
-                  ))
-(else
-                  (car
-                      (gimp-layer-new
-                        theImage
-			"layer 1"
-                        theImageWidth
-                        theImageHeight
-                        RGB-IMAGE
-                        100
-                        LAYER-MODE-NORMAL
-                      )
                   )
-))
-        )
-				(highlight (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-				(car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight" 100 LAYER-MODE-NORMAL-LEGACY)))
-				(else (car (gimp-layer-new theImage  "Highlight" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 
-				(highlight-channel (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-				(car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight-chan" 100 LAYER-MODE-NORMAL-LEGACY)))
- 				(else (car (gimp-layer-new theImage "Highlight-chan" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
+        )
+				(highlight	(car (gimp-layer-new-ng theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight" 100 LAYER-MODE-NORMAL-LEGACY)))
+				(highlight-channel (car (gimp-layer-new-ng theImage theImageWidth theImageHeight RGBA-IMAGE "Highlight-chan" 100 LAYER-MODE-NORMAL-LEGACY)))
 
 	  (justification (cond ((= justification 0) 2)
 						       ((= justification 1) 0)
