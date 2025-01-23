@@ -7,13 +7,22 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
-(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
+;(cond ((not (defined? 'gimp-image-get-selected-drawables)) (define gimp-image-get-selected-drawables gimp-image-get-active-drawable)))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTBodiniPoster Italic")
@@ -34,11 +43,11 @@
 		(c-x (car (gimp-drawable-get-offsets drawable)))
 		(c-y (cadr (gimp-drawable-get-offsets drawable)))
 
-		(white-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE "Blur" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(white-layer (car (gimp-layer-new-ng image image-width image-height RGBA-IMAGE "Blur" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(text-layer (car (gimp-layer-new-from-drawable drawable image)))
-		(fond-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE "GRAD" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(fond-layer (car (gimp-layer-new-ng image image-width image-height RGBA-IMAGE "GRAD" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(horizon-layer (car (gimp-layer-new-from-drawable fond-layer image)))
-		(bump-layer (car (gimp-layer-new image image-width image-height RGBA-IMAGE "Edge" 100 LAYER-MODE-OVERLAY-LEGACY)))
+		(bump-layer (car (gimp-layer-new-ng image image-width image-height RGBA-IMAGE "Edge" 100 LAYER-MODE-OVERLAY-LEGACY)))
 		(blur-layer 0)
 		(layer 0)
 		(adjust 0) )
@@ -63,7 +72,7 @@
 (gimp-context-set-background '(255 255 255))
 (gimp-drawable-edit-fill white-layer 1)
 (set! blur-layer (car (gimp-image-merge-down image text-layer 0)))
-(apply-gauss image blur-layer (/ area 70) (/ area 70))
+(apply-gauss2 image blur-layer (/ area 70) (/ area 70))
 
 	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 						 (gimp-context-set-gradient "Horizon 2")
@@ -80,13 +89,35 @@
 		      (gimp-drawable-edit-gradient-fill horizon-layer  GRADIENT-LINEAR 0 0 1 0 0 0 0 0 image-height) ; Fill with gradient
 
 (gimp-item-set-name horizon-layer "Reflex")
-(set! adjust (* displace 2))
-(plug-in-displace 1 image horizon-layer (/ area (- 70 adjust)) (/ area (- 70 adjust)) TRUE TRUE blur-layer blur-layer 1)
+(set! adjust  (/ area (- 70 (* displace 2))))
+	(cond((not(defined? 'plug-in-displace))
+          (let* (
+                 (filter (car (gimp-drawable-filter-new horizon-layer "gegl:displace" ""))))
+            (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                            "amount-x" adjust "amount-y" adjust "abyss-policy" "clamp"
+                                            "sampler-type" "cubic" "displace-mode" "cartesian")
+            (gimp-drawable-filter-set-aux-input filter "aux" blur-layer)
+            (gimp-drawable-filter-set-aux-input filter "aux2" blur-layer)
+            (gimp-drawable-merge-filter horizon-layer filter)
+          ))
+        (else
+(plug-in-displace 1 image horizon-layer adjust adjust TRUE TRUE blur-layer blur-layer 1)))
 
 (gimp-context-set-foreground '(152 152 152))
 (gimp-drawable-edit-fill bump-layer 0)
-(plug-in-bump-map 1 image bump-layer blur-layer 135 27 7 0 0 0 0 TRUE TRUE 2)
-(apply-gauss image bump-layer 1 1)
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new bump-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 27 "depth" 7
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.120
+                                      "compensate" TRUE "invert" TRUE "type" "sinusoidal"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" blur-layer)
+      (gimp-drawable-merge-filter bump-layer filter)
+    ))
+    (else
+(plug-in-bump-map 1 image bump-layer blur-layer 135 27 7 0 0 0 0 TRUE TRUE 2)))
+(apply-gauss2 image bump-layer 1 1)
 (gimp-image-remove-layer image blur-layer)
 ;(gimp-context-set-gradient "Three bars sin")
 
@@ -262,7 +293,7 @@
 
   (let* (
 	(image (car (gimp-image-new 256 256 RGB)))
-	(bg-layer (car (gimp-layer-new image 256 256 RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(bg-layer (car (gimp-layer-new-ng image 256 256 RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	 (justification (cond ((= justification 0) 2)
 						       ((= justification 1) 0)
 						       ((= justification 2) 1)
