@@ -63,6 +63,11 @@
        (else
 	(plug-in-gauss 1 img drawable x y 0)
 )))
+  
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 	; 水玉(水滴)のような効果
 (define (apply-raindrop-300-logo-effect20
@@ -268,7 +273,7 @@
 
  (let* ((width  (car (gimp-drawable-get-width  text-layer)))
 		(height (car (gimp-drawable-get-height text-layer)))
-		(bg-layer (car (gimp-layer-new img (+ width (* 4 sh-offset)) (+ height (* 4 sh-offset)) RGBA-IMAGE "BG layer" 100 LAYER-MODE-NORMAL-LEGACY))))
+		(bg-layer (car (gimp-layer-new-ng img (+ width (* 4 sh-offset)) (+ height (* 4 sh-offset)) RGBA-IMAGE "BG layer" 100 LAYER-MODE-NORMAL-LEGACY))))
 		(gimp-image-undo-group-start img)
 		(gimp-context-push)
 		(gimp-context-set-paint-mode 0)
@@ -332,7 +337,7 @@
 						  text (+ 20 reflect-width) TRUE font-size PIXELS fontname)))
 		(width  (car (gimp-drawable-get-width  text-layer)))
 		(height (car (gimp-drawable-get-height text-layer)))
-		(bg-layer (car (gimp-layer-new img (+ width sh-offset) (+ height sh-offset) RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(bg-layer (car (gimp-layer-new-ng img (+ width sh-offset) (+ height sh-offset) RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 		;(old-pattern (car (gimp-context-get-pattern)))
 			(justify (cond ((= justify 0) 2)
 		                ((= justify 1) 0)
