@@ -44,7 +44,11 @@
       (gimp-context-set-gradient gradient)
       ;(plug-in-autostretch-hsv 1 image fond)
                  (gimp-drawable-levels-stretch fond)
-
+  
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
       
  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
 (plug-in-gradmap 1 image fond) 
@@ -209,8 +213,8 @@
 	 (width (car (gimp-drawable-get-width drawable)))
 	 (height (car (gimp-drawable-get-height drawable)))
 ;;背景
-	 (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-	 (bump-layer (car (gimp-layer-new img width height RGB-IMAGE "Bump" 100 LAYER-MODE-NORMAL-LEGACY)))
+	 (bg-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	 (bump-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Bump" 100 LAYER-MODE-NORMAL-LEGACY)))
 )
 ;2.4追加
   (let (
@@ -551,8 +555,8 @@
 	 (width (car (gimp-drawable-get-width drawable)))
 	 (height (car (gimp-drawable-get-height drawable)))
 ;;背景
-	 (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-	 (bump-layer (car (gimp-layer-new img width height RGB-IMAGE "Bump" 100 LAYER-MODE-NORMAL-LEGACY)))
+	 (bg-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	 (bump-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Bump" 100 LAYER-MODE-NORMAL-LEGACY)))
 
          (old-fg (car (gimp-context-get-foreground)))
          (old-grad (car (gimp-context-get-gradient)))
