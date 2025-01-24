@@ -20,6 +20,11 @@
         (define sffont "QTBodiniPoster Italic")
   (define sffont "QTBodiniPoster-Italic"))
   
+(define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
+  
   		(define (apply-gauss2 img drawable x y)
        (cond ((not(defined? 'plug-in-gauss))
            (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
@@ -34,9 +39,9 @@
 	 (text-layer (car (gimp-text-fontname img -1 0 0 text 10 TRUE size PIXELS font)))
 	 (width (car (gimp-drawable-get-width text-layer)))
 	 (height (car (gimp-drawable-get-height text-layer)))
-	 (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	 (bg-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	 (cut-layer (car (gimp-layer-copy text-layer TRUE)))
-	 (shadow-layer (car (gimp-layer-new img width height RGBA-IMAGE "Shadow" 100 LAYER-MODE-MULTIPLY-LEGACY)))
+	 (shadow-layer (car (gimp-layer-new-ng img width height RGBA-IMAGE "Shadow" 100 LAYER-MODE-MULTIPLY-LEGACY)))
 	 (cut-ofs (+ (/ size 100) 1))
 	 (shadow-ofs (+ (/ size 50) 1))
 	 (textmask)
