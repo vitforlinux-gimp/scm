@@ -376,13 +376,29 @@
 			
 					(define (material-plasma fond image)  			(begin
           ;(gimp-layer-set-lock-alpha fond TRUE)
-             (plug-in-plasma 1 image fond (random 999999999) 7) ; Add plasma
+	  		        (define width (car (gimp-drawable-get-width fond)))
+        (define height (car (gimp-drawable-get-height fond)))
+	  				    (cond((not(defined? 'plug-in-plasma))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:plasma" 0 LAYER-MODE-REPLACE 1.0
+"turbulence" 1.0 "x" 0 "y" 0 "width" width "height" height "seed" (random 999999999) ))		    
+	(else
+             (plug-in-plasma 1 image fond (random 999999999) 7))) ; Add plasma
 			))
 		(define (material-none fond)  	(gimp-drawable-edit-clear fond)	)
 		
 (define (material-patchwork  fond image)  			(begin
-	    (plug-in-plasma 1 image fond (random 999999999) (+ 1 (random 3))) ; Rnd Plasma Fill
-	    (plug-in-cubism 1 image fond 6 10 0)
+	  		        (define width (car (gimp-drawable-get-width fond)))
+        (define height (car (gimp-drawable-get-height fond)))
+	  				    (cond((not(defined? 'plug-in-plasma))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:plasma" 0 LAYER-MODE-REPLACE 1.0
+"turbulence" (+ 1 (random 3)) "x" 0 "y" 0 "width" width "height" height "seed" (random 999999999) ))		    
+	(else
+	    (plug-in-plasma 1 image fond (random 999999999) (+ 1 (random 3))))) ; Rnd Plasma Fill
+	 (cond ((not(defined? 'plug-in-cubism))
+	             (gimp-drawable-merge-new-filter fond "gegl:cubism" 0 LAYER-MODE-REPLACE 1.0
+		     "tile-size" 10 "tile-saturation" 6 "bg-color" '(0 0 0)))
+		     (else
+	    (plug-in-cubism 1 image fond 6 10 0)))
 			))
 		(define (material-diffraction  fond image)  			(begin
               (set! *seed* (car (gettimeofday))) ; Random Number Seed From Clock (*seed* is global)
