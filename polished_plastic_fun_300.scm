@@ -52,9 +52,18 @@
 						 (gimp-context-set-gradient value)
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
 				))))
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 				
 ;scaled pattern fill procedure
 (define (scaled-pattern-fill image drawable pattern scale)
@@ -62,7 +71,7 @@
 	      (width (car (gimp-pattern-get-info pattern)))
           (height (cadr (gimp-pattern-get-info pattern)))
 		  (pat-img (car (gimp-image-new (* 5 width) (* 5 height) RGB)))
-		  (pat-layer (car (gimp-layer-new pat-img (* 5 width) (* 5 height) RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))
+		  (pat-layer (car (gimp-layer-new-ng pat-img (* 5 width) (* 5 height) RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))
 		  (new-width (* (/ (* 5 width) 100) scale))
 		  (new-height (* (/ (* 5 height) 100) scale))
 		  )
@@ -267,11 +276,11 @@
 				(gimp-drawable-desaturate fond 1)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(gimp-selection-none image)
-				(apply-gauss image fond 20 20)
+				(apply-gauss2 image fond 20 20)
 				;(plug-in-randomize-hurl 0 image fond 50 50 TRUE 0)
 				(plug-in-noisify 1 image fond FALSE 1 1 1 0)
 				;(plug-in-mblur 0 image fond 0 25 0 0 0)
-				(apply-gauss image fond 25 0)
+				(apply-gauss2 image fond 25 0)
 				(gimp-drawable-colorize-hsl fond 0 0 10 )
 				;(script-fu-colorize 0 image fond 959595 1)
 			))
@@ -305,11 +314,11 @@
 				(gimp-drawable-desaturate fond 1)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(gimp-selection-none image)
-				(apply-gauss image fond 20 20)
+				(apply-gauss2 image fond 20 20)
 				;(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)
 				(plug-in-noisify 1 image fond FALSE 1 1 1 0)
 				;(plug-in-mblur 0 image fond 0 25 0 0 0)
-				(apply-gauss image fond 25 0)
+				(apply-gauss2 image fond 25 0)
 				(gimp-drawable-colorize-hsl fond 0 0 10 )
 			))
 			
@@ -342,7 +351,7 @@
 				;(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)
 				(plug-in-noisify 1 image fond FALSE 0.6 0.6 0.6 0)
 				(gimp-drawable-desaturate fond 1)
-				(apply-gauss image fond 3 3)
+				(apply-gauss2 image fond 3 3)
 				;(gimp-drawable-colorize-hsl fond 230 36 20 )
 
 																(if (= col-opt 0) 
@@ -594,7 +603,7 @@
 			
 	(define  (material-emap fond image gradient) (begin
 				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
-				      (apply-gauss                 
+				      (apply-gauss2                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
          5     ; Blur Radius x  
@@ -620,7 +629,7 @@
 (define  (material-vitwood fond image) (begin
 				;(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
 					(plug-in-solid-noise 0 image fond 1 0 (random 65535) 2 9 1)
-				      (apply-gauss                 
+				      (apply-gauss2                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
          5     ; Blur Radius x  
@@ -632,7 +641,7 @@
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
      ; (plug-in-oilify 1 image fond 2 0)
-     (apply-gauss image fond 2 0)
+     (apply-gauss2 image fond 2 0)
 
 	))
 			
@@ -685,7 +694,7 @@
 ;;;;;;;MATERIAL END
 ;;;;;;;
 		(define  (effect-blur fond image) (begin
-				(apply-gauss image fond 6 6)
+				(apply-gauss2 image fond 6 6)
 			))
 		(define  (effect-oilify fond image) (begin
 					 (plug-in-oilify 1 image fond 20 0)              ; Add olify effect
@@ -737,7 +746,7 @@
 					(gimp-drawable-curves-spline fond 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 					(gimp-drawable-curves-spline fond 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 
-					(apply-gauss image fond 3 3)
+					(apply-gauss2 image fond 3 3)
 
 
 			))
@@ -747,7 +756,7 @@
 					(gimp-drawable-curves-spline fond 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 					(gimp-drawable-curves-spline fond 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 					(gimp-context-set-foreground fond-color)
-					(apply-gauss image fond 3 3)
+					(apply-gauss2 image fond 3 3)
 					(if (= number 0) (gimp-context-set-paint-mode LAYER-MODE-LIGHTEN-ONLY-LEGACY))
 					(if (= number 1) (gimp-context-set-paint-mode LAYER-MODE-MULTIPLY-LEGACY))
 					(if (= number 2) (gimp-context-set-paint-mode LAYER-MODE-OVERLAY-LEGACY))
@@ -834,12 +843,12 @@
 		(
 			(width (car (gimp-drawable-get-width basetext)))
 			(height (car (gimp-drawable-get-height basetext)))
-			(fond (car (gimp-layer-new   img width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(olight (car (gimp-layer-new img width height RGBA-IMAGE "Light Outline" 90 LAYER-MODE-SCREEN-LEGACY)))
-			(border (car (gimp-layer-new img width height RGBA-IMAGE "Border" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(refl (car (gimp-layer-new   img width height RGBA-IMAGE "Refl" 70 LAYER-MODE-NORMAL-LEGACY)))
-			(mapeux (car (gimp-layer-new img width height RGBA-IMAGE "Mapper" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(shad (car (gimp-layer-new   img width height RGBA-IMAGE "Shadow" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(fond (car (gimp-layer-new-ng   img width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(olight (car (gimp-layer-new-ng img width height RGBA-IMAGE "Light Outline" 90 LAYER-MODE-SCREEN-LEGACY)))
+			(border (car (gimp-layer-new-ng img width height RGBA-IMAGE "Border" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(refl (car (gimp-layer-new-ng   img width height RGBA-IMAGE "Refl" 70 LAYER-MODE-NORMAL-LEGACY)))
+			(mapeux (car (gimp-layer-new-ng img width height RGBA-IMAGE "Mapper" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(shad (car (gimp-layer-new-ng   img width height RGBA-IMAGE "Shadow" 100 LAYER-MODE-NORMAL-LEGACY)))
 			(chantext)
 			(basetextmask)
 			(xdest)
@@ -1097,7 +1106,7 @@
 		(gimp-context-set-foreground '(255 255 255))
 		(gimp-drawable-edit-fill olight FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(apply-gauss img olight 18 18)
+		(apply-gauss2 img olight 18 18)
 		(gimp-image-select-item img 0 chantext)
 		;(gimp-selection-invert img)
 		;(gimp-edit-cut olight)
@@ -1185,9 +1194,21 @@
 		(gimp-context-set-foreground '(255 255 255))
 		(gimp-drawable-edit-fill mapeux FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(apply-gauss img mapeux 18 18)
+		(apply-gauss2 img mapeux 18 18)
 
 		; bumpmapping:displacing reflect to follow shape
+
+	(cond((not(defined? 'plug-in-displace))
+          (let* (
+                 (filter (car (gimp-drawable-filter-new refl "gegl:displace" ""))))
+            (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                            "amount-x" 1.5 "amount-y" 1.5 "abyss-policy" "clamp"
+                                            "sampler-type" "cubic" "displace-mode" "cartesian")
+            (gimp-drawable-filter-set-aux-input filter "aux" mapeux)
+            (gimp-drawable-filter-set-aux-input filter "aux2" mapeux)
+            (gimp-drawable-merge-filter refl filter)
+          ))
+        (else
 		(plug-in-displace 
 			1
 			img
@@ -1199,7 +1220,7 @@
 			mapeux
 			mapeux
 			1
-		)
+		)))
 		(gimp-image-remove-layer img mapeux)    
 		
 		; back shadow
@@ -1210,7 +1231,7 @@
 		(gimp-context-set-foreground shadow-color)
 		(gimp-drawable-edit-fill shad FILL-FOREGROUND)
 		(gimp-selection-none img)
-		(apply-gauss img shad 15 15)
+		(apply-gauss2 img shad 15 15)
 
 		
 		; correcting resizing effect on background
@@ -1487,7 +1508,7 @@
 
 		(if (= text-effect 1) (plug-in-waves  1 img text-layer 5 70 10 1 0 FALSE ))
 		(if (= text-effect 2) (begin (gimp-selection-none img)
-			(apply-gauss img text-layer 20 20)
+			(apply-gauss2 img text-layer 20 20)
 		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 (gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 (gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
