@@ -25,6 +25,7 @@
 ; ------------ 
 ; Rel 0.01 - Initial Release
 ; Rel 2.99.16 - Port to Gimp 2.99.16 and 2.10.34 Vitforlinux
+; Rel 300 for Gimp 2.10 & 3.0 rc2 + git Vitforlinux
 ; Gradients blend direction list
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
 ;
@@ -39,6 +40,11 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTFloraline Bold")
   (define sffont "QTFloraline-Bold"))
+  
+(define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
@@ -58,9 +64,13 @@
 		(gimp-selection-none img)
 		))
 			
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 
 
 ; Include layer Procedure
@@ -228,7 +238,7 @@
   SF-ADJUSTMENT _"Vertical Texture Size"    '(2.8 1 5 .1 .5 1 1)
   SF-ADJUSTMENT _"Blur Radius"              '(5 0 30 1 5 0 1)
   SF-TOGGLE     _"Turbulent Noise"          TRUE
-  SF-ADJUSTMENT "Highlight Dist fr Edge"    '(6 0 10 1 1 0 0)
+  SF-ADJUSTMENT "Highlight Dist fr Edge"    '(6 0 20 1 1 0 0)
   SF-ADJUSTMENT "Drop Shadow Offset"        '(8 0 50 1 1 0 1)
   SF-ADJUSTMENT "Drop Shadow Blur"          '(15 0 100 1 5 0 1)
   SF-OPTION     "Background Type"           '("Transparency" "From Gradient" "Environment Map")
@@ -261,8 +271,8 @@
  (let* (
             (width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
-			(bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(highlight (car (gimp-layer-new image width height RGBA-IMAGE "Highlight" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(highlight (car (gimp-layer-new-ng image width height RGBA-IMAGE "Highlight" 100 LAYER-MODE-NORMAL-LEGACY)))
 			(alpha (car (gimp-drawable-has-alpha layer)))
 		    (sel (car (gimp-selection-is-empty image)))
 		    (layer-name (cond ((defined? 'gimp-image-get-item-position) (car (gimp-item-get-name layer)))
@@ -307,7 +317,7 @@
     ) ;endcond
 	(gimp-selection-none image)	
 ;;;;begin the script	
-	(apply-gauss image bump-channel 10 10) ;-------------------------------------blur the bump-channel
+	(apply-gauss2 image bump-channel 10 10) ;-------------------------------------blur the bump-channel
 	;(gimp-image-set-active-layer image layer)
 	(include-layer image bkg-layer layer 1)	;stack 0=above 1=below ;---------------------------------------add layer for environment map
 	
@@ -392,8 +402,19 @@
 		0.25) ;distance NEW ok
 	)
   	)
-  
-	(plug-in-bump-map RUN-NONINTERACTIVE image layer bump-channel 135 45 40 0 0 0 0 TRUE FALSE 1) ; { LINEAR (0), SPHERICAL (1), SINUSOIDAL (2) }
+
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" 40
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-channel)
+      (gimp-drawable-merge-filter layer filter)
+    ))
+    (else
+	(plug-in-bump-map RUN-NONINTERACTIVE image layer bump-channel 135 45 40 0 0 0 0 TRUE FALSE 1))) ; { LINEAR (0), SPHERICAL (1), SINUSOIDAL (2) }
 	
 ;;;;create the highlight
 	(gimp-image-select-item image 2  selection-channel)
@@ -407,9 +428,20 @@
 	(else (gimp-item-set-name highlight-channel "highlight-channel"))
     ) ;endcond	
 	(gimp-selection-none image)
-	(apply-gauss image highlight-channel 5 5)
+	(apply-gauss2 image highlight-channel 5 5)
 	;(gimp-image-set-active-layer image highlight)
-	(plug-in-bump-map RUN-NONINTERACTIVE image highlight highlight-channel 135 15 10 0 0 0 1 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new highlight "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 15 "depth" 10
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" highlight-channel)
+      (gimp-drawable-merge-filter highlight filter)
+    ))
+    (else
+	(plug-in-bump-map RUN-NONINTERACTIVE image highlight highlight-channel 135 15 10 0 0 0 1 TRUE FALSE 0))) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	;(plug-in-colortoalpha RUN-NONINTERACTIVE image highlight '(128 128 128))
 	(remove-color image highlight '(128 128 128))
 	
@@ -477,7 +509,7 @@
   SF-ADJUSTMENT "Brightness"                '(1 0 1 .01 1 2 1)
   SF-ADJUSTMENT "Shiny"                     '(.5 0 1 .01 1 2 1)
   SF-ADJUSTMENT "Polish"                    '(27 0 100000 .01 1 2 1)
-  SF-ADJUSTMENT "Highlight Dist fr Edge"    '(6 0 10 1 1 0 0)
+  SF-ADJUSTMENT "Highlight Dist fr Edge"    '(6 0 20 1 1 0 0)
   SF-ADJUSTMENT "Drop Shadow Offset"        '(8 0 50 1 1 0 1)
   SF-ADJUSTMENT "Drop Shadow Blur"          '(15 0 100 1 5 0 1)
   SF-OPTION     "Background Type"           '("Transparency" "From Gradient" "Environment Map")
@@ -526,6 +558,13 @@
 ;
 ; Call Solid Noise Plug-in
 ;
+					  (cond ((not (defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter drawable "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" (random 999999)
+                                                                                                       "detail" detail-level "x-size" 16 "y-size" 16
+                                                                                                       "width" 2000 "height" 2000)
+												       )
+												       (else
       (plug-in-solid-noise 
                        1         ; Interactive
                      img         ; Input Image
@@ -536,7 +575,7 @@
              detail-level        ; Detail Level
              texturesizex        ; Horizontal Texture Size
              texturesizey        ; Vertical Texture Size
-      )
+      )))
 
 ;
 ; Auto-stretch HSV
@@ -554,7 +593,7 @@
 ;
 (if (> blur-radius 0)
    
-      (apply-gauss                 
+      (apply-gauss2                 
                  img     ; Image to apply blur 
             drawable     ; Layer to apply blur
          blur-radius     ; Blur Radius x  
