@@ -18,6 +18,11 @@
        (else
 	(plug-in-gauss 1 img drawable x y 0)
 )))
+
+(define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
   
 
 
@@ -36,10 +41,10 @@
     (theTextLayer (car (gimp-text-fontname img -1 0 0 text 50 TRUE size PIXELS font))) 
   (theImageWidth (car (gimp-drawable-get-width theTextLayer)))
   (theImageHeight (car (gimp-drawable-get-height theTextLayer)))
-  (theBgLayer (car (gimp-layer-new img theImageWidth theImageHeight RGBA-IMAGE "Fipsi" 100 LAYER-MODE-NORMAL-LEGACY)))
-  (theOutlineLayer (car (gimp-layer-new img theImageWidth theImageHeight RGBA-IMAGE "Outline" 100 LAYER-MODE-NORMAL-LEGACY)))
-  (theBlurLayer (car (gimp-layer-new img theImageWidth theImageHeight RGBA-IMAGE "Outline" 100 LAYER-MODE-NORMAL-LEGACY)))
-  (theBlur2Layer (car (gimp-layer-new img theImageWidth theImageHeight RGBA-IMAGE "Outline" 100 LAYER-MODE-NORMAL-LEGACY)))
+  (theBgLayer (car (gimp-layer-new-ng img theImageWidth theImageHeight RGBA-IMAGE "Fipsi" 100 LAYER-MODE-NORMAL-LEGACY)))
+  (theOutlineLayer (car (gimp-layer-new-ng img theImageWidth theImageHeight RGBA-IMAGE "Outline" 100 LAYER-MODE-NORMAL-LEGACY)))
+  (theBlurLayer (car (gimp-layer-new-ng img theImageWidth theImageHeight RGBA-IMAGE "Outline" 100 LAYER-MODE-NORMAL-LEGACY)))
+  (theBlur2Layer (car (gimp-layer-new-ng img theImageWidth theImageHeight RGBA-IMAGE "Outline" 100 LAYER-MODE-NORMAL-LEGACY)))
   (theMerge 0) (theMap 0) )
 
     (gimp-context-push)
