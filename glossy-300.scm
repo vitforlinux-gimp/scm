@@ -43,6 +43,11 @@
 				(gimp-context-set-opacity 100)
 				(gimp-selection-none img)
 			))
+			
+(define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 
 (define (apply-glossy-300-logo-effect img
@@ -68,7 +73,7 @@
         (height (car (gimp-drawable-get-height logo-layer)))
         (posx (- (car (gimp-drawable-get-offsets logo-layer))))
         (posy (- (cadr (gimp-drawable-get-offsets logo-layer))))
-        (bg-layer (car (gimp-layer-new img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+        (bg-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
         (grow-me (car (gimp-layer-copy logo-layer TRUE)))
         (dont-drop-me 0)
         )
@@ -146,11 +151,22 @@
 
     (gimp-selection-none img)
 
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new grow-me "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 110 "elevation" 45 "depth" 3
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" logo-layer)
+      (gimp-drawable-merge-filter grow-me filter)
+    ))
+    (else
     (plug-in-bump-map (if (= noninteractive TRUE)
         RUN-NONINTERACTIVE
         RUN-INTERACTIVE)
           img grow-me logo-layer
-                      110.0 45.0 3 0 0 0 0 TRUE FALSE 0)
+                      110.0 45.0 3 0 0 0 0 TRUE FALSE 0)))
     (gimp-layer-set-mode logo-layer LAYER-MODE-SCREEN-LEGACY)
 
     (if (= use-pattern-overlay TRUE)
