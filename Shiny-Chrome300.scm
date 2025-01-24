@@ -36,10 +36,19 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
  
+   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
+
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTBookmann Bold")
   (define sffont "QTBookmann-Bold"))
@@ -212,8 +221,8 @@
 			(height (car (gimp-drawable-get-height drawable)))
 			(offx (car (gimp-drawable-get-offsets drawable)))
             (offy (cadr (gimp-drawable-get-offsets drawable)))
-			(bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
-			(chrome (car (gimp-layer-new image width height RGBA-IMAGE "Chrome" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(chrome (car (gimp-layer-new-ng image width height RGBA-IMAGE "Chrome" 100 LAYER-MODE-NORMAL-LEGACY)))
 			(alpha (car (gimp-drawable-has-alpha drawable)))
 		    (no-sel (car (gimp-selection-is-empty image)))
 			(active-gradient (car (gimp-context-get-gradient)))
@@ -259,7 +268,7 @@
 	(gimp-drawable-fill bkg-layer FILL-FOREGROUND)
 	(gimp-drawable-edit-fill bkg-layer FILL-BACKGROUND)
 	(gimp-selection-none image)
-	(apply-gauss image bkg-layer 5 5)
+	(apply-gauss2 image bkg-layer 5 5)
 
 	;(gimp-image-select-color image 2 bkg-layer '(0 0 0) )
 (gimp-image-select-item image 2 drawable)
@@ -279,10 +288,21 @@
 	;(gimp-drawable-edit-gradient-fill chrome GRADIENT-LINEAR 100 0 REPEAT-NONE FALSE FALSE 3 0.2 TRUE (+ offx x1) (+ offy y2) (+ offx x1) (+ offy y1))
 	  (gimp-drawable-edit-gradient-fill chrome GRADIENT-LINEAR 0 0 1 0 0 (+ offx x1) (+ offy y2) (+ offx x1) (+ offy y1))
 	(gimp-selection-none image)
+	      	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new chrome "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" 3
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bkg-layer)
+      (gimp-drawable-merge-filter chrome filter)
+    ))
+    (else
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 3 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
 	(gimp-drawable-curves-spline chrome 0  12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
-	(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) )	)
+	(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) )	)))
 
 	;(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE)
 (gimp-drawable-levels-stretch chrome)
@@ -312,7 +332,7 @@
 		(y2 0)
         )  
 	(cond ((not (= bkg-type 0))
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(include-layer image bkg-layer drawable 1)	;stack 0=above 1=below
 	(gimp-layer-set-offsets bkg-layer offx offy)
     )
