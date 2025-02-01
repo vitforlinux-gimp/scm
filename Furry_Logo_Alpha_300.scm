@@ -35,14 +35,25 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
+
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
+
+
 ;Fix code for 2.10 work in 2.99.12
 ;(cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image 1 (vector drawable)))))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 
 (define (script-fu-furry-300-logo 
                                       img-width
@@ -144,7 +155,7 @@
     	
 ;;;;create the background layer    
 	(if (> bkg-type 0) (begin
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
     (if (= conserve FALSE) (begin
 	(gimp-image-insert-layer image bkg-layer 0 (+ (car (gimp-image-get-item-position image layer )) 1)))
 	(gimp-image-insert-layer image bkg-layer 0 (+ (car (gimp-image-get-item-position image layer )) 2)))
@@ -278,11 +289,17 @@
 ;;;;begin the script
 ;;;;create the fur layer	
 	(if (= fur-color 0) (begin ;use new colors
-	(set! fur-layer (car (gimp-layer-new image width height RGBA-IMAGE "Fur" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! fur-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Fur" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(gimp-image-insert-layer image fur-layer 0(car (gimp-image-get-item-position image layer )))
 	(gimp-drawable-edit-fill fur-layer FILL-BACKGROUND)
 	(gimp-image-select-item image 2 fur-layer)
-	(plug-in-solid-noise RUN-NONINTERACTIVE image fur-layer 0 0 0 1 (- 17 motle-size) (- 17 motle-size))
+					  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter fur-layer "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" FALSE "seed" 0
+                                                                                                       "detail" 1 "x-size" (- 17 motle-size) "y-size" (- 17 motle-size)
+                                                                                                       "width" width "height" height))
+												       (else
+	(plug-in-solid-noise RUN-NONINTERACTIVE image fur-layer 0 0 0 1 (- 17 motle-size) (- 17 motle-size))))
 	(gimp-drawable-threshold fur-layer 0 ( / motle 255) 1)
 	(if (> motle 35) (begin
 	;(gimp-by-color-select fur-layer '(0 0 0) 15 2 TRUE FALSE 0 FALSE)
@@ -339,7 +356,7 @@
 	(gimp-drawable-edit-clear fur-layer)
 	(gimp-selection-none image)
 	
-	(if (> blur-radius 0) (apply-gauss image fur-layer blur-radius blur-radius))
+	(if (> blur-radius 0) (apply-gauss2 image fur-layer blur-radius blur-radius))
 	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
 	(plug-in-gimpressionist 1 image fur-layer "Furry")
 		(plug-in-gimpressionist 1 image (vector fur-layer) "Furry") )
