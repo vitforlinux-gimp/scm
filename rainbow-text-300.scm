@@ -92,8 +92,10 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 						       ((= justification 2) 1)
 						       ((= justification 3) 3)))
       ) ;end of our local variables
+      
           (gimp-context-push)
     (gimp-context-set-defaults)
+    (gimp-context-set-paint-mode 0)
       (gimp-image-insert-layer theImage theLayer 0 0)
       (gimp-context-set-background bgColor)
       (gimp-context-set-foreground inTextColor)
