@@ -41,13 +41,22 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
  
  		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTChanceryType Bold")
   (define sffont "QTChanceryType-Bold"))
+  
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 ;
 ; Gradients blend direction list
@@ -95,7 +104,7 @@
     (cond ((= ver 2.8) (gimp-image-select-item image 2 layer)) 
 	(else (gimp-image-select-item image 2  layer))
 	) ;endcond	
-	(set! snow-layer (car (gimp-layer-new image width height RGBA-IMAGE "Snow Template" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! snow-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Snow Template" 100 LAYER-MODE-NORMAL-LEGACY)))
     (include-layer image snow-layer layer 0)	;stack 0=above 1=below
 	(gimp-drawable-edit-fill snow-layer FILL-BACKGROUND)
 	(gimp-layer-set-offsets snow-layer 0 (- 0 depth))
@@ -122,12 +131,12 @@
 								  )
 	(gimp-item-set-visible snow-layer FALSE)
 	
-	(set! snowtop-layer (car (gimp-layer-new image width height RGBA-IMAGE "Snow Topping" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! snowtop-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Snow Topping" 100 LAYER-MODE-NORMAL-LEGACY)))
     (include-layer image snowtop-layer snow-layer 0)	;stack 0=above 1=below
 	(gimp-context-set-background '(243 243 255))
 	(gimp-drawable-edit-fill snowtop-layer FILL-BACKGROUND)
 	(gimp-selection-none image)
-	(apply-gauss image snowtop-layer 3 3)
+	(apply-gauss2 image snowtop-layer 3 3)
 	(cond ((= ver 2.8)
 	(gimp-context-set-sample-threshold-int 25)
 	(gimp-context-set-antialias TRUE)
@@ -136,7 +145,7 @@
 	) ;endcond
 	(gimp-drawable-edit-fill snowtop-layer FILL-BACKGROUND)
 	
-	(set! snowshadow-layer (car (gimp-layer-new image width height RGBA-IMAGE "Snow Shadow" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! snowshadow-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Snow Shadow" 100 LAYER-MODE-NORMAL-LEGACY)))
     (include-layer image snowshadow-layer snowtop-layer 0)	;stack 0=above 1=below
 	(gimp-context-set-background '(149 149 207))
 	(gimp-drawable-edit-fill snowshadow-layer FILL-BACKGROUND)
@@ -146,9 +155,9 @@
 	(gimp-selection-invert image)
     (gimp-drawable-edit-clear snowshadow-layer)
 	(gimp-selection-invert image)
-	(apply-gauss image snowshadow-layer 10 10)
+	(apply-gauss2 image snowshadow-layer 10 10)
 	(gimp-selection-none image)
-	(apply-gauss image snowtop-layer 3 3)
+	(apply-gauss2 image snowtop-layer 3 3)
 
 ;;;;finish the script	
     (if (= conserve FALSE) (begin
@@ -257,7 +266,7 @@
 	(gimp-selection-none image)
 	
 		; creating  map (inner shape)
-		(set! innermap (car (gimp-layer-new  image width height RGB-IMAGE "iMap" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(set! innermap (car (gimp-layer-new-ng  image width height RGB-IMAGE "iMap" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(include-layer image innermap text-layer 1)	;stack 0=above 1=below
 		(gimp-context-set-foreground '(255 255 255))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
@@ -266,11 +275,22 @@
 		(gimp-context-set-foreground '(0 0 0))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
 		(gimp-selection-none image)
-		(apply-gauss image innermap 6 6)
+		(apply-gauss2 image innermap 6 6)
 
 		(gimp-context-set-foreground color)
 		(gimp-drawable-edit-fill text-layer FILL-FOREGROUND)
 
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new text-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 32 "depth" 5
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" innermap)
+      (gimp-drawable-merge-filter text-layer filter)
+    ))
+    (else
 		(plug-in-bump-map
 			1
 			image
@@ -285,14 +305,14 @@
 			0
 			1
 			1
-			0)
+			0)))
 	
 		(gimp-image-select-item image 2  text-selection)
 		(gimp-selection-shrink image 2)
 		(set! masktext (car (gimp-layer-create-mask text-layer ADD-MASK-SELECTION)))
 		(gimp-layer-add-mask text-layer masktext)
 		(gimp-selection-none image)
-		(apply-gauss image masktext 1 1)
+		(apply-gauss2 image masktext 1 1)
 		(gimp-layer-remove-mask text-layer MASK-APPLY)
 		(gimp-image-remove-layer image innermap)
 		(gimp-image-remove-channel image text-selection)
@@ -301,7 +321,7 @@
 ;;;;create the background layer    
 	;;;;create the background layer    
 	(cond ((not (= bkg-type 0))
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(include-layer image bkg-layer text-layer 1)	;stack 0=above 1=below
     )
 	) ;endcond
