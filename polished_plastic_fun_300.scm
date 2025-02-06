@@ -218,7 +218,13 @@
 			
 			
 		(define  (material-bovination-2 fond image) (begin
-				(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
+							  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter fond "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" (random 65535)
+                                                                                                       "detail" 1 "x-size" 16 "y-size" 4
+                                                                                                       "width" (car (gimp-image-get-width image)) "height" (car (gimp-image-get-height image))))
+												       (else
+				(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)))
 					(gimp-drawable-equalize fond 0)
 					;	(gimp-drawable-threshold fond HISTOGRAM-VALUE 0 1)
 
@@ -417,7 +423,11 @@
 				(gimp-drawable-edit-fill fond FILL-FOREGROUND)
 				(gimp-selection-none image)
 				(gimp-layer-set-lock-alpha fond TRUE)
-	      (plug-in-oilify 1 image fond 20 0) 
+ (cond((not(defined? 'plug-in-oilify))
+    (gimp-drawable-merge-new-filter fond "gegl:oilify" 0 LAYER-MODE-REPLACE 1.0
+    "mask-radius" 10 "use-inten" FALSE) )
+(else  
+	      (plug-in-oilify 1 image fond 10 0) ))
 			))
 			
 		(define (material-pijama fond image gradient col-opt)  			(begin
@@ -618,7 +628,13 @@
 			))
 			
 	(define  (material-emap fond image gradient) (begin
-				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
+							  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter fond "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 1 "x-size" 9 "y-size" 3
+                                                                                                       "width" (car (gimp-image-get-width image)) "height" (car (gimp-image-get-height image))))
+												       (else
+				(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)))
 				      (apply-gauss2                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
@@ -644,7 +660,13 @@
 			
 (define  (material-vitwood fond image) (begin
 				;(plug-in-solid-noise 1 image fond 1 0 (random 999999) 1 9 3)
-					(plug-in-solid-noise 0 image fond 1 0 (random 65535) 2 9 1)
+							  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter fond "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" 0
+                                                                                                       "detail" 2 "x-size" 9 "y-size" 1
+                                                                                                       "width" (car (gimp-image-get-width image)) "height" (car (gimp-image-get-height image))))
+												       (else
+					(plug-in-solid-noise 0 image fond 1 0 (random 65535) 2 9 1)))
 				      (apply-gauss2                 
                  image     ; Image to apply blur 
             fond     ; Layer to apply blur
@@ -668,15 +690,29 @@
 		)	
 	
 	(gimp-context-set-paint-mode  LAYER-MODE-MULTIPLY-LEGACY)
- (plug-in-solid-noise 0 img fond 0 0 (random 65535) 1 16 4)
+							  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter fond "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" TRUE "seed" (random 65535)
+                                                                                                       "detail" 1 "x-size" 16 "y-size" 4
+                                                                                                       "width" (car (gimp-image-get-width img)) "height" (car (gimp-image-get-height img))))
+												       (else
+ (plug-in-solid-noise 0 img fond 0 0 (random 65535) 1 16 4)))
    (gimp-drawable-edit-fill fond FILL-FOREGROUND)
    (gimp-drawable-hue-saturation fond 0 0 0 100 0)
      (gimp-drawable-hue-saturation fond 0 0 0 100 0)
      (gimp-context-set-paint-mode  LAYER-MODE-NORMAL-LEGACY)
 	) )
-		(define (material-grunge-green img fond color n1) (begin 
-       (plug-in-plasma 1 img fond 0 1.0) (gimp-drawable-desaturate fond 4)
-      (plug-in-noisify 1 img fond 1 0.2 0.2 0.2 0)
+		(define (material-grunge-green img fond color n1) (begin
+	  				    (cond((not(defined? 'plug-in-plasma))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:plasma" 0 LAYER-MODE-REPLACE 1.0
+"turbulence" 1.0 "x" 0 "y" 0 "width" (car (gimp-image-get-width img))"height" (car (gimp-image-get-height img)) "seed" (random 999999999) ) (gimp-drawable-desaturate fond 4))		    
+	(else
+       (plug-in-plasma 1 img fond 0 1.0) (gimp-drawable-desaturate fond 4)))
+				    (cond((not(defined? 'plug-in-noisify))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:noise-hurl" 0 LAYER-MODE-REPLACE 1.0
+"pct-random" 50 "repeat" 1 "seed" 0 ) (gimp-drawable-desaturate fond 4))		    
+	(else
+      (plug-in-noisify 1 img fond 1 0.2 0.2 0.2 0)))
       (gimp-context-set-paint-mode  LAYER-MODE-MULTIPLY-LEGACY)
       			(if (= n1 0) 
      (gimp-context-set-background '(0 96 4) )
