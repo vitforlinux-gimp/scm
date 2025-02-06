@@ -283,8 +283,12 @@
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(gimp-selection-none image)
 				(apply-gauss2 image fond 20 20)
-				;(plug-in-randomize-hurl 0 image fond 50 50 TRUE 0)
-				(plug-in-noisify 1 image fond FALSE 1 1 1 0)
+				    (cond((not(defined? 'plug-in-randomize-hurl))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:noise-hurl" 0 LAYER-MODE-REPLACE 1.0
+"pct-random" 50 "repeat" 50 "seed" 0 ))		    
+	(else
+				(plug-in-randomize-hurl 0 image fond 50 50 TRUE 0)))
+				;(plug-in-noisify 1 image fond FALSE 1 1 1 0)
 				;(plug-in-mblur 0 image fond 0 25 0 0 0)
 				(apply-gauss2 image fond 25 0)
 				(gimp-drawable-colorize-hsl fond 0 0 10 )
@@ -321,8 +325,12 @@
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
 				(gimp-selection-none image)
 				(apply-gauss2 image fond 20 20)
-				;(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)
-				(plug-in-noisify 1 image fond FALSE 1 1 1 0)
+				    (cond((not(defined? 'plug-in-randomize-hurl))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:noise-hurl" 0 LAYER-MODE-REPLACE 1.0
+"pct-random" 5 "repeat" 5 "seed" 0 ))		    
+	(else
+				(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)))
+				;(plug-in-noisify 1 image fond FALSE 1 1 1 0)
 				;(plug-in-mblur 0 image fond 0 25 0 0 0)
 				(apply-gauss2 image fond 25 0)
 				(gimp-drawable-colorize-hsl fond 0 0 10 )
@@ -354,8 +362,12 @@
 			5
 		)
 				(gimp-drawable-brightness-contrast fond -0.5 0.15)
-				;(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)
-				(plug-in-noisify 1 image fond FALSE 0.6 0.6 0.6 0)
+				    (cond((not(defined? 'plug-in-noisify))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:noise-hurl" 0 LAYER-MODE-REPLACE 1.0
+"pct-random" 7 "repeat" 7 "seed" 0 ))		    
+	(else
+				(plug-in-randomize-hurl 0 image fond 5 5 TRUE 0)))
+				;(plug-in-noisify 1 image fond FALSE 0.6 0.6 0.6 0)
 				(gimp-drawable-desaturate fond 1)
 				(apply-gauss2 image fond 3 3)
 				;(gimp-drawable-colorize-hsl fond 230 36 20 )
@@ -749,13 +761,25 @@
 				(apply-gauss2 image fond 6 6)
 			))
 		(define  (effect-oilify fond image) (begin
-					 (plug-in-oilify 1 image fond 20 0)              ; Add olify effect
+ (cond((not(defined? 'plug-in-oilify))
+    (gimp-drawable-merge-new-filter fond "gegl:oilify" 0 LAYER-MODE-REPLACE 1.0
+    "mask-radius" 10 "use-inten" FALSE) )
+(else  
+					 (plug-in-oilify 1 image fond 10 0)   ))           ; Add olify effect
 			))
 		(define  (effect-cubism fond image) (begin
-					(plug-in-cubism 1 image fond 15 9 1)               ; Add cubism effect
+	 (cond ((not(defined? 'plug-in-cubism))
+	             (gimp-drawable-merge-new-filter fond "gegl:cubism" 0 LAYER-MODE-REPLACE 1.0
+		     "tile-size" 15 "tile-saturation" 9 "bg-color" '(0 0 0)))
+		     (else
+					(plug-in-cubism 1 image fond 15 9 1)))               ; Add cubism effect
 			))
 		(define  (effect-ripple fond image) (begin
-				(plug-in-ripple 1 image fond 100 5 1 0 1 TRUE FALSE)               ; Add ripple effect
+		 (cond((not(defined? 'plug-in-ripple))
+		 		     (gimp-drawable-merge-new-filter fond "gegl:ripple" 0 LAYER-MODE-REPLACE 1.0
+"amplitude" 5 "period" 100 "phi" 0 "angle" 0 "sampler-type" "cubic" "wave-type" "sine" "abyss-policy" "none" "tileable" FALSE))		    
+	(else
+				(plug-in-ripple 1 image fond 100 5 1 0 1 TRUE FALSE) ))              ; Add ripple effect
 			))
 		(define  (effect-bump-pattern fond image pattern scale)  (begin
 
@@ -775,6 +799,17 @@
 ;
 ; Call bump map procedure (pattern bump)
 ;
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new fond "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 130 "elevation" 55 "depth" 7
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter fond filter)
+    ))
+    (else
         (plug-in-bump-map 
                      1              ; Interactive (0), non-interactive (1)
                      image            ; Input image
@@ -789,7 +824,7 @@
                      0              ; Ambient lighting factor
                      TRUE           ; Compensate for darkening
                      FALSE          ; Invert bumpmap
-                    0)        ; Type of map (0=linear, 1=spherical, 2=sinusoidal)
+                    0) ))       ; Type of map (0=linear, 1=spherical, 2=sinusoidal)
 		    (gimp-image-remove-layer image bump-layer)
       ))
 	(define  (effect-desat-chrome fond image) (begin
@@ -844,9 +879,18 @@
 			))
 		(define  (effect-glitter fond image) (begin
 				 ;(plug-in-solid-noise 0 image fond 0 0 (random 65535) 1 16 4)
-				 ;(plug-in-rgb-noise 1 image fond  FALSE FALSE 0.6 0.6 0.6 0)
-				 (plug-in-noisify 1 image fond FALSE 0.6 0.6 0.6 0)
-				 (plug-in-cubism 1 image fond 1 5 0)               ; Add cubism effect
+	 (cond ((not(defined? 'plug-in-rgb-noise))
+	             (gimp-drawable-merge-new-filter fond "gegl:noise-rgb" 0 LAYER-MODE-REPLACE 1.0
+		     "correlated" FALSE "independent" FALSE "linear" TRUE "gaussian" TRUE "red" 0.6 "green" 0.6 "blue" 0.6 "alpha" 0 "seed" 0))
+		     (else
+				 (plug-in-rgb-noise 1 image fond  FALSE FALSE 0.6 0.6 0.6 0)))
+
+				; (plug-in-noisify 1 image fond FALSE 0.6 0.6 0.6 0)))
+	 (cond ((not(defined? 'plug-in-cubism))
+	             (gimp-drawable-merge-new-filter fond "gegl:cubism" 0 LAYER-MODE-REPLACE 1.0
+		     "tile-size" 1 "tile-saturation" 5 "bg-color" '(0 0 0)))
+		     (else
+				 (plug-in-cubism 1 image fond 1 5 0) ))              ; Add cubism effect
 			))
 
 ;;;;;;;			
