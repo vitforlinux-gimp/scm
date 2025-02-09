@@ -49,6 +49,7 @@
 (define (apply-wire-art-300-chrome-logo-effect img ; qui
                                   logo-layer
                                   offsets
+				  noshad
                                   bg-color)
   (let* (
         (offx1 (* offsets 0.4))
@@ -104,7 +105,8 @@
     (gimp-drawable-edit-fill layer-mask FILL-BACKGROUND)
     (gimp-context-set-background '(0 0 0))
     (gimp-selection-translate img offx1 offy1)
-    (gimp-drawable-edit-fill shadow FILL-BACKGROUND); qui
+    (if (= noshad 1)
+    (gimp-drawable-edit-fill shadow FILL-BACKGROUND)); qui
     (gimp-selection-none img)
     (gimp-context-set-background bg-color)
     (gimp-drawable-edit-fill background FILL-BACKGROUND)
@@ -161,7 +163,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -212,7 +215,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -249,6 +253,7 @@
   SF-ADJUSTMENT	"Grid Size (pixels)"	'(16 3 500 1 1 0 0)
    SF-ADJUSTMENT	"Grid Wire Size (pixels)"	'(3 1 15 1 1 0 0)
   SF-ADJUSTMENT	"Wire Size (pixels)"	'(5 1 25 1 1 0 0)
+  SF-TOGGLE	"Shadow"	TRUE
   SF-OPTION	"Metal Plating Type"	'("Chrome" "Gold" "Silver" "Copper" "Bronze" "Colored Tint")
   SF-TOGGLE	"Plate the Text only"	FALSE
   SF-COLOR	"Tint Color"		'(0 0 255)
@@ -267,7 +272,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -291,7 +297,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -309,7 +316,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -337,7 +345,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -364,6 +373,7 @@
   SF-ADJUSTMENT	"Grid Size (pixels)"	'(16 3 500 1 1 0 0)
   SF-ADJUSTMENT	"Grid Wire Size (pixels)"	'(3 1 15 1 1 0 0)
   SF-ADJUSTMENT	"Wire Size (pixels)"	'(5 1 25 1 1 0 0)
+  SF-TOGGLE	"Shadow"	TRUE
   SF-OPTION	"Metal Plating Type"	'("Chrome" "Gold" "Silver" "Copper" "Bronze" "Colored Tint")
   SF-TOGGLE	"Plate the Text only"	FALSE
   SF-COLOR	"Tint Color"		'(0 0 255)
@@ -382,7 +392,8 @@
 				grid-type
 				glid-size
 				grid-wire-size
-				wire-size 
+				wire-size
+				noshad
 				metal 
 				metal-text 
 				tint-color 
@@ -513,7 +524,7 @@
     (gimp-selection-none image)
 
 	;(script-fu-chrome-logo-alpha image text-layer 10 bkg-color)
-	(apply-wire-art-300-chrome-logo-effect image text-layer 10 bkg-color)
+	(apply-wire-art-300-chrome-logo-effect image text-layer 10 noshad bkg-color)
 	
 	
 	
