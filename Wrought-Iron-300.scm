@@ -37,9 +37,18 @@
 
 (cond ((not (defined? 'gimp-image-get-active-drawable)) (define (gimp-image-get-active-drawable image) (vector-ref (car (gimp-image-get-selected-drawables image)) 0))))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+ 
+ (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfgrad "Crown molding")
@@ -116,13 +125,34 @@
 	(gimp-image-select-item  image 2  image-layer)))
 	
 ;;;;create the age-layer layer    
-	(set! age-layer (car (gimp-layer-new image width height RGBA-IMAGE "Aging-Layer" 100 LAYER-MODE-SCREEN-LEGACY)))
+	(set! age-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Aging-Layer" 100 LAYER-MODE-SCREEN-LEGACY)))
     (gimp-image-insert-layer image age-layer 0 -1)
     (gimp-image-select-rectangle image 0 0 0 1 1)
-	(plug-in-solid-noise 1 image age-layer FALSE FALSE 0 1 4 4)
-	(plug-in-spread 1 image age-layer spread (/ spread 9))
-	(apply-gauss image age-layer 5 5)
-	(plug-in-bump-map 1 image age-layer age-layer 108 83 50 0 0 0 0 TRUE FALSE 2)
+					  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter age-layer "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" FALSE "seed" (random 65536)
+                                                                                                       "detail" 1 "x-size" 4 "y-size" 4
+                                                                                                       "width" width "height" height))
+												       (else
+	(plug-in-solid-noise 1 image age-layer FALSE FALSE 0 1 4 4)))
+					  (cond((not(defined? 'plug-in-spread))
+					                (gimp-drawable-merge-new-filter age-layer "gegl:noise-spread" 0 LAYER-MODE-REPLACE 1.0
+                                                                                                        "amount-x" spread "amount-y" (/ spread 9) "seed" 0))
+												       (else
+	(plug-in-spread 1 image age-layer spread (/ spread 9))))
+	(apply-gauss2 image age-layer 5 5)
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new age-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 108 "elevation" 83 "depth" 50
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" age-layer)
+      (gimp-drawable-merge-filter age-layer filter)
+    ))
+    (else
+	(plug-in-bump-map 1 image age-layer age-layer 108 83 50 0 0 0 0 TRUE FALSE 2)))
 	(gimp-image-select-rectangle image 1 0 0 1 1)
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(gimp-drawable-curves-spline age-layer 0 12 #(0 0 0.117647058824 0.266666666667 0.270588235294 0.2862745098 0.501960784314 0.721568627451 0.729411764706 0.737254901961 1 1))
@@ -144,7 +174,7 @@
 	(gimp-drawable-brightness-contrast image-layer (/ brightness 127)  (/ contrast 127))	
 	
 ;;;;create the background layer    
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bkg-layer 0 1)
 	(gimp-context-set-background bkg-color)
 	(if (= bkg-fill TRUE) (gimp-drawable-fill bkg-layer FILL-BACKGROUND))
@@ -418,7 +448,7 @@
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector image-layer)))
 (else (gimp-image-set-active-layer image image-layer))
 )    
-    (set! bevel-layer (car (gimp-layer-new image width height RGBA-IMAGE name 100 layer-mode)))
+    (set! bevel-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE name 100 layer-mode)))
     (gimp-image-insert-layer image bevel-layer 0 -1)
 ;    (gimp-image-set-active-layer image bevel-layer)
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector bevel-layer)))
@@ -455,8 +485,13 @@
 ;;;;add prenoise
     (if (> prenoise 0) (plug-in-hsv-noise 1 image bevel-layer 4 0 0 prenoise))
                         						
-;;;;emboss the selection    
-    (plug-in-emboss RUN-NONINTERACTIVE image bevel-layer light-angle light-elevation depth 1);Emboss
+;;;;emboss the selection
+		 (cond((not(defined? 'plug-in-emboss))
+		 		     (gimp-drawable-merge-new-filter bevel-layer "gegl:emboss" 0 LAYER-MODE-REPLACE 1.0
+"type" "emboss" "azimuth" light-angle "elevation" light-elevation "depth" depth)
+		)
+		(else
+    (plug-in-emboss RUN-NONINTERACTIVE image bevel-layer light-angle light-elevation depth 1)));Emboss
 
 ;;;;gloss the bevel-layer    
      (if (> gloss 0)
@@ -493,7 +528,7 @@
 	 )
 	(gimp-image-select-item image 2 image-channel)  
 ;postblur                
-	(if (> postblur 0) (apply-gauss image bevel-layer postblur postblur))
+	(if (> postblur 0) (apply-gauss2 image bevel-layer postblur postblur))
 	;(if (> postblur 0) (plug-in-gauss-rle 1 image bevel-layer postblur TRUE TRUE))
 	(gimp-layer-set-lock-alpha bevel-layer FALSE)
 	
@@ -620,11 +655,11 @@
 	
 	(gimp-image-resize image width height xsize ysize)
 	
-	(set! border-layer (car (gimp-layer-new image width height typeA "Border" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! border-layer (car (gimp-layer-new-ng image width height typeA "Border" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image border-layer 0 -1)
 	
 	(if (= tint TRUE) (begin
-	(set! tint-layer (car (gimp-layer-new image width height typeA "Tint" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! tint-layer (car (gimp-layer-new-ng image width height typeA "Tint" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image tint-layer 0 1) 
 	(gimp-context-set-background tint-color)
 	(gimp-image-select-item image 2 selection-channel)
@@ -636,7 +671,7 @@
 (else (gimp-image-set-active-layer image border-layer))
 )
 	
-	(set! bump-layer (car (gimp-layer-new image width height typeA "Grain" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bump-layer (car (gimp-layer-new-ng image width height typeA "Grain" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bump-layer 0 -1)
 	(gimp-item-set-visible bump-layer FALSE)
 	(if (= use-pattern TRUE) (begin
@@ -730,7 +765,19 @@
 (else (gimp-image-set-active-layer image border-layer))
 )  
 	(if (= tint TRUE) (plug-in-sample-colorize 1 image border-layer tint-layer TRUE FALSE FALSE TRUE 0 255 1.00 0 255))
-	(if (= use-pattern TRUE) (plug-in-bump-map 1 image border-layer bump-layer 135 45 3 0 0 0 0 TRUE FALSE LINEAR))
+	(if (= use-pattern TRUE) 
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new border-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" 3
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter border-layer filter)
+    ))
+    (else
+    (plug-in-bump-map 1 image border-layer bump-layer 135 45 3 0 0 0 0 TRUE FALSE LINEAR))))
 
 ;;;;finish the script	
 	(if (= conserve FALSE) (begin  
