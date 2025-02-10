@@ -266,7 +266,9 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
        (gimp-selection-none img)
        )
        )
-       (plug-in-autocrop 0 img bgLayer)
+       
+	(cond ((defined? 'plug-in-autocrop)(plug-in-autocrop 0 img bgLayer))
+	(else (gimp-image-autocrop img bgLayer)))
 
 )
 )
