@@ -555,7 +555,8 @@
 	(set! text-layer (car (gimp-image-merge-down image text-layer EXPAND-AS-NECESSARY)))
 	(gimp-item-set-name text-layer "Wire Text")
 	
-	(plug-in-autocrop 1 image text-layer)
+	(cond ((defined? 'plug-in-autocrop)(plug-in-autocrop 1 image text-layer))
+	(else (gimp-image-autocrop image text-layer)))
 	
 	(set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-MULTIPLY-LEGACY)))
     (gimp-image-insert-layer image bkg-layer 0 1)
