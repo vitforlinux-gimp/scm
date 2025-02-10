@@ -695,8 +695,8 @@
 	(gimp-image-insert-layer img new_from_visible -1 0)
 	
 	; découpage calque new_from_visible pour déterminer dimensions image
-	(plug-in-autocrop 1 img new_from_visible)
-	
+	(cond ((defined? 'plug-in-autocrop)(plug-in-autocrop 1 img new_from_visible))
+	(else (gimp-image-autocrop img new_from_visible)))
 
 	
 	
