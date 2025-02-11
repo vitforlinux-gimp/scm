@@ -42,6 +42,11 @@
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sfbggrad "Crown molding")
   (define sfbggrad "Crown Molding")	)
+  
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
@@ -166,7 +171,18 @@
   
 ; The bump map plugin is run using the bumpMapLayer to give the originalLayer its chiseled look
   
-  (plug-in-bump-map 1 image originalLayer bumpMapLayer 135 45 5 0 0 0 0 TRUE FALSE 0)
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new originalLayer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" 5
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bumpMapLayer)
+      (gimp-drawable-merge-filter originalLayer filter)
+    ))
+    (else
+(plug-in-bump-map 1 image originalLayer bumpMapLayer 135 45 5 0 0 0 0 TRUE FALSE 0)))
 
 ; If the user wants to keep the bumpMapLayer for later use, it will be kept in this step.
 ; Otherwise, the layer is deleted.  
@@ -341,7 +357,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 
       (set! width (car (gimp-image-get-width img) ) )
       (set! height (car (gimp-image-get-height img) ) )
-      (set! bg-layer (car (gimp-layer-new img 10 10 RGB-IMAGE "background" 100 LAYER-MODE-NORMAL-LEGACY) ) )
+      (set! bg-layer (car (gimp-layer-new-ng img 10 10 RGB-IMAGE "background" 100 LAYER-MODE-NORMAL-LEGACY) ) )
       (gimp-image-insert-layer img bg-layer 0 2)
       (gimp-drawable-edit-clear bg-layer)
       (gimp-layer-resize bg-layer width height 0 0)
