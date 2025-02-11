@@ -1,22 +1,22 @@
 
-; DÃ©but du script-fu script-fu-Glossy-Metal-3D-Text-By-Monsoonami-300_Gimp_2_8.scm
+; Début du script-fu script-fu-Glossy-Metal-3D-Text-By-Monsoonami-300_Gimp_2_8.scm
 ;
-; AccÃ¨s par :   Fichier > CrÃ©er > Logos > Glossy Metal 3D Text By Monsoonami
+; Accès par :   Fichier > Créer > Logos > Glossy Metal 3D Text By Monsoonami
 ;               File > Create > Logos > Glossy Metal 3D Text By Monsoonami
 ;
 ;                __________________________________________________________
 ; 
 ;
-; script-fu adaptÃ© du didacticiel vidÃ©o : http://www.youtube.com/watch?v=C7t5hsbtwrM
+; script-fu adapté du didacticiel vidéo : http://www.youtube.com/watch?v=C7t5hsbtwrM
 ;								motif : http://monsoonami.deviantart.com/art/offset-tiles-pattern-for-gimp-159543647				   
-; Merci Ã  Monsoonami, l'auteur.
+; Merci à Monsoonami, l'auteur.
 ;
 ;
 ;
 ; Licence GNU/GPL
 ;
 ; --------------------------------------------------------------------
-; Ã©ditÃ© avec Notepad++    http://notepad-plus-plus.org/
+; édité avec Notepad++    http://notepad-plus-plus.org/
 ;
 ; version 1.0 par samj (  http://www.aljacom.com/~gimp       http://samjcreations.blogspot.com  ) 16 juin 2012
 ;
@@ -37,6 +37,18 @@
         (define sffont "Walkway Bold,")
   (define sffont "Walkway Bold"	))
 
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
+
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 
 
 (define (
@@ -60,14 +72,14 @@
 		(
 			; affectation des variables		
 	
-			; mÃ©moriser les couleurs PP et AP
+			; mémoriser les couleurs PP et AP
 			(old-fg (car (gimp-context-get-foreground)))
 			(old-bg (car (gimp-context-get-background)))
 			
-			; mÃ©moriser brosse
+			; mémoriser brosse
 			(old-brush (car (gimp-context-get-brush)))			
 			
-			; caractÃ©ristiques de la surface occupÃ©e par le texte
+			; caractéristiques de la surface occupée par le texte
 			(fond_texte (gimp-text-get-extents-fontname Texte Taille_Police 0 Police))
 			
 			; largeur de la future image
@@ -76,7 +88,7 @@
 			; hauteur de la future image
 			(height (cadr fond_texte))
 			
-			; crÃ©er une nouvelle image rgb
+			; créer une nouvelle image rgb
 			(img (car (gimp-image-new 12 6 0)))
 			
 			;calque offset_tiles_pattern_by_monsoonami
@@ -100,7 +112,7 @@
 			; calque Texte noir
 			(calque_texte_2ter)
 			
-			; calque Texte dÃ©gradÃ©
+			; calque Texte dégradé
 			(calque_texte_3)
 			
 			; calque 2 limites du texte
@@ -122,12 +134,12 @@
 		
 
 	
-; calque offset_tiles_pattern_by_monsoonami , crÃ©er le motif****************************************************************
+; calque offset_tiles_pattern_by_monsoonami , créer le motif****************************************************************
 	
 
 
-	; crÃ©er calque offset_tiles_pattern_by_monsoonami
-	(set! offset_tiles_pattern_by_monsoonami (car (gimp-layer-new img 12 6 1 "offset_tiles_pattern_by_monsoonami" 100 0)))	
+	; créer calque offset_tiles_pattern_by_monsoonami
+	(set! offset_tiles_pattern_by_monsoonami (car (gimp-layer-new-ng img 12 6 1 "offset_tiles_pattern_by_monsoonami" 100 0)))	
 
 	; ajouter le calque calque_motif
 	(gimp-image-insert-layer img offset_tiles_pattern_by_monsoonami 0 -1)	
@@ -136,7 +148,7 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(0 0 0))
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(255 255 255))
 
 	; remplir de PP	
@@ -145,7 +157,7 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(255 255 255))	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -155,16 +167,16 @@
 		3							; height
 	)
 	
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)	
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -174,20 +186,20 @@
 		3							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 	
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(102 102 102))	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -197,16 +209,16 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -216,20 +228,20 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 	
 	
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(51 51 51))	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -240,16 +252,16 @@
 	)
 
 	
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -259,19 +271,19 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(204 204 204))	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -281,16 +293,16 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -300,19 +312,19 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 	
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(153 153 153))	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -322,16 +334,16 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 	
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -341,13 +353,13 @@
 		1							; height
 	)
 
-	; remplir la sÃ©lection de PP	
+	; remplir la sélection de PP	
 	(gimp-drawable-edit-fill 
 		offset_tiles_pattern_by_monsoonami	; drawable 									; x 
 		0									; paint mode
 	)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 
 	; copier le motif
@@ -390,7 +402,7 @@
 			; 		*****************************************************************************************	
 	
 	
-	; astuce de RobA  http://www.gimpchat.com/viewtopic.php?f=8&t=1221&start=40 pour que le presse-papiers devienne le motif sans avoir Ã  choisir le nom qui varie selon les langues de Gimp
+	; astuce de RobA  http://www.gimpchat.com/viewtopic.php?f=8&t=1221&start=40 pour que le presse-papiers devienne le motif sans avoir à choisir le nom qui varie selon les langues de Gimp
 	;QUI(gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0)) ; set patten to clipboard (first in list)
 	
   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
@@ -410,8 +422,8 @@
 	
 	
 
-	; crÃ©er calque_degrade
-	(set! calque_degrade (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "calque_degrade" 100 0)))	
+	; créer calque_degrade
+	(set! calque_degrade (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "calque_degrade" 100 0)))	
 	
 	; ajouter le calque calque_degrade
 	(gimp-image-insert-layer img calque_degrade 0 -1)
@@ -422,7 +434,7 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground Couleur_fond)
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(0 0 0))
 ;QUI!!
 	;(gimp-context-set-gradient-fg-bg-rgb)
@@ -433,7 +445,7 @@
 ;(gimp-context-set-gradient-fg-transparent)
 (gimp-context-set-gradient-fg-bg-rgb)
 (gimp-context-get-gradient-reverse TRUE)
-	; appliquer un dÃ©gradÃ© sur calque calque_degrade
+	; appliquer un dégradé sur calque calque_degrade
 								(gimp-drawable-edit-gradient-fill 
 			calque_degrade
 			;BLEND-FG-TRANSPARENT
@@ -477,8 +489,8 @@
 	
 	
 
-	; crÃ©er calque_motif
-	(set! calque_motif (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "calque_motif" 100 0)))	
+	; créer calque_motif
+	(set! calque_motif (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "calque_motif" 100 0)))	
 	
 	; ajouter le calque calque_motif
 	(gimp-image-insert-layer img calque_motif 0 -1)
@@ -486,10 +498,10 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(0 0 0))
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(255 255 255))	
 
-	; crÃ©er une sÃ©lection rectangulaire
+	; créer une sélection rectangulaire
 	(gimp-image-select-rectangle
 		img							; image 
 		0							; operation 
@@ -505,13 +517,13 @@
 		FILL-PATTERN									; paint mode pattern
 	)	
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 	
-	; mettre le calque en mode lumiÃ¨re douce
+	; mettre le calque en mode lumière douce
 	(gimp-layer-set-mode calque_motif 19)
 
-	; mettre le calque Ã  60% d'opacitÃ©
+	; mettre le calque à 60% d'opacité
 	(gimp-layer-set-opacity calque_motif 60)
 	
 
@@ -527,17 +539,17 @@
 	; mettre pp = couleur de l'encre
 	(gimp-context-set-foreground Couleur_encre)
 	
-	; crÃ©er le calque texte
+	; créer le calque texte
 	;                  (gimp-text-fontname image drawable x y text border antialias size size-type fontname)
 	(set! calque_texte (car (gimp-text-fontname img -1 (round (* width 0.25)) (round (* height 0.5)) Texte 0 TRUE Taille_Police 0 Police)))
 	
 	; donner un nom au calque
 	(gimp-item-set-name calque_texte "Texte")
 	
-	; sÃ©lectionner le texte
+	; sélectionner le texte
 	(gimp-image-select-item img 0 calque_texte)
 	
-	; sauvegarder cette sÃ©lection dans un chemin
+	; sauvegarder cette sélection dans un chemin
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(plug-in-sel2path 1 img calque_texte)
 	(plug-in-sel2path 1 img (vector calque_texte)))
@@ -556,8 +568,8 @@
 	
 	
 
-	; crÃ©er calque_texte_2
-	(set! calque_texte_2 (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "calque_texte_2" 100 0)))	
+	; créer calque_texte_2
+	(set! calque_texte_2 (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "calque_texte_2" 100 0)))	
 	
 	; ajouter le calque calque_texte_2
 	(gimp-image-insert-layer img calque_texte_2 0 -1)
@@ -565,13 +577,13 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground Couleur_du_fond_du_texte)
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(255 255 255))
 	
-	; grossir la sÃ©lection en cours
+	; grossir la sélection en cours
 	(gimp-selection-grow img Grosseur_du_fond_du_texte)
 	
-	; sauvegarder cette sÃ©lection dans un chemin
+	; sauvegarder cette sélection dans un chemin
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(plug-in-sel2path 1 img calque_texte_2)
 	(plug-in-sel2path 1 img (vector calque_texte_2)))
@@ -593,7 +605,7 @@
 
 
 
-	; dÃ©placer le calque vers le bas
+	; déplacer le calque vers le bas
 	(gimp-item-transform-translate calque_texte_2 decalage_flou (round (/ Taille_Police 13)))
 	
 
@@ -603,8 +615,8 @@
 	
 	
 
-	; crÃ©er calque_texte_2bis
-	(set! calque_texte_2bis (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "calque_texte_2bis" 100 0)))	
+	; créer calque_texte_2bis
+	(set! calque_texte_2bis (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "calque_texte_2bis" 100 0)))	
 	
 	; ajouter le calque calque_texte_2bis
 	(gimp-image-insert-layer img calque_texte_2bis 0 -1)
@@ -612,7 +624,7 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground Couleur_du_fond_du_texte)
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(255 255 255))
 	
 	; remplir le calque calque_motif avec la couleur de PP
@@ -621,7 +633,7 @@
 		0									; paint mode
 	)	
 	
-	; dÃ©placer le calque vers le bas
+	; déplacer le calque vers le bas
 	(gimp-item-transform-translate calque_texte_2bis decalage_flou (round (/ Taille_Police 13)))
 
 
@@ -631,8 +643,8 @@
 	
 	
 
-	; crÃ©er calque_texte_2ter
-	(set! calque_texte_2ter (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "calque_texte_2ter" 100 0)))	
+	; créer calque_texte_2ter
+	(set! calque_texte_2ter (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "calque_texte_2ter" 100 0)))	
 	
 	; ajouter le calque calque_texte_2ter
 	(gimp-image-insert-layer img calque_texte_2ter 0 -1)
@@ -640,7 +652,7 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground Couleur_du_fond_du_texte)
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(255 255 255))
 
 	; remplir le calque calque_motif avec la couleur de PP
@@ -660,8 +672,8 @@
 	
 	
 
-	; crÃ©er calque_texte_3
-	(set! calque_texte_3 (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "calque_texte_3" 100 0)))	
+	; créer calque_texte_3
+	(set! calque_texte_3 (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "calque_texte_3" 100 0)))	
 	
 	; ajouter le calque calque_texte_3
 	(gimp-image-insert-layer img calque_texte_3 0 -1)
@@ -669,15 +681,15 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground Couleur_du_fond_du_texte)
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background Couleur_AP_degrade_fond_du_texte)	
 	
-	; appliquer un dÃ©gradÃ© sur calque calque_texte_3
+	; appliquer un dégradé sur calque calque_texte_3
 	(gimp-drawable-edit-gradient-fill 
 		calque_texte_3 			; drawable
 		;0 						; blend-mode
 		;0 						; paint-mode
-		0 						; gradient-type linÃ©aire
+		0 						; gradient-type linéaire
 		1 					; opacity
 		0 						; offset
 		;0 						; repeat
@@ -692,11 +704,11 @@
 		(round (* height 0.5))	; y2
 	)	
 	
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 	
 	
-	; rÃ©cupÃ©rer la premiÃ¨re sÃ©lection via le chemin
+	; récupérer la première sélection via le chemin
 	(gimp-image-select-item 
 		img						; image 
 		0						; op
@@ -712,10 +724,10 @@
 		;1						; feather-radius-y
 	)
 	
-	; grossir la sÃ©lection en cours
+	; grossir la sélection en cours
 	(gimp-selection-grow img (round (/ Grosseur_du_fond_du_texte 5)))
 	
-	; sauvegarder cette sÃ©lection dans un chemin
+	; sauvegarder cette sélection dans un chemin
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(plug-in-sel2path 1 img calque_texte_3)
 	(plug-in-sel2path 1 img (vector calque_texte_3)))
@@ -734,13 +746,13 @@
 		0									; paint mode
 	)	
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 	
-	; sÃ©lectionner le texte
+	; sélectionner le texte
 	(gimp-image-select-item img 0 calque_texte_3)	
 	
-	; rÃ©cupÃ©rer la premiÃ¨re sÃ©lection Texte_3 via le chemin mode diffÃ©rence
+	; récupérer la première sélection Texte_3 via le chemin mode différence
 	(gimp-image-select-item 
 		img						; image 
 		1						; op
@@ -756,7 +768,7 @@
 		;1						; feather-radius-y
 	)	
 	
-	; sauvegarder cette sÃ©lection dans un chemin
+	; sauvegarder cette sélection dans un chemin
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(plug-in-sel2path 1 img calque_texte_3)
 	(plug-in-sel2path 1 img (vector calque_texte_3)))
@@ -775,8 +787,8 @@
 	
 	
 
-	; crÃ©er limites_texte
-	(set! limites_texte (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "limites_texte" 100 0)))	
+	; créer limites_texte
+	(set! limites_texte (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "limites_texte" 100 0)))	
 	
 	; ajouter le calque limites_texte
 	(gimp-image-insert-layer img limites_texte 0 -1)
@@ -784,15 +796,15 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(255 255 255))
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background Couleur_degrade_limites_texte)		
 	
-	; appliquer un dÃ©gradÃ© sur calque calque_texte_3
+	; appliquer un dégradé sur calque calque_texte_3
 	(gimp-drawable-edit-gradient-fill 
 		limites_texte 			; drawable
 		;0 						; blend-mode
 		;0 						; paint-mode
-		0 						; gradient-type linÃ©aire
+		0 						; gradient-type linéaire
 		1 					; opacity
 		0 						; offset
 		;0 						; repeat
@@ -807,7 +819,7 @@
 		(round (* height 1.5))	; y2
 	)	
 	
-	; rÃ©duire la sÃ©lection
+	; réduire la sélection
 	(gimp-selection-shrink img (round (/ Grosseur_du_fond_du_texte 10)))
 	
 	; effacer
@@ -816,10 +828,10 @@
 		0									; paint mode
 	)	
 	
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)	
 	
-	; mettre le calque Ã  60% d'opacitÃ©
+	; mettre le calque à 60% d'opacité
 	(gimp-layer-set-opacity limites_texte 60)	
 
 	
@@ -829,12 +841,12 @@
 ; calque_texte_2*********************************************************************************	
 	
 	; appliquer un flou
-	(plug-in-gauss 1 img calque_texte_2 (round (/ Taille_Police 10)) (round (/ Taille_Police 10)) 1)	
+	(apply-gauss2 img calque_texte_2 (round (/ Taille_Police 10)) (round (/ Taille_Police 10)) )	
 	
-	; dÃ©placer le calque vers le bas
+	; déplacer le calque vers le bas
 	(gimp-item-transform-translate calque_texte_2 decalage_flou (round (/ Taille_Police 25)))	
 	
-	; mettre le calque Ã  80% d'opacitÃ©
+	; mettre le calque à 80% d'opacité
 	(gimp-layer-set-opacity calque_texte_2 80)	
 	
 	
@@ -849,7 +861,7 @@
 	(gimp-image-raise-item img calque_texte)	
 	(gimp-image-raise-item img calque_texte)
 	
-	; dÃ©placer le calque vers le bas
+	; déplacer le calque vers le bas
 	(gimp-item-transform-translate calque_texte decalage_flou (round (/ Taille_Police 50)))	
 	
 
@@ -863,8 +875,8 @@
 	
 	
 
-	; crÃ©er demi_texte_haut
-	(set! demi_texte_haut (car (gimp-layer-new img (round (* width 1.5)) (* height 2) 1 "demi_texte_haut" 100 0)))	
+	; créer demi_texte_haut
+	(set! demi_texte_haut (car (gimp-layer-new-ng img (round (* width 1.5)) (* height 2) 1 "demi_texte_haut" 100 0)))	
 	
 	; ajouter le calque demi_texte_haut
 	(gimp-image-insert-layer img demi_texte_haut 0 -1)
@@ -872,10 +884,10 @@
 	; modifier couleur de premier plan
 	(gimp-context-set-foreground '(255 255 255))
 	
-	; modifier couleur d'arriÃ¨re plan
+	; modifier couleur d'arrière plan
 	(gimp-context-set-background '(255 255 255))	
 	
-	; rÃ©cupÃ©rer la premiÃ¨re sÃ©lection via le chemin
+	; récupérer la première sélection via le chemin
 	(gimp-image-select-item 
 		img						; image 
 		0						; op
@@ -890,7 +902,7 @@
 		;1						; feather-radius-y
 	)	
 	
-	; sÃ©lection rectangulaire en mode intersection
+	; sélection rectangulaire en mode intersection
 	(gimp-image-select-rectangle 
 		img						; image 
 		3						; operation    mode intersection
@@ -900,7 +912,7 @@
 		height						; height
 	)
 	
-	; sauvegarder cette sÃ©lection dans un chemin
+	; sauvegarder cette sélection dans un chemin
 	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
 	(plug-in-sel2path 1 img demi_texte_haut)
 	(plug-in-sel2path 1 img (vector demi_texte_haut)))
@@ -919,7 +931,7 @@
 	; aplatir l'image
 	(if
 		(= Degrade_haut_du_texte_inverse TRUE)
-			; appliquer un dÃ©gradÃ© sur calque demi_texte_haut
+			; appliquer un dégradé sur calque demi_texte_haut
 			(gimp-drawable-edit-gradient-fill 
 				demi_texte_haut 		; drawable
 				;2 						; blend-mode   PP vers transparent
@@ -941,7 +953,7 @@
 			
 			; ELSE
 			
-			; appliquer un dÃ©gradÃ© sur calque demi_texte_haut
+			; appliquer un dégradé sur calque demi_texte_haut
 			(gimp-drawable-edit-gradient-fill 
 				demi_texte_haut 		; drawable
 				;2 						; blend-mode   PP vers transparent
@@ -969,7 +981,7 @@
 
 ; calque offset_tiles_pattern_by_monsoonami ************************************************
 
-	; enlever la visibilitÃ©
+	; enlever la visibilité
 	(gimp-item-set-visible offset_tiles_pattern_by_monsoonami FALSE)
 
 	
@@ -993,7 +1005,7 @@
 	; restaurer brosse
 	(gimp-context-set-brush old-brush)
 
-	; ne rien sÃ©lectionner
+	; ne rien sélectionner
 	(gimp-selection-none img)
 	
 	; afficher l'image
@@ -1013,7 +1025,7 @@
 
 (script-fu-register
 	"script-fu-Glossy-Metal-3D-Text-By-Monsoonami-300"
-	"Glossy Metal 3D Text By Monsoonami 300"
+	"Glossy Metal 3D Text By Monsoonami 3.0"
 	"Logo 3D sur fond avec texture"
 	"samj"
 	"samj"
