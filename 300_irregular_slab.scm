@@ -326,7 +326,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
       (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
                                       "azimuth" 135 "elevation" 45 "depth" 60
                                       "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0.50
-                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "compensate" TRUE "invert" TRUE "type" "spherical"
                                       "tiled" FALSE)
       (gimp-drawable-filter-set-aux-input filter "aux" theBumpLayer2)
       (gimp-drawable-merge-filter thePattLayer2 filter)
