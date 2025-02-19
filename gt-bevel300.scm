@@ -34,16 +34,25 @@
 ; v299b finally works
 ; v299c fix for Gimp 2.99.12
 ; v299d fix for Gimp 2.99.16 and LAYER-MODE-NORMAL-LEGACY, Undo is back!
-; v300 fix for Gimp 3.0 rc1
+; v300 fix for Gimp 3.0 rc2
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss 1 img drawable (* x 0.32)  (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+ 
+   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 ;Define Main Procedure
 ;
@@ -111,7 +120,7 @@
 ;
 ; Create New Bevel Layer
 ; 
-    (set! bevel-layer (car (gimp-layer-new img width height RGBA-IMAGE "Bevel" 100 LAYER-MODE-NORMAL)))
+    (set! bevel-layer (car (gimp-layer-new-ng img width height RGBA-IMAGE "Bevel" 100 LAYER-MODE-NORMAL)))
     (set! in-layer-pos (car (gimp-image-get-item-position img in-layer)))         ; Get Incomimg Layer Position   
     (gimp-image-insert-layer img bevel-layer 0 in-layer-pos)                       ; Insert Bevel layer
     (gimp-layer-set-offsets bevel-layer (car layer-offsets) (cadr layer-offsets))  ; Compensate For An Offset Layer
@@ -121,7 +130,7 @@
 ;
 ; Create New Bumpmap Layer 
 ;
-    (set! bump-layer (car (gimp-layer-new img width height RGB-IMAGE "Bumpmap" 100 LAYER-MODE-NORMAL)))
+    (set! bump-layer (car (gimp-layer-new-ng img width height RGB-IMAGE "Bumpmap" 100 LAYER-MODE-NORMAL)))
     (set! in-layer-pos (car (gimp-image-get-item-position img in-layer)))       ; Get Incomimg Layer Position   
     (gimp-image-insert-layer img bump-layer 0 (+ in-layer-pos 1))                ; Insert Bevel layer
     (gimp-layer-set-offsets bump-layer (car layer-offsets) (cadr layer-offsets)) ; Compensate For An Offset Layer
@@ -144,12 +153,22 @@
 ;
         (if (= stretch-contrast TRUE)
            ; (plug-in-autostretch-hsv 1 img bump-layer)  ;Stretch Contrast 
-	   ;(gimp-drawable-levels-stretch bump-layer)
-	   (plug-in-c-astretch  1 img bump-layer)
+	   (gimp-drawable-levels-stretch bump-layer)
+	  ;(plug-in-c-astretch  1 img bump-layer)
         )
 
         (gimp-selection-none img)   ; Clear the selection
-
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new bevel-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" bump-azimuth "elevation" bump-elevation "depth" bump-depth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" bump-ambient
+                                      "compensate" TRUE "invert" bump-invert "type" (cond ((= bump-curve 0) "linear" ) ((= bump-curve 1) "spherical" ) ((= bump-curve 2) "sinusoidal" ))
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter bevel-layer filter)
+    ))
+    (else
         (plug-in-bump-map 
                      1              ; Interactive (0), Non-interactive (1)
                      img            ; Input Image
@@ -164,7 +183,7 @@
                      bump-ambient   ; Ambient Lighting Factor
                      TRUE           ; Compensate for Darkening
                      bump-invert    ; Invert Bumpmap Toggle
-                     bump-curve)    ; Type of Mmap (0=linear, 1=spherical, 2=sinusoidal)
+                     bump-curve) ))   ; Type of Mmap (0=linear, 1=spherical, 2=sinusoidal)
 
         (gimp-item-set-visible bump-layer FALSE)            ; Set Bumpmap To Not Visible
         ;(plug-in-colortoalpha 1 img bevel-layer '(127 127 127)) ; Remove BG Gray Leaving Only Bevel
@@ -175,7 +194,7 @@
 ; After effect blur	
 	(if (> inBlur 0)
       (gimp-image-select-item img 2 bevel-layer)	
-	  (apply-gauss img bevel-layer inBlur inBlur )
+	  (apply-gauss2 img bevel-layer inBlur inBlur )
 	  (gimp-selection-none img) 
 	)
 ;
@@ -234,7 +253,7 @@
             SF-ADJUSTMENT   _"Ambient Light"       '(.5 0 1 .01 0.05 2 0)
             SF-TOGGLE       _"Stretch Contrast"     FALSE
             SF-TOGGLE       _"Invert Bumpmap"       FALSE
-                    SF-ADJUSTMENT "Post Effect Blur" '(0 0 20 1 5 0 0)					
+                    SF-ADJUSTMENT "Post Effect Blur" '(0 0 50 1 5 0 0)					
             SF-TOGGLE       _"Keep Layers"          FALSE
 ) ;End register 
 (script-fu-menu-register "script-fu-gt-bevel300"

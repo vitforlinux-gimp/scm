@@ -213,7 +213,7 @@
       (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
                                       "azimuth" bump-azimuth "elevation" bump-elevation "depth" bump-depth
                                       "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" bump-ambient
-                                      "compensate" TRUE "invert" bump-invert "type" "linear"
+                                      "compensate" TRUE "invert" bump-invert "type" (cond ((= bump-type 0) "linear" ) ((= bump-type 1) "spherical" ) ((= bump-type 2) "sinusoidal" ))
                                       "tiled" FALSE)
       (gimp-drawable-filter-set-aux-input filter "aux" in-layer)
       (gimp-drawable-merge-filter in-layer filter)
