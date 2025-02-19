@@ -38,6 +38,14 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+
 
 (define (script-fu-chisel-300 img inLayer bump-type inWidth inSoften inCurve inPow inAizmuth inElevation inDepth inMode inLocation inBlur inKeepBump)
   (let*
@@ -205,7 +213,7 @@
 	  (if (= inLocation 1)
 	    (gimp-selection-invert img)
 	  )	
-	  (plug-in-gauss RUN-NONINTERACTIVE img varBevelLayer inBlur inBlur 0)
+	  (apply-gauss2 img varBevelLayer inBlur inBlur )
 	  (gimp-selection-none img) 
 	)
 	
