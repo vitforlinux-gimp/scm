@@ -39,7 +39,7 @@
 (cond ((not (defined? 'gimp-drawable-get-offsets)) (define gimp-drawable-get-offsets gimp-drawable-offsets)))
 
 
-(define (script-fu-chisel-300 img inLayer inWidth inSoften inCurve inPow inAizmuth inElevation inDepth inMode inLocation inBlur inKeepBump)
+(define (script-fu-chisel-300 img inLayer bump-type inWidth inSoften inCurve inPow inAizmuth inElevation inDepth inMode inLocation inBlur inKeepBump)
   (let*
     (
 	   (varNoSelection (car (gimp-selection-is-empty img)))
@@ -152,8 +152,19 @@
     (gimp-context-set-foreground '(127 127 127))
     (gimp-drawable-fill varBevelLayer FILL-FOREGROUND) ;                                  dn: chg from FILL-FOREGROUND 
 
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new varBevelLayer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" inAizmuth "elevation" inElevation "depth" inDepth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" (cond ((= inMode 0) FALSE) ((= inMode 1) TRUE)) "type" (cond ((= bump-type 0) "linear" ) ((= bump-type 1) "spherical" ) ((= bump-type 2) "sinusoidal" ))
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" varBumpmapLayer)
+      (gimp-drawable-merge-filter varBevelLayer filter)
+    ))
+    (else
 	(plug-in-bump-map RUN-NONINTERACTIVE img varBevelLayer varBumpmapLayer inAizmuth inElevation inDepth 0 0 0 0 
-	                  TRUE (cond ((= inMode 0) FALSE) ((= inMode 1) TRUE)) 0) ;             dn: LINEAR not accepted by 2.10, set 0
+	                  TRUE (cond ((= inMode 0) FALSE) ((= inMode 1) TRUE)) bump-type))) ;             dn: LINEAR not accepted by 2.10, set 0
 	(gimp-layer-set-mode varBevelLayer LAYER-MODE-HARDLIGHT) ;                              dn: chg from HARDLIGHT-MODE
 	(gimp-layer-set-opacity varBevelLayer 80)
     (if (= (car (gimp-drawable-has-alpha varBevelLayer)) FALSE)
@@ -235,6 +246,7 @@
                     "RGB* GRAY*"
                     SF-IMAGE      "image"      0
                     SF-DRAWABLE   "drawable"   0
+		    SF-OPTION       _"Bump Curve"          '("Linear" "Spherical" "Sinusoidal")
                     SF-ADJUSTMENT "Bevel Width" '(20 2 256 1 5 0 0)
                     SF-ADJUSTMENT "Bevel Softness" '(5 0 10 1 5 0 0)
                     SF-ADJUSTMENT "Bevel Roundness" '(0 -1 1 0.1 1 1 0)
