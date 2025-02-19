@@ -358,7 +358,7 @@
       (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
                                       "azimuth" 250 "elevation" 45 "depth" 50
                                       "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
-                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "compensate" TRUE "invert" FALSE "type" "spherical"
                                       "tiled" FALSE)
       (gimp-drawable-filter-set-aux-input filter "aux" calque_texte)
       (gimp-drawable-merge-filter calque_texte filter)
