@@ -19,10 +19,19 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
+ 
+ (define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
 
-		(define (apply-gauss-im img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32)  (* y 0.32) 0)  )))
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
  
 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
         (define sffont "QTSchoolCentury Bold")
@@ -36,12 +45,12 @@
                                              TRUE font-size PIXELS font)))
         (width (car (gimp-drawable-get-width text-layer)))
         (height (car (gimp-drawable-get-height text-layer)))
-        (dist-text-layer (car (gimp-layer-new img width height RGBA-IMAGE
+        (dist-text-layer (car (gimp-layer-new-ng img width height RGBA-IMAGE
                                               "Distorted text" 100 LAYER-MODE-NORMAL-LEGACY)))
-        (dist-frame-layer (car (gimp-layer-new img width height RGBA-IMAGE
+        (dist-frame-layer (car (gimp-layer-new-ng img width height RGBA-IMAGE
                                                "Distorted text" 100 LAYER-MODE-NORMAL-LEGACY)))
         (distortion-img (car (gimp-image-new width height GRAY)))
-        (distortion-layer (car (gimp-layer-new distortion-img width height
+        (distortion-layer (car (gimp-layer-new-ng distortion-img width height
                                                GRAY-IMAGE "temp" 100 LAYER-MODE-NORMAL-LEGACY)))
         (radius (/ font-size 10))
         (prob 0.5)
@@ -72,22 +81,54 @@
     ;; now make the distortion data
     (gimp-context-set-background '(255 255 255))
     (gimp-drawable-edit-fill distortion-layer FILL-BACKGROUND)
-    (plug-in-noisify RUN-NONINTERACTIVE distortion-img distortion-layer FALSE prob prob prob 0.0)
-    (apply-gauss-im distortion-img distortion-layer radius strength strength)
-    (plug-in-c-astretch RUN-NONINTERACTIVE distortion-img distortion-layer)
-    (apply-gauss-im distortion-img distortion-layer radius strength strength)
+    				    (cond((not(defined? 'plug-in-noisify))
+		 		     (gimp-drawable-merge-new-filter distortion-layer "gegl:noise-hurl" 0 LAYER-MODE-REPLACE 1.0
+"pct-random" 50 "repeat" 1 "seed" 0 ))		    
+	(else
+    (plug-in-noisify RUN-NONINTERACTIVE distortion-img distortion-layer FALSE prob prob prob 0.0)))
+    (apply-gauss2 distortion-img distortion-layer radius strength strength)
+    ;(plug-in-c-astretch RUN-NONINTERACTIVE distortion-img distortion-layer)
+    (gimp-drawable-levels-stretch distortion-img)
+    (apply-gauss2 distortion-img distortion-layer radius strength strength)
     ;; OK, apply it to dist-text-layer
+    	(cond((not(defined? 'plug-in-displace))
+          (let* (
+                 (filter (car (gimp-drawable-filter-new dist-text-layer "gegl:displace" ""))))
+            (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                            "amount-x" radius "amount-y" radius "abyss-policy" "clamp"
+                                            "sampler-type" "cubic" "displace-mode" "cartesian")
+            (gimp-drawable-filter-set-aux-input filter "aux" distortion-layer)
+            (gimp-drawable-filter-set-aux-input filter "aux2" distortion-layer)
+            (gimp-drawable-merge-filter dist-text-layer filter)
+          ))
+        (else
     (plug-in-displace RUN-NONINTERACTIVE img dist-text-layer radius radius 1 1
-                      distortion-layer distortion-layer 1)
+                      distortion-layer distortion-layer 1)))
     ;; make the distortion data once again fro the frame
     (gimp-drawable-edit-fill distortion-layer FILL-BACKGROUND)
-    (plug-in-noisify RUN-NONINTERACTIVE distortion-img distortion-layer FALSE prob prob prob 0.0)
-    (apply-gauss-im distortion-img distortion-layer radius strength strength)
-    (plug-in-c-astretch RUN-NONINTERACTIVE distortion-img distortion-layer)
-    (apply-gauss-im distortion-img distortion-layer radius strength strength)
+    				    (cond((not(defined? 'plug-in-noisify))
+		 		     (gimp-drawable-merge-new-filter distortion-layer "gegl:noise-hurl" 0 LAYER-MODE-REPLACE 1.0
+"pct-random" 50 "repeat" 1 "seed" 0 ))		    
+	(else
+    (plug-in-noisify RUN-NONINTERACTIVE distortion-img distortion-layer FALSE prob prob prob 0.0)))
+    (apply-gauss2 distortion-img distortion-layer radius strength strength)
+    ;(plug-in-c-astretch RUN-NONINTERACTIVE distortion-img distortion-layer)
+    (gimp-drawable-levels-stretch distortion-img)
+    (apply-gauss2 distortion-img distortion-layer radius strength strength)
     ;; then, apply it to dist-frame-layer
+    	(cond((not(defined? 'plug-in-displace))
+          (let* (
+                 (filter (car (gimp-drawable-filter-new dist-frame-layer "gegl:displace" ""))))
+            (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                            "amount-x" radius "amount-y" radius "abyss-policy" "clamp"
+                                            "sampler-type" "cubic" "displace-mode" "cartesian")
+            (gimp-drawable-filter-set-aux-input filter "aux" distortion-layer)
+            (gimp-drawable-filter-set-aux-input filter "aux2" distortion-layer)
+            (gimp-drawable-merge-filter dist-frame-layer filter)
+          ))
+        (else
     (plug-in-displace RUN-NONINTERACTIVE img dist-frame-layer radius radius 1 1
-                      distortion-layer distortion-layer 1)
+                      distortion-layer distortion-layer 1)))
     ;; Finally, clear the bottom layer (text-layer)
     (gimp-selection-all img)
     (gimp-context-set-background '(255 255 255))
@@ -117,7 +158,7 @@
   SF-FONT       _"Font"               sffont
   SF-ADJUSTMENT _"Font size (pixels)" '(100 2 1000 1 10 0 1)
   SF-ADJUSTMENT _"Frame size"         '(2 1 20 1 5 0 1)
-  SF-ADJUSTMENT _"Strength effect "         '(6 1 20 1 5 0 1)
+  SF-ADJUSTMENT _"Strength effect "         '(3 1 20 1 5 0 1)
 )
 
 (script-fu-menu-register "script-fu-imigre300-gunya2"
