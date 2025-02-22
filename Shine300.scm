@@ -158,7 +158,7 @@
  (if (= conserve FALSE)
     (begin
 	(set! img-layer (car (gimp-image-merge-down image img-layer EXPAND-AS-NECESSARY)))
-	(set! img-layer (car (gimp-image-merge-down image img-layer EXPAND-AS-NECESSARY)))
+	;(set! img-layer (car (gimp-image-merge-down image img-layer EXPAND-AS-NECESSARY)))
 	(gimp-item-set-name img-layer "Shined Image")
 	)
 	)	
