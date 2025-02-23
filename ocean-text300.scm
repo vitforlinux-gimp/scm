@@ -43,12 +43,12 @@
 	(plug-in-gauss 1 img drawable x y 0)
 )))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTHelvetCnd-Black Heavy")
   (define sffont "QTHelvetCnd-Black"))
   
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -70,7 +70,8 @@
 	(define theImage (car (gimp-image-new 256 256 RGB)))
 
 	; Disable undoing
-	(gimp-image-undo-disable theImage)
+	;(gimp-image-undo-disable theImage)
+	    (gimp-image-undo-group-start theImage)
     (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 
 
@@ -119,7 +120,7 @@
 
 
 ; Add the ocean waves
-	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(if (= grad-type 0)(begin   (if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Horizon 2")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
 				))
@@ -177,14 +178,16 @@
 	(gimp-drawable-fill background FILL-BACKGROUND)
 
 	; Display the image & re-enable undoing
-	(gimp-image-undo-enable theImage)
-	(gimp-image-clean-all theImage)
-	(gimp-display-new theImage)
+	;(gimp-image-undo-enable theImage)
+	    (gimp-image-undo-group-end theImage)
+
+	;(gimp-image-clean-all theImage)
+	;(gimp-display-new theImage)
 	
 
 
 	; Force update
-	(gimp-displays-flush)
+	;(gimp-displays-flush)
 
 	; Return
 	(list theImage)
@@ -192,6 +195,7 @@
 ; Resets previous user settings  
   
 (gimp-context-pop)
+(gimp-display-new theImage)
 
 )
 

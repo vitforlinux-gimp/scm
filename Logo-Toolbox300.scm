@@ -101,7 +101,7 @@
 ; Fix code for gimp 2.10 working in 2.99.16
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
-  		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "LobsterTwo Bold")
   (define sffont "LobsterTwo-Bold"))
 
@@ -450,7 +450,7 @@
            (gimp-selection-shrink img glass-depth)                        ; Shrink selection
            (gimp-selection-feather img (- glass-depth 1))                 ; Feather Selection
            ;(gimp-curves-spline fill-layer 4 4 (lt-get-glass-trans-curve 64)) ; Modify channel curves
-	   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	   (if (not (defined? 'gimp-drawable-filter-new)) 
            (gimp-drawable-curves-spline fill-layer 4 4 (lt-get-glass-trans-curve 64)) ; Modify channel curves
 (gimp-drawable-curves-spline fill-layer 4 (lt-get-glass-trans-curve 64))) ; Modify channel curves	   
            (gimp-image-select-item img 2 saved-selection)                          ; Restore Selection

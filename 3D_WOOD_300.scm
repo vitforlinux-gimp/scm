@@ -146,7 +146,7 @@
 	(if (= modify TRUE) (begin
 	;(gimp-image-set-active-layer image text-layer)
 	(apply-gauss2 image text-layer blur blur)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
 
@@ -165,7 +165,7 @@
 	;(plug-in-mblur 1 image motion-layer 0 3d-height 90 (/ width 2) (/ height 2))
 	(apply-gauss2 image motion-layer 0 3d-height)
 ;;;;create the noise-layer
-	(set! noise-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! noise-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Noise" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new image "Noise" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image noise-layer 0 3)
@@ -173,7 +173,7 @@
 					  (cond((not(defined? 'plug-in-solid-noise))
 					                (gimp-drawable-merge-new-filter noise-layer "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
 							"tileable" FALSE "turbulent" TRUE "seed" 0
-                                                                                                       "detail" 1 "x-size" 16 "y-size" 0.6
+                                                                                                       "detail" 1 "x-size" 16 "y-size" 1
                                                                                                        "width" width "height" height))
 												       (else
 	(plug-in-solid-noise 1 image noise-layer FALSE TRUE 0 1 16.0 0.6)))
@@ -253,7 +253,7 @@
 ;;;;create the background layer    
 	(if (> bkg-type 0)
 	(begin
-	(set! bkg-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! bkg-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new image "Background" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image bkg-layer 0 1)))

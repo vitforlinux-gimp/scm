@@ -34,7 +34,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
   (script-fu-menu-register "script-fu-rainbow-text" "<Image>/File/Create/Text")
   
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
   
@@ -101,7 +101,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
       (gimp-context-set-foreground inTextColor)
       (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
-      		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      		 (if (not (defined? 'gimp-drawable-filter-new))
 		                    (car
                           (gimp-text-fontname
                           theImage theLayer
@@ -194,7 +194,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                                                                                                        "length" shadL "midpoint" 0 "midpoint-rel" 0
 												       "color" shadColor7 "composition" ""
 												       )
-												       
+  (gimp-layer-resize-to-image-size theText)												       
 		    (if (= vignette TRUE)
 (begin
             (gimp-image-select-ellipse
@@ -211,6 +211,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-context-set-background vignetteColor)
     (gimp-drawable-edit-fill theLayer FILL-BACKGROUND)
     		(gimp-selection-none theImage)
+		    (gimp-context-set-opacity 100)
 ))
 	(gimp-context-pop)
       (gimp-display-new theImage)
