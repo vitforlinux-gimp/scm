@@ -173,7 +173,7 @@
 					  (cond((not(defined? 'plug-in-solid-noise))
 					                (gimp-drawable-merge-new-filter noise-layer "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
 							"tileable" FALSE "turbulent" TRUE "seed" 0
-                                                                                                       "detail" 1 "x-size" 16 "y-size" 1
+                                                                                                       "detail" 1 "x-size" 16 "y-size" 0.6
                                                                                                        "width" width "height" height))
 												       (else
 	(plug-in-solid-noise 1 image noise-layer FALSE TRUE 0 1 16.0 0.6)))

@@ -37,12 +37,12 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTFloraline Bold")
   (define sffont "QTFloraline-Bold"))
   
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -340,7 +340,7 @@
 	;(gimp-image-set-active-layer image layer)
 	
 	
-(cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(cond ((not (defined? 'gimp-drawable-filter-new))
 	
 	(plug-in-lighting 1 
 	    image              ; IMAGE
@@ -613,7 +613,7 @@
 ;
 (if (= map-type 0)
     (begin 
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+ (if (not (defined? 'gimp-drawable-filter-new))  
 (plug-in-gradmap 1 img drawable) 
       (plug-in-gradmap 1 img (vector drawable))   )              ; Map Gradient
       (gimp-item-set-name drawable "EnviroMap: Topo") ; Name it

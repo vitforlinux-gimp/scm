@@ -52,7 +52,7 @@
 
 (gimp-image-undo-disable theImage)
 
-          (set! theTextLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+          (set! theTextLayer (cond ((not (defined? 'gimp-drawable-filter-new))
 	  (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Text Layer" 100 LAYER-MODE-NORMAL-LEGACY) ) )
 	  (else (car (gimp-layer-new theImage "Text Layer" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
           (gimp-image-insert-layer theImage theTextLayer 0 0)
@@ -185,7 +185,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-selection-invert theImage)
 	;  (gimp-image-select-rectangle theImage 0 0 0 1 1) ; plasma fix
 	  (if (= inDistress TRUE) 
-	  	  	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+	  	  	 (if (not (defined? 'gimp-drawable-filter-new))	
 	      (script-fu-distress-selection theImage theSourceLayer 127 2 1.5 2 TRUE TRUE)
 	      (script-fu-distress-selection theImage (vector theSourceLayer) 0.5 2 1.5 2 TRUE TRUE))
               (apply-gauss2 theImage theSourceLayer 1 1) 
@@ -197,14 +197,14 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-selection-all theImage)
 
 
-          (set! thePattLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+          (set! thePattLayer (cond ((not (defined? 'gimp-drawable-filter-new))
 	  (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Pattern Layer" 100 LAYER-MODE-NORMAL-LEGACY) ) )
 	(else (car (gimp-layer-new theImage "Pattern Layer" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
 
           (gimp-image-insert-layer theImage thePattLayer 0 0)
           (gimp-drawable-edit-clear thePattLayer)
 
-          (set! theBumpLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+          (set! theBumpLayer (cond ((not (defined? 'gimp-drawable-filter-new))
 	  (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "BumpMap Layer 1" 100 LAYER-MODE-NORMAL-LEGACY) ) )
 	  (else  (car (gimp-layer-new theImage "BumpMap Layer 1" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
 	  (gimp-context-set-background '(255 255 255))
@@ -230,7 +230,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	  (gimp-selection-grow theImage theBuffer )
 
           (if (= inDistressSlab TRUE) 
-	  	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+	  	 (if (not (defined? 'gimp-drawable-filter-new))	
 	     (script-fu-distress-selection theImage theSourceLayer 127 8 4 
                    (if (= inWoodLook TRUE) 8 2) TRUE (if (= inWoodLook TRUE) FALSE TRUE))
 		     (script-fu-distress-selection theImage (vector theSourceLayer) 0.5 8 4 
@@ -275,7 +275,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 ;;LIGHTEN-ONLY-MODE‚Ågimp-edit-blend‚ðŽÀs‚·‚é‚Æ‚¨‚©‚µ‚­‚È‚é‚Ì‚Å•ÏX‚µ‚½
 
-		(set! thenewLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(set! thenewLayer (cond ((not (defined? 'gimp-drawable-filter-new))
 		(car (gimp-layer-new theImage theImageWidth theImageHeight RGB-IMAGE "T Layer" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(else (car (gimp-layer-new theImage "T Layer" theImageWidth theImageHeight RGB-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 ;;;;;		(set! thenewLayer (car(gimp-layer-copy thePaintLayer FALSE)))	;;’Ç‰Á
@@ -338,7 +338,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
           (gimp-image-remove-layer theImage theBumpLayer2)
 ;	  (if (= inBG TRUE)
 ;              (begin
-                 (set! theBackground (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+                 (set! theBackground (cond ((not (defined? 'gimp-drawable-filter-new))
 		 (car (gimp-layer-new theImage theImageWidth theImageHeight RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY) ) )
 		 (else (car (gimp-layer-new theImage "Background" theImageWidth theImageHeight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY) ) )))
                  (gimp-context-set-background inBGColor )

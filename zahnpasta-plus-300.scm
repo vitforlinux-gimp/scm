@@ -7,7 +7,7 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfbrush '("Pencil Scratch" 1.0 20 0))
   (define sfbrush "Pencil Scratch")	)
   
@@ -20,7 +20,7 @@
 )))
 
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
   
@@ -77,12 +77,12 @@
 
     (gimp-context-set-foreground '(50 50 50))
    ; (gimp-context-set-brush "Circle Fuzzy (05)") 2. Hardness 100
-         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+         (if (not (defined? 'gimp-drawable-filter-new))   
 (gimp-context-set-brush "2. Hardness 025")
 (gimp-context-set-brush (car (gimp-brush-get-by-name "2. Hardness 025"))))
 (gimp-context-set-brush-size 5)
     (gimp-image-select-item img 2 theTextLayer)
-    (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+    (if (not (defined? 'gimp-drawable-filter-new))   
 (gimp-edit-stroke theBlur2Layer)
 (gimp-drawable-edit-stroke-selection theBlur2Layer))
     
@@ -96,20 +96,20 @@
     (if (= outype 4)  (begin (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics TRUE))(if  (defined? 'gimp-context-set-dynamics)(gimp-context-set-dynamics "Confetti")(gimp-context-set-dynamics-name "Confetti"))))
 
     ;(gimp-context-set-brush "Circle (19)")
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (gimp-context-set-brush (car  brush)) 
   (gimp-context-set-brush   brush)	)
   ;(if (> outype 0)
   (gimp-context-set-brush-size brush-size); )
 ;(gimp-context-set-brush-size brush-size)
     ;(gimp-drawable-edit-stroke-selection theOutlineLayer)
-        (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+        (if (not (defined? 'gimp-drawable-filter-new))   
 (gimp-edit-stroke theOutlineLayer)
 (gimp-drawable-edit-stroke-selection theOutlineLayer))
     (gimp-context-set-foreground '(0 0 0))
     (gimp-context-set-background '(0 0 0))
     (gimp-drawable-edit-fill theBlurLayer 0)
-    (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+    (if (not (defined? 'gimp-drawable-filter-new))   
 (gimp-edit-stroke theBlurLayer)
 (gimp-drawable-edit-stroke-selection theBlurLayer))
    ; (gimp-drawable-edit-stroke-selection theBlurLayer)

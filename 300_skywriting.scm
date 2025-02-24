@@ -6,7 +6,7 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTHelvet-Black Heavy")
   (define sffont "QTHelvet-Black"))
   
@@ -147,7 +147,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 (define (script-fu-skywriting-300imgh img drawable inSize color foption scolor grad pat)
   (let* (
 	(img2 (car (gimp-image-duplicate img)))
-	(drawable2 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(drawable2 (if (not (defined? 'gimp-drawable-filter-new)) 
 				 (car (gimp-image-get-active-drawable img2))
 				(vector-ref (car (gimp-image-get-selected-drawables img2)) 0)
 				))
@@ -198,7 +198,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 
 	;(gimp-display-new img)      ; make the image appear
 
-	(define clouds1 (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(define clouds1 (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new img imwidth imheight RGBA-IMAGE "Clouds1" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new img "Clouds1" imwidth imheight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 	(gimp-image-insert-layer img clouds1 0 0)
@@ -217,7 +217,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 		(gimp-image-select-item img 2 theText)
 		(gimp-selection-grow img grow)
 ;		(script-fu-distress-selection img clouds1 thr 10 4 2 1 1)	;none
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
 			 		(script-fu-distress-selection img clouds1 thr (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) 1 1)	;add
 		(script-fu-distress-selection img (vector clouds1) (/ thr 255) (+ (* (/ inSize 700) 10) 8.4) (+ (* (/ inSize 400) 4) 3.1) (+ (* (/ inSize 700) 2) 1.657) TRUE TRUE)	;add
 		)
@@ -241,7 +241,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 	(gimp-selection-none img)
 	;(define cloudText (car (gimp-image-merge-visible-layers img CLIP-TO-BOTTOM-LAYER)))
 
-	(define bgLayer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(define bgLayer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new img imwidth imheight RGBA-IMAGE "Blue" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new img "Blue" imwidth imheight RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 	(gimp-image-insert-layer img bgLayer 0 1)

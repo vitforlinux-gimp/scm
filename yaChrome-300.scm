@@ -58,11 +58,11 @@
 )))
  
    (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTBasker Bold")
   (define sffont "QTBasker-Bold"))
 
@@ -212,7 +212,7 @@
 		 (ver 2.8)   
         (major_version_no 0)
         (minor_version_no 0)
-        (version_list (strbreakup (car (gimp-version)) "."))		 
+        (version_list 0)		 
          )
 	;(cond ((not (defined? 'gimp-image-get-item-position)) (set! ver 2.6))) ;define the gimp version	 
 		 
@@ -368,7 +368,7 @@
 		    (ver 2.8)
 		            (major_version_no 0)
         (minor_version_no 0)
-        (version_list (strbreakup (car (gimp-version)) "."))
+        (version_list 0)
 			(x1 0)
 		    (y1 0)
 		    (x2 0)
@@ -488,7 +488,7 @@
     ))
     (else
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 depth 0 0 0 0 TRUE FALSE 0))) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 	(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 	(if (= shined 1) ;(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE))
@@ -525,11 +525,11 @@
 (apply-gauss2 image chrome-copy 1 1)
 ;(if (= gradmap 3)(plug-in-gauss-iir2 1 image chrome-copy 2 2))
   ; (gimp-context-set-gradient gradient)
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+  (if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient gradname210)
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name gradname299 )))
 				)
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+ (if (not (defined? 'gimp-drawable-filter-new))  
 (plug-in-gradmap 1 image chrome-copy) 
       (plug-in-gradmap 1 image (vector chrome-copy))   )              ; Map Gradient
 (cond((not(defined? 'plug-in-oilify))
@@ -572,11 +572,11 @@
 		(if (= metal 4) (gimp-drawable-brightness-contrast chrome 0.216535433071 0.1968503937));copper
 		(if (= metal 5) (gimp-drawable-brightness-contrast chrome 0.137795275591 0.236220472441));bronze
 		(if (= metal 6) (gimp-drawable-brightness-contrast chrome 0.0905511811024 0.0905511811024));brass
-		(if (= metal 7) (begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+		(if (= metal 7) (begin (if (not (defined? 'gimp-drawable-filter-new))  
 (gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 (gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 ) (gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss2 1 image chrome 1 1)));chrome
-		(if (= metal 8)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+		(if (= metal 8)(begin (if (not (defined? 'gimp-drawable-filter-new)) 
 		(gimp-drawable-curves-spline chrome 0 14 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 ))
 		(gimp-drawable-curves-spline chrome 0 #(0 0 0.23677581863979855 0.16731517509727623 0.37027707808564231 0.44357976653696496 0.62468513853904284 0.57587548638132291 0.7153652392947103 0.77042801556420237 0.86649874055415621 0.82101167315175105 1 1 )))
 		(gimp-layer-set-lock-alpha chrome TRUE)(apply-gauss2 image chrome 1 1)));chrome

@@ -10,12 +10,12 @@
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfbrush '("Pencil Scratch" 1.0 20 0))
   (define sfbrush "Pencil Scratch")	)
   
   
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfbggrad "Full saturation spectrum CCW")
   (define sfbggrad "Full Saturation Spectrum CCW")	)
 
@@ -35,10 +35,10 @@
    (gimp-image-undo-group-start image)
    		(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 		      (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics FALSE))
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-context-set-dynamics "Pressure Opacity")
 (gimp-context-set-dynamics-name "Pressure Opacity"))
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (gimp-context-set-brush (car  brush)) 
   (gimp-context-set-brush   brush)	)
  
@@ -52,7 +52,7 @@
       (set! g (random 255))
       (set! b (random 255))
       (set! random-color (list r g b))
-      (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)(begin
+      (if (not (defined? 'gimp-drawable-filter-new))(begin
      (if (= ctype 0)  (gimp-context-set-foreground random-color))
       (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics TRUE))
       (if (= ctype 1) (begin (gimp-context-set-foreground color) (gimp-context-set-dynamics "Pressure Opacity")))
@@ -72,7 +72,7 @@
       (vector-set! segment 1 (* 1 ya))
       (vector-set! segment 2 (* 1 xa))
       (vector-set! segment 3 (* 1 ya))
-      		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      		 (if (not (defined? 'gimp-drawable-filter-new))
       (gimp-paintbrush-default drawable point segment)
       (gimp-paintbrush-default drawable segment)
       )

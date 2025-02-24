@@ -42,13 +42,13 @@
 
 
 (cond ((not (defined? 'gimp-context-set-pattern-ng)) (define (gimp-context-set-pattern-ng value) 
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-pattern value)
 				(gimp-context-set-pattern (car (gimp-pattern-get-by-name value)))
 				))))
 
 (cond ((not (defined? 'gimp-context-set-gradient-ng)) (define (gimp-context-set-gradient-ng value) 
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient value)
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
 				))))
@@ -61,7 +61,7 @@
 )))
 
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 				
@@ -83,7 +83,7 @@
 	;(plug-in-make-seamless 1 pat-img pat-layer)
 	(gimp-edit-copy-visible pat-img)
 	;(gimp-context-set-pattern (caadr (gimp-patterns-list "")))
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(if (not (defined? 'gimp-drawable-filter-new)) 
 		(gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0))
 			;(gimp-context-set-pattern (car (gimp-pattern-get-by-name (list-ref (car (gimp-patterns-get-list "")) 0))))
 			(gimp-context-set-pattern (vector-ref (car (gimp-patterns-get-list ""))0))
@@ -297,7 +297,7 @@
 		(define  (material-alubrushed-light fond image) (begin
 				;(gimp-context-set-gradient "Flare Rays Size 1")
 			;	(gimp-context-set-gradient-ng "Rounded edge")
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Rounded edge")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Rounded Edge")))
 				)
@@ -338,7 +338,7 @@
 			
 					(define  (material-blue-jeans fond image col-opt) (begin
 			;	(gimp-context-set-gradient-ng "Rounded edge")
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Rounded edge")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Rounded Edge")))
 				)
@@ -557,7 +557,7 @@
             				(gimp-context-set-foreground '(0 0 0))
 					(gimp-context-set-background '(255 255 255))
 				(gimp-context-set-gradient-fg-bg-rgb)
-				(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+				(if (not (defined? 'gimp-drawable-filter-new)) 
 				(gimp-context-set-gradient-repeat-mode 1)
 				(gimp-context-set-gradient-repeat-mode 3))
 				(gimp-drawable-edit-gradient-fill 
@@ -656,7 +656,7 @@
       (gimp-context-set-gradient gradient)
       ;(plug-in-autostretch-hsv 1 image fond)
       (gimp-drawable-levels-stretch fond)
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+ (if (not (defined? 'gimp-drawable-filter-new))  
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
 
@@ -687,7 +687,7 @@
       )
       (gimp-context-set-gradient-ng "Wood 2")
 
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+ (if (not (defined? 'gimp-drawable-filter-new))  
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
      ; (plug-in-oilify 1 image fond 2 0)
@@ -737,7 +737,7 @@
 		(define (material-stripes img fond color color2 45deg size) (begin
 			    (gimp-context-set-background color2)
 		(gimp-context-set-foreground color )	
-				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+				 (if (not (defined? 'gimp-drawable-filter-new)) 
 		(gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1)) 
 		;(gimp-context-set-gradient (car (gimp-gradient-get-by-name(list-ref (car (gimp-gradients-get-list "")) 4))))
 (gimp-context-set-gradient (vector-ref (car (gimp-gradients-get-list ""))4))		)
@@ -829,7 +829,7 @@
       ))
 	(define  (effect-desat-chrome fond image) (begin
 				(gimp-drawable-desaturate fond 4 )
-					(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+					(if (not (defined? 'gimp-drawable-filter-new))
 					(gimp-drawable-curves-spline fond 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 					(gimp-drawable-curves-spline fond 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 
@@ -839,7 +839,7 @@
 			))
 	(define  (effect-desat-chrome-color fond image fond-color number) (begin
 				(gimp-drawable-desaturate fond 2 )
-					(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+					(if (not (defined? 'gimp-drawable-filter-new))
 					(gimp-drawable-curves-spline fond 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 					(gimp-drawable-curves-spline fond 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
 					(gimp-context-set-foreground fond-color)
@@ -1605,7 +1605,7 @@
 		(if (= text-effect 1) (plug-in-waves  1 img text-layer 5 70 10 1 0 FALSE ))
 		(if (= text-effect 2) (begin (gimp-selection-none img)
 			(apply-gauss2 img text-layer 20 20)
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 (gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1)))
 ))

@@ -37,7 +37,7 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -99,7 +99,7 @@
                                                          ADD-MASK-BLACK))))
       (gimp-layer-add-mask bands-layer bands-layer-mask)
       (gimp-selection-none img)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
       (begin (gimp-edit-copy bands-layer)
       (gimp-floating-sel-anchor (car (gimp-edit-paste bands-layer-mask FALSE))))
     (begin (gimp-edit-copy (vector bands-layer))
@@ -117,7 +117,7 @@
 
     ; Clean up and exit.
     (gimp-item-set-visible logo-layer 0)
-    (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+    (if (not (defined? 'gimp-drawable-filter-new))
     (gimp-image-set-active-layer img bands-layer)
     (gimp-image-set-selected-layers img (vector bands-layer)))
     (gimp-displays-flush)

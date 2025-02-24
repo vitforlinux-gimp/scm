@@ -20,11 +20,11 @@
 )))
 
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTBodiniPoster Italic")
   (define sffont "QTBodiniPoster-Italic"))
 
@@ -74,7 +74,7 @@
 (set! blur-layer (car (gimp-image-merge-down image text-layer 0)))
 (apply-gauss2 image blur-layer (/ area 70) (/ area 70))
 
-	(if (= grad-type 0)(begin   (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(if (= grad-type 0)(begin   (if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Horizon 2")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
 				))
@@ -121,12 +121,12 @@
 (gimp-image-remove-layer image blur-layer)
 ;(gimp-context-set-gradient "Three bars sin")
 
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Three bars sin")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Three Bars Sin")))
 				)
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (plug-in-gradmap 1 image bump-layer)
   (plug-in-gradmap 1 image (vector bump-layer))	)
 
@@ -160,7 +160,7 @@
 (define (script-fu-reflex-300-logo-alpha image drawable grad-type gradient reverse displace bg-type bg-col merge)
 
 	(let* (
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(if (not (defined? 'gimp-drawable-filter-new)) 
 		(drawable (car (gimp-image-get-active-drawable image)))
 		(drawable (aref (cadr (gimp-image-get-selected-drawables image)) 0)))
 		(var-select 0)
@@ -227,7 +227,7 @@
 	(if (= bg-type 2)
 		(begin 
 	     ; (gimp-drawable-edit-fill drawable FILL-WHITE)
-	      (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	      (if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Horizon 2")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
 				)
@@ -332,7 +332,7 @@
 	(if (= bg-type 2)
 		(begin 
 	     ; (gimp-drawable-edit-fill text-layer FILL-WHITE)
-	      (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	      (if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Horizon 2")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Horizon 2" )))
 				)

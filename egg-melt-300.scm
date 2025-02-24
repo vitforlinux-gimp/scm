@@ -8,14 +8,14 @@
 
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTVagaRound Bold")
   (define sffont "QTVagaRound-Bold"))
   
 
 
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -45,7 +45,7 @@
 
  (let* (
             ;(image-layer (car (gimp-image-get-active-layer image)))
-	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
@@ -80,7 +80,7 @@
 ;;;;create channel
 	(gimp-selection-save image)
 ;	(set! img-channel (car (gimp-image-get-active-drawable image)))	
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (set! img-channel (car (gimp-image-get-active-drawable image)))
   (set! img-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-channel-set-opacity img-channel 100)	
@@ -136,7 +136,7 @@
 ;;;;create the shadow
 (if (> shadow-size 0)
   (begin
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
     (script-fu-drop-shadow image img-layer shadow-size shadow-size shadow-size '(0 0 0) shadow-opacity FALSE)
     (script-fu-drop-shadow image (vector img-layer) shadow-size shadow-size shadow-size '(0 0 0) shadow-opacity FALSE))
     (set! tmp-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "temp" 100 LAYER-MODE-NORMAL-LEGACY)))
@@ -144,7 +144,7 @@
 	(gimp-image-raise-item image tmp-layer)
     (gimp-image-merge-down image tmp-layer CLIP-TO-IMAGE)
 	;(set! shadow-layer (car (gimp-image-get-active-drawable image)))
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (set! shadow-layer (car (gimp-image-get-active-drawable image)))
   (set! shadow-layer (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-image-lower-item image shadow-layer)
@@ -258,7 +258,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
       (gimp-context-set-foreground inTextColor)
       (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
-      		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+      		 (if (not (defined? 'gimp-drawable-filter-new))
 		                    (car
                           (gimp-text-fontname
                           theImage theLayer
@@ -343,7 +343,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 
 ;;; background
 (gimp-selection-none theImage)
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (gimp-context-set-gradient (list-ref (cadr (gimp-gradients-get-list "")) 1))
   (gimp-context-set-gradient (vector-ref (car (gimp-gradients-get-list ""))4))	)
     (gimp-context-set-background bg-color2)

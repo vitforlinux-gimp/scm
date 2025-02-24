@@ -37,7 +37,7 @@
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -262,7 +262,7 @@
 	(if (= sel TRUE) (set! keep-selection FALSE))
 	(if (= sel TRUE) (gimp-image-select-item image 2 layer))
 	
-	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+	 (if (not (defined? 'gimp-drawable-filter-new))	
 	(script-fu-distress-selection image 
 	                            layer
 								  127       ;Threshold (bigger 1<-->255 smaller)
@@ -305,7 +305,7 @@
 	;(gimp-by-color-select fur-layer '(0 0 0) 15 2 TRUE FALSE 0 FALSE)
 	(gimp-image-select-color image 2 fur-layer '(0 0 0))
 	
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+		 (if (not (defined? 'gimp-drawable-filter-new))	
 	(script-fu-distress-selection image 
 	                             layer
 								  127       ;Threshold (bigger 1<-->255 smaller)
@@ -357,7 +357,7 @@
 	(gimp-selection-none image)
 	
 	(if (> blur-radius 0) (apply-gauss2 image fur-layer blur-radius blur-radius))
-	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+	 (if (not (defined? 'gimp-drawable-filter-new))	
 	(plug-in-gimpressionist 1 image fur-layer "Furry")
 		(plug-in-gimpressionist 1 image (vector fur-layer) "Furry") )
 	(gimp-image-select-item image 2 fur-layer)

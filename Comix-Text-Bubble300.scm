@@ -51,7 +51,7 @@
 			))
   
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -76,7 +76,7 @@
 
  (let* (
        ; (image-layer (car (gimp-image-get-active-layer image)))
-       			(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+       			(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 		(offx 0)

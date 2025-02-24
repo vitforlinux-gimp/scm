@@ -39,12 +39,12 @@
 (cond ((not (defined? 'gimp-image-get-width)) (define gimp-image-get-width gimp-image-width)))
 (cond ((not (defined? 'gimp-image-get-height)) (define gimp-image-get-height gimp-image-height)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfbggrad "Crown molding")
   (define sfbggrad "Crown Molding")	)
   
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -103,7 +103,7 @@
 ; script, but results weren't as good.  The bumpMapLayer and OriginalLayer are linked for
 ; later movement around the canvas if so desired.
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
   (set! bumpMapLayer (car (gimp-image-get-active-layer image)))
       (set! bumpMapLayer  (vector-ref (car (gimp-image-get-selected-layers image)) 0))
   )
@@ -195,7 +195,7 @@
 ; run are put into the existing GIMP drop shadow script.  
 
   (if (= addShadow TRUE)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
       (script-fu-drop-shadow image originalLayer offsetX offsetY blurRadius shadowColor opacity TRUE)	;changed
             (script-fu-drop-shadow image (vector originalLayer) offsetX offsetY blurRadius shadowColor opacity TRUE))	;changed
 
@@ -205,7 +205,7 @@
 ; to the bumpMapLayer and OriginalLayer for later movement around the canvas if so desired.
 
 ;;;(set! position (car (gimp-image-get-item-position image originalLayer)))	;none 2.2
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 (set! shadowLayer (aref (cadr (gimp-image-get-layers image)) (+ position 1)))
 (set! shadowLayer (vector-ref (car (gimp-image-get-layers image)) (+ position 1))))
 ;(gimp-image-set-active-layer image shadowLayer)

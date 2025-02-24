@@ -59,15 +59,15 @@
 
  
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfrepeat '("None"  "Sawtooth"  "Triangular"  "Truncate"))
   (define sfrepeat '("None" "Truncate" "Sawtooth" "Triangular" ))	)
   
-  		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "LobsterTwo Bold")
   (define sffont "LobsterTwo-Bold"))
 ;Material start
@@ -174,7 +174,7 @@
 
  (let* (
             ;(image-layer (car (gimp-image-get-active-layer image)))
-	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
@@ -204,7 +204,7 @@
 ;;;;create channel
 	(gimp-selection-save image)
 	;(set! img-channel (car (gimp-image-get-active-drawable image)))
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (set! img-channel (car (gimp-image-get-active-drawable image)))
   (set! img-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-channel-set-opacity img-channel 100)	
@@ -251,7 +251,7 @@
 	
 ;;;;create the shadow		
 	;(gimp-image-remove-channel image img-channel)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
 (begin)		
 (gimp-image-merge-down image img-layer 0))
 
@@ -313,7 +313,7 @@
 ;
    (if (> shadow-opacity 0)
        (begin 
-       		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+       		 (if (not (defined? 'gimp-drawable-filter-new))
         (script-fu-drop-shadow img logo-layer shadowx shadowy 3 shadow-color shadow-opacity 1) ; Create shadow
 	        (script-fu-drop-shadow img (vector logo-layer) shadowx shadowy 3 shadow-color shadow-opacity 1) ); Create shadow
 

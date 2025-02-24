@@ -194,7 +194,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                                                                                                        "length" shadL "midpoint" 0 "midpoint-rel" 0
 												       "color" shadColor7 "composition" ""
 												       )
-  (gimp-layer-resize-to-image-size theText)												       
+												       
 		    (if (= vignette TRUE)
 (begin
             (gimp-image-select-ellipse
@@ -211,7 +211,6 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-context-set-background vignetteColor)
     (gimp-drawable-edit-fill theLayer FILL-BACKGROUND)
     		(gimp-selection-none theImage)
-		    (gimp-context-set-opacity 100)
 ))
 	(gimp-context-pop)
       (gimp-display-new theImage)

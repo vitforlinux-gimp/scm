@@ -16,7 +16,7 @@
 )))
  
 (cond ((not (defined? 'gimp-context-set-gradient-ng)) (define (gimp-context-set-gradient-ng value) 
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient value)
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name value)))
 				))))
@@ -46,11 +46,11 @@
                  (gimp-drawable-levels-stretch fond)
   
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
       
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+ (if (not (defined? 'gimp-drawable-filter-new))  
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
 
@@ -73,7 +73,7 @@
       )
       (gimp-context-set-gradient-ng "Wood 2")
 
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+ (if (not (defined? 'gimp-drawable-filter-new))  
 (plug-in-gradmap 1 image fond) 
       (plug-in-gradmap 1 image (vector fond))   )              ; Map Gradient
      ; (plug-in-oilify 1 image fond 2 0)

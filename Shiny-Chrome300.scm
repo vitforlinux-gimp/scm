@@ -45,11 +45,11 @@
 )))
  
    (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTBookmann Bold")
   (define sffont "QTBookmann-Bold"))
 
@@ -300,7 +300,7 @@
     ))
     (else
 	(plug-in-bump-map RUN-NONINTERACTIVE image chrome bkg-layer 135 45 3 0 0 0 0 TRUE FALSE 0) ;{LINEAR(0),SPHERICAL(1),SINUSOIDAL(2)}
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(if (not (defined? 'gimp-drawable-filter-new)) 
 	(gimp-drawable-curves-spline chrome 0  12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 	(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) )	)))
 
@@ -312,12 +312,12 @@
 	(include-layer image chrome-copy chrome 0)	;stack 0=above 1=below
 	(gimp-item-set-name chrome-copy "Chrome-Copy")
 	;(gimp-context-set-gradient "Sunrise")
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-gradient "Sunrise")
 				(gimp-context-set-gradient (car (gimp-gradient-get-by-name "Sunrise")))
 				)
 	;(plug-in-gradmap 1 image chrome-copy)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
         (plug-in-gradmap 1 image chrome-copy)
   (plug-in-gradmap 1 image (vector chrome-copy))	)
 	(gimp-layer-set-mode chrome-copy LAYER-MODE-BURN-LEGACY)

@@ -46,11 +46,11 @@
 )))
  
  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfgrad "Crown molding")
   (define sfgrad "Crown Molding")	)
 
@@ -73,7 +73,7 @@
 
  (let* (
             ;(image-layer (car (gimp-image-get-active-layer image)))
-	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
@@ -154,7 +154,7 @@
     (else
 	(plug-in-bump-map 1 image age-layer age-layer 108 83 50 0 0 0 0 TRUE FALSE 2)))
 	(gimp-image-select-rectangle image 1 0 0 1 1)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline age-layer 0 12 #(0 0 0.117647058824 0.266666666667 0.270588235294 0.2862745098 0.501960784314 0.721568627451 0.729411764706 0.737254901961 1 1))
 	(gimp-drawable-curves-spline age-layer 0 #(0 0 0.117647058824 0.266666666667 0.270588235294 0.2862745098 0.501960784314 0.721568627451 0.729411764706 0.737254901961 1 1)))
 	(set! image-layer (car (gimp-image-merge-down image age-layer 0)))
@@ -163,12 +163,12 @@
 	;(set! image-layer (car (gimp-image-merge-down image (car (gimp-image-get-active-layer image)) 0))) ; QUI GUASTO
 	
 	(set! image-layer (car (gimp-image-merge-down image
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-image-get-active-layer image))
 	(car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 	)0)))
 	
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline image-layer 0 22 #(0 0 0.0823529411765 0.541176470588 0.145098039216 0.870588235294 0.2431372549 1 0.325490196078 0.901960784314 0.41568627451 0.650980392157 0.576470588235 0.341176470588 0.678431372549 0.247058823529 0.780392156863 0.352941176471 0.874509803922 0.627450980392 1 1))
 	(gimp-drawable-curves-spline image-layer 0 #(0 0 0.0823529411765 0.541176470588 0.145098039216 0.870588235294 0.2431372549 1 0.325490196078 0.901960784314 0.41568627451 0.650980392157 0.576470588235 0.341176470588 0.678431372549 0.247058823529 0.780392156863 0.352941176471 0.874509803922 0.627450980392 1 1)))
 	(gimp-drawable-brightness-contrast image-layer (/ brightness 127)  (/ contrast 127))	
@@ -380,7 +380,7 @@
 
  (let* (
             ;(image-layer (car (gimp-image-get-active-layer image)))
-	    			(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	    			(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
@@ -472,7 +472,7 @@
 	                (vector-set! *newpoint* 3 (+ shape 0.5))
 					(vector-set! *newpoint* 4 1)
 					(vector-set! *newpoint* 5 1)
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline bevel-layer 0 6 *newpoint*)
 	(gimp-drawable-curves-spline bevel-layer 0  *newpoint*))
 
@@ -520,7 +520,7 @@
 					(vector-set! *newpointx1* 14 1)
 					(vector-set! *newpointx1* 15 1)
 					;(0,0, 63,(63 + y1), 95,(95 + y2), 127,(127 - y3), 156,(156 + y4), 191,(191 - y5), 223,(223 + y6), 255,255)
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline bevel-layer 0 16 *newpointx1*)
 	(gimp-drawable-curves-spline bevel-layer 0 *newpointx1*))
 
@@ -577,7 +577,7 @@
 
  (let* (
         ;(image-layer (car (gimp-image-get-active-layer image)))
-	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 		(old-width (car (gimp-drawable-get-width image-layer)))
@@ -727,7 +727,7 @@
 	(gimp-context-set-gradient gradient)
 ;;;;create the top of border
 	;(gimp-free-select image 10 *newpoint-top* 2 TRUE FALSE 15)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-image-select-polygon image 2 10 *newpoint-top*)
 	(gimp-image-select-polygon image 2 *newpoint-top*))
 	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE (/ width 2) 0 (/ width 2) ysize)
@@ -736,7 +736,7 @@
 
 ;;;;create the bottom of border
 	;(gimp-free-select image 10 *newpoint-bot* 2 TRUE FALSE 15)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-image-select-polygon image 2 10 *newpoint-bot*)
 	(gimp-image-select-polygon image 2 *newpoint-bot*))
 	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE (/ width 2) height (/ width 2) (+ old-height ysize))
@@ -744,7 +744,7 @@
 	(gimp-drawable-edit-gradient-fill border-layer GRADIENT-LINEAR 0 0 1 0 0  (/ width 2) height (/ width 2) (+ old-height ysize)) ; Fill with gradient
 ;;;;create the left of border
 	;(gimp-free-select image 10 *newpoint-left* 2 TRUE FALSE 15)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-image-select-polygon image 2 10 *newpoint-left*)
 	(gimp-image-select-polygon image 2 *newpoint-left*))
 	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE 0 (/ height 2) xsize (/ height 2))
@@ -752,7 +752,7 @@
 	(gimp-drawable-edit-gradient-fill border-layer GRADIENT-LINEAR 0 0 1 0 0   0 (/ height 2) xsize (/ height 2)) ; Fill with gradient
 ;;;;create the right of border
 	;(gimp-free-select image 10 *newpoint-right* 2 TRUE FALSE 15)
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-image-select-polygon image 2 10 *newpoint-right*)
 	(gimp-image-select-polygon image 2 *newpoint-right*))
 	;(gimp-edit-blend border-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY  GRADIENT-LINEAR 100 0 REPEAT-NONE reverse FALSE 3 0.2 TRUE width (/ height 2) (+ old-width xsize) (/ height 2))

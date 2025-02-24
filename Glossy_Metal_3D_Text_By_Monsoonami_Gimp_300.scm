@@ -33,12 +33,12 @@
 
 
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "Walkway Bold,")
   (define sffont "Walkway Bold"	))
 
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -405,7 +405,7 @@
 	; astuce de RobA  http://www.gimpchat.com/viewtopic.php?f=8&t=1221&start=40 pour que le presse-papiers devienne le motif sans avoir à choisir le nom qui varie selon les langues de Gimp
 	;QUI(gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0)) ; set patten to clipboard (first in list)
 	
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+  (if (not (defined? 'gimp-drawable-filter-new)) 
 						 (gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0))
 				;(gimp-context-set-pattern (car (gimp-pattern-get-by-name (list-ref (car (gimp-patterns-get-list "")) 0))))
 				(gimp-context-set-pattern (vector-ref (car (gimp-patterns-get-list ""))0))
@@ -550,13 +550,13 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sauvegarder cette sélection dans un chemin
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(plug-in-sel2path 1 img calque_texte)
 	(plug-in-sel2path 1 img (vector calque_texte)))
 	
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1")
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_1")  
 (gimp-item-set-name (vector-ref  (car (gimp-image-get-selected-paths img)) 0) "Texte_1"))
 
@@ -584,13 +584,13 @@
 	(gimp-selection-grow img Grosseur_du_fond_du_texte)
 	
 	; sauvegarder cette sélection dans un chemin
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(plug-in-sel2path 1 img calque_texte_2)
 	(plug-in-sel2path 1 img (vector calque_texte_2)))
 	
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2")
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  (if (not (defined? 'gimp-drawable-filter-new))
    (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_2")
 	(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "Texte_2"))
 
@@ -713,7 +713,7 @@
 		img						; image 
 		0						; op
 		;(car (gimp-image-get-path-by-name img "Texte_1"))
-				  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+				  (if (not (defined? 'gimp-drawable-filter-new))   
 		(car (gimp-image-get-vectors-by-name img "Texte_1"))
 		(car (gimp-image-get-path-by-name img "Texte_1")))
 		;"Texte_1"				; name 
@@ -728,13 +728,13 @@
 	(gimp-selection-grow img (round (/ Grosseur_du_fond_du_texte 5)))
 	
 	; sauvegarder cette sélection dans un chemin
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(plug-in-sel2path 1 img calque_texte_3)
 	(plug-in-sel2path 1 img (vector calque_texte_3)))
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3")
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  (if (not (defined? 'gimp-drawable-filter-new))
   (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3")
 	(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "Texte_3"))
 
@@ -757,7 +757,7 @@
 		img						; image 
 		1						; op
 		;(car (gimp-image-get-path-by-name img "Texte_3"))
-				  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+				  (if (not (defined? 'gimp-drawable-filter-new))   
 		(car (gimp-image-get-vectors-by-name img "Texte_3"))
 		(car (gimp-image-get-path-by-name img "Texte_3")))
 		;"Texte_3"				; name 
@@ -769,13 +769,13 @@
 	)	
 	
 	; sauvegarder cette sélection dans un chemin
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(plug-in-sel2path 1 img calque_texte_3)
 	(plug-in-sel2path 1 img (vector calque_texte_3)))
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour")
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+  (if (not (defined? 'gimp-drawable-filter-new))
    (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "Texte_3_contour")
 		(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "Texte_3_contour"))
 
@@ -891,7 +891,7 @@
 	(gimp-image-select-item 
 		img						; image 
 		0						; op
-		  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+		  (if (not (defined? 'gimp-drawable-filter-new))   
 		(car (gimp-image-get-vectors-by-name img "Texte_3_contour"))
 		(car (gimp-image-get-path-by-name img "Texte_3_contour")))
 		;"Texte_3_contour"		; name 
@@ -913,13 +913,13 @@
 	)
 	
 	; sauvegarder cette sélection dans un chemin
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(plug-in-sel2path 1 img demi_texte_haut)
 	(plug-in-sel2path 1 img (vector demi_texte_haut)))
 
 	; donner un nom au chemin
 	;(gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut")
-  (if (= (string->number (substring (car (gimp-version)) 0 3)) 2.10)
+  (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-item-set-name (car (gimp-image-get-active-vectors img)) "demi_texte_haut")
 	(gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths img)) 0) "demi_texte_haut"))
 

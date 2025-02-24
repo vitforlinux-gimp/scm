@@ -49,12 +49,12 @@
 	(plug-in-gauss 1 img drawable x y 0)
 )))
  
- 		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+ 		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTChanceryType Bold")
   (define sffont "QTChanceryType-Bold"))
   
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -111,7 +111,7 @@
 	(gimp-drawable-edit-clear snow-layer)
 	(gimp-selection-none image)
 	(gimp-image-select-item image 2  snow-layer)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+			 (if (not (defined? 'gimp-drawable-filter-new))	
 	(script-fu-distress-selection image 
 	                             snow-layer
 								  127       ;Threshold (bigger 1<-->255 smaller)
@@ -355,7 +355,7 @@
 	
 		
 ;;;;resize the text-layer
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+(if (not (defined? 'gimp-drawable-filter-new)) 
 	(gimp-image-set-active-layer image text-layer)
 	(gimp-image-set-selected-layers image (vector text-layer)))
 	(script-fu-snow-cover300-alpha image 

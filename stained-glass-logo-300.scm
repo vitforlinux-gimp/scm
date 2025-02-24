@@ -10,7 +10,7 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTBookmann Bold")
   (define sffont "QTBookmann-Bold"))
   
@@ -23,7 +23,7 @@
 )))
 
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -116,7 +116,7 @@ sf
 (set-pt v_point 1 0.25098 0.25098 )
 (set-pt v_point 2 0.5 0.88627 )
 (set-pt v_point 3 1 1 )
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-drawable-curves-spline logo-layer HISTOGRAM-VALUE 8 v_point)
 (gimp-drawable-curves-spline logo-layer HISTOGRAM-VALUE v_point))
 
@@ -125,12 +125,12 @@ sf
 ; draw outline
 ; Convert text to path
 (gimp-image-select-item image 2  bump-layer) ;select text
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (plug-in-sel2path 1 image bump-layer)
 (plug-in-sel2path 1 image (vector bump-layer))) ;
 
 
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+  (if (not (defined? 'gimp-drawable-filter-new)) 
 (gimp-item-set-name (car (gimp-image-get-active-vectors image)) "Path")  
 (gimp-item-set-name (vector-ref (car (gimp-image-get-selected-paths image)) 0) "Path")
 )
@@ -150,13 +150,13 @@ sf
 ;(gimp-context-enable-dynamics FALSE)
 (if  (defined? 'gimp-context-set-dynamics)(gimp-context-set-dynamics "Pressure Opacity")(gimp-context-set-dynamics-name "Pressure Opacity"))
 (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics FALSE))
-         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+         (if (not (defined? 'gimp-drawable-filter-new))   
 (gimp-context-set-brush "2. Hardness 100")
 (gimp-context-set-brush (car (gimp-brush-get-by-name "2. Hardness 100"))))
 (gimp-context-set-brush-size lwidth)
 (gimp-context-set-brush-spacing 0.1)
 ;(gimp-path-stroke-current image)
-  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+  (if (not (defined? 'gimp-drawable-filter-new))   
  (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-active-vectors image)))
  (gimp-drawable-edit-stroke-item path-layer (car (gimp-image-get-path-by-name image "Path")))	)
  

@@ -55,12 +55,12 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 (cond ((not (defined? 'gimp-text-get-extents-fontname)) (define (gimp-text-get-extents-fontname efn1 efn2 PIXELS efn3) (gimp-text-get-extents-font efn1 efn2 efn3))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTBookmann Bold")
   (define sffont "QTBookmann-Bold"))
   
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -223,13 +223,13 @@
 			
 				; créer un chemin à partir du texte
 				;(set! chemin_texte (car (gimp-vectors-new-from-text-layer img calque_texte)))
-				(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+				(if (not (defined? 'gimp-drawable-filter-new))   
 					(set! chemin_texte (car (gimp-vectors-new-from-text-layer img calque_texte)))
 					(set! chemin_texte (car (gimp-path-new-from-text-layer img calque_texte))))
 	
 				; ajouter le chemin à l'image
 				;(gimp-image-insert-vectors img chemin_texte 0 0)
-				(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+				(if (not (defined? 'gimp-drawable-filter-new))   
 					(gimp-image-insert-vectors img chemin_texte 0 0)
 					(gimp-image-insert-path img chemin_texte 0 0))
 				
@@ -244,7 +244,7 @@
 				; déterminer la taille des la brosse Circle Fuzzy en fonction de la Police
 				
 				;(gimp-context-set-brush "2. Hardness 025") ; 5*5
-				         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+				         (if (not (defined? 'gimp-drawable-filter-new))   
 (gimp-context-set-brush "2. Hardness 025")
 (gimp-context-set-brush (car (gimp-brush-get-by-name "2. Hardness 025"))))
 
@@ -339,7 +339,7 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sélection vers chemin
-					         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+					         (if (not (defined? 'gimp-drawable-filter-new))   
 	(set! chemin_texte_trace_avec_brosse (car (plug-in-sel2path 1 img calque_texte)))
 	(set! chemin_texte_trace_avec_brosse (car (plug-in-sel2path 1 img (vector calque_texte))))	)
 
@@ -395,7 +395,7 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sélection vers chemin
-						         (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+						         (if (not (defined? 'gimp-drawable-filter-new))   
 	(set! chemin_texte_effet (car (plug-in-sel2path 1 img calque_texte)))
 	(set! chemin_texte_effet (car (plug-in-sel2path 1 img (vector calque_texte)))))
 	
@@ -619,7 +619,7 @@
 	(gimp-image-select-item img 0 calque_texte)
 	
 	; sélection vers chemin
-			(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+			(if (not (defined? 'gimp-drawable-filter-new))   
 	(plug-in-sel2path 1 img calque_texte)
 	(plug-in-sel2path 1 img (vector calque_texte)))
 	
@@ -627,7 +627,7 @@
 	(gimp-selection-invert img)
 	
 	; sélection vers chemin
-			(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)   
+			(if (not (defined? 'gimp-drawable-filter-new))   
 	(plug-in-sel2path 1 img calque_texte)
 	(plug-in-sel2path 1 img (vector calque_texte)))
 

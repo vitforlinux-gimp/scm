@@ -70,8 +70,7 @@
 	(define theImage (car (gimp-image-new 256 256 RGB)))
 
 	; Disable undoing
-	;(gimp-image-undo-disable theImage)
-	    (gimp-image-undo-group-start theImage)
+	(gimp-image-undo-disable theImage)
     (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
 
 
@@ -178,16 +177,14 @@
 	(gimp-drawable-fill background FILL-BACKGROUND)
 
 	; Display the image & re-enable undoing
-	;(gimp-image-undo-enable theImage)
-	    (gimp-image-undo-group-end theImage)
-
-	;(gimp-image-clean-all theImage)
-	;(gimp-display-new theImage)
+	(gimp-image-undo-enable theImage)
+	(gimp-image-clean-all theImage)
+	(gimp-display-new theImage)
 	
 
 
 	; Force update
-	;(gimp-displays-flush)
+	(gimp-displays-flush)
 
 	; Return
 	(list theImage)
@@ -195,7 +192,6 @@
 ; Resets previous user settings  
   
 (gimp-context-pop)
-(gimp-display-new theImage)
 
 )
 

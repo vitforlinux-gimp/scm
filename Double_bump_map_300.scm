@@ -24,7 +24,7 @@
 			))
 			
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -85,14 +85,14 @@
 		(gimp-selection-grow image grow-distance)
 		(gimp-selection-invert image)
 		(gimp-selection-feather image 2)
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+		(if (not (defined? 'gimp-drawable-filter-new))	
 		(plug-in-sel2path RUN-NONINTERACTIVE image layer)
 		(plug-in-sel2path RUN-NONINTERACTIVE image (vector layer)))
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(if (not (defined? 'gimp-drawable-filter-new))
 			(set! get-vectors-returned-values (gimp-image-get-vectors image))
 			(set! get-vectors-returned-values (gimp-image-get-paths image)) )
 		(set! vectors-count (car  get-vectors-returned-values))
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(if (not (defined? 'gimp-drawable-filter-new))
 		(set! vectors-array (cadr get-vectors-returned-values))
 		(set! vectors-array (car get-vectors-returned-values)))
 
@@ -181,20 +181,20 @@
 
 		;cut out color layer using previously created path
 		(gimp-image-select-item image CHANNEL-OP-REPLACE current-vector)
-				 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+				 (if (not (defined? 'gimp-drawable-filter-new))
         (gimp-edit-cut  color-layer)
 		(gimp-edit-cut (vector color-layer)) )
 		(gimp-selection-none image)
 		;cur out pattern layer using previously created path
 		(gimp-image-select-item image CHANNEL-OP-REPLACE current-vector)
-						 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+						 (if (not (defined? 'gimp-drawable-filter-new))
         (gimp-edit-cut  pattern-layer)
 		(gimp-edit-cut (vector pattern-layer)) )
 		(gimp-selection-none image)
 		
 		;delete current-vector
 		;(gimp-image-remove-vectors image current-vector)
-		(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		(if (not (defined? 'gimp-drawable-filter-new))
 			(gimp-image-remove-vectors image current-vector)
 		(gimp-image-remove-path image current-vector) )
 				
@@ -380,7 +380,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
       (gimp-context-set-foreground color)
       (gimp-drawable-fill theLayer FILL-BACKGROUND)
       (set! theText
-       (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+       (if (not (defined? 'gimp-drawable-filter-new))	
                           (car
                           (gimp-text-fontname
                           theImage theLayer

@@ -45,7 +45,7 @@
 			))
 			
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
-(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+(if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
@@ -182,7 +182,7 @@
     (if (= shadow-toggle TRUE)
       (begin
         (gimp-image-select-item img CHANNEL-OP-REPLACE logo-layer)
-	  (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	  (if (not (defined? 'gimp-drawable-filter-new)) 
         (set! dont-drop-me (car (script-fu-drop-shadow img logo-layer
                                                        s-offset-x s-offset-y
                                                        15 '(0 0 0) 80 TRUE)))

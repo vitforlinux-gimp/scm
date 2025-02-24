@@ -56,7 +56,7 @@
 		(gimp-selection-none img)
 		))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "QTVagaRound Bold")
   (define sffont "QTVagaRound-Bold"))
 
@@ -77,7 +77,7 @@
 	      (width (car (gimp-pattern-get-info pattern)))
           (height (cadr (gimp-pattern-get-info pattern)))
 		  (pat-img (car (gimp-image-new (* 5 width) (* 5 height) RGB)))
-		  (pat-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		  (pat-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 		  (car (gimp-layer-new pat-img (* 5 width) (* 5 height) RGBA-IMAGE "Pattern" 100 LAYER-MODE-NORMAL-LEGACY)))
 		  (else (car (gimp-layer-new pat-img  "Pattern" (* 5 width) (* 5 height) RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
 		  (new-width (* (/ (* 5 width) 100) scale))
@@ -92,7 +92,7 @@
 	(plug-in-make-seamless 1 pat-img pat-layer))
 	(gimp-edit-copy-visible pat-img)
 	;(gimp-context-set-pattern (caadr (gimp-patterns-list "")))
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10) 
+	(if (not (defined? 'gimp-drawable-filter-new)) 
 		(gimp-context-set-pattern (list-ref (cadr (gimp-patterns-get-list "")) 0))
 			;(gimp-context-set-pattern (car (gimp-pattern-get-by-name (list-ref (car (gimp-patterns-get-list "")) 0))))
 			(gimp-context-set-pattern (vector-ref (car (gimp-patterns-get-list ""))0))
@@ -217,7 +217,7 @@
 (else (gimp-image-set-active-layer image text-layer))
 )  
 	(apply-gauss2 image text-layer blur blur)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+			 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA 8 #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 		(gimp-drawable-curves-spline text-layer HISTOGRAM-ALPHA #(0 0 0.6196 0.0745 0.68235 0.94901 1 1))
 )
@@ -252,7 +252,7 @@
     
 ;;;;create the background layer    
 	(if (> bkg-type 0) (begin
-	(set! bkg-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! bkg-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new image "Background" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image bkg-layer 0 2)))
@@ -342,7 +342,7 @@
 	(gimp-drawable-threshold reflection1 0 0 0.31372)
 	(remove-color image reflection1 '(0 0 0))
 	(apply-gauss2 image reflection1 15 15)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+			 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection1 4  #(0 0 0.63529 0 0.69019 1 1 1))
 )
@@ -354,7 +354,7 @@
 	(gimp-drawable-threshold reflection2 0 0.39215 0.50980)
 	(remove-color image reflection2 '(0 0 0))
 	(apply-gauss2 image reflection2 8 8)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+			 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
 		(gimp-drawable-curves-spline reflection2 4  #(0 0 0.73725 0 0.79607 1 1 1))
 	)
@@ -366,12 +366,12 @@
 	(gimp-drawable-threshold reflection3 0 0.78431 1)
 	(remove-color image reflection3 '(0 0 0))
 	(apply-gauss2 image reflection3 15 15)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+			 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1))
 )
 	;(gimp-layer-set-opacity reflection3 70)
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+		 (if (not (defined? 'gimp-drawable-filter-new))  
 (gimp-layer-set-opacity reflection3 70)	
       (begin (gimp-layer-set-opacity reflection3 50)	 (gimp-layer-set-mode reflection3 LAYER-MODE-OVERLAY ))  )
 
@@ -383,7 +383,7 @@
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
-	(set! tint-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! tint-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
 	(else (car (gimp-layer-new image "Tint" width height RGBA-IMAGE 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))))
     (gimp-image-insert-layer image tint-layer 0 -1)
@@ -459,7 +459,7 @@
 
 ;;;;create the glass effect	
 	(if (= Material 1)
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+		 (if (not (defined? 'gimp-drawable-filter-new))  
 (gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
 (gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1)));max
 )
@@ -502,7 +502,7 @@
   SF-PATTERN		"Text Pattern"				"Burlwood"
       SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
       SF-TOGGLE     "Seamless"   FALSE
-  SF-FONT       "Font"            sffont
+  SF-FONT       "Font"            sffont 
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 150 1 5 0 1)
@@ -549,7 +549,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 							   )							  
 
  (let* (
-	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+	(image-layer (if (not (defined? 'gimp-drawable-filter-new))  
  		(car (gimp-image-get-active-layer image))	
         	(vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 		(width (car (gimp-image-get-width image)))
@@ -579,7 +579,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
     (gimp-image-undo-group-start image)
 	(gimp-context-set-default-colors)
 	
-	(set! text-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! text-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Copy" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new image "Copy" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image text-layer 0 -1)
@@ -618,7 +618,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 
 ;;;;create the background layer    
 	(if (> bkg-type 0) (begin
-	(set! bkg-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! bkg-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(else (car (gimp-layer-new image "Background" width height RGBA-IMAGE 100 LAYER-MODE-NORMAL-LEGACY)))))
     (gimp-image-insert-layer image bkg-layer 2 0)))
@@ -705,7 +705,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-drawable-threshold reflection1 0 0 0.31372)
 	(remove-color image reflection1 '(0 0 0))
 	(apply-gauss2 image reflection1 15 15)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+			 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline reflection1 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection1 4 #(0 0 0.63529 0 0.69019 1 1 1))
 )
@@ -717,7 +717,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-drawable-threshold reflection2 0 0.39215 0.50980)
 	(remove-color image reflection2 '(0 0 0))
 	(apply-gauss2 image reflection2 8 8)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+			 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline reflection2 4 8 #(0 0 0.73725 0 0.79607 1 1 1))
 	(gimp-drawable-curves-spline reflection2 4 #(0 0 0.73725 0 0.79607 1 1 1))
 )
@@ -729,12 +729,12 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-drawable-threshold reflection3 0 0.78431 1)
 	(remove-color image reflection3 '(0 0 0))
 	(apply-gauss2 image reflection3 15 15)
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+		 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline reflection3 4 8 #(0 0 0.63529 0 0.69019 1 1 1))
 		(gimp-drawable-curves-spline reflection3 4 #(0 0 0.63529 0 0.69019 1 1 1))
 )
 	;(gimp-layer-set-opacity reflection3 70)	
-	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.1)  
+	 (if (not (defined? 'gimp-drawable-filter-new))  
 (gimp-layer-set-opacity reflection3 70)	
       (begin (gimp-layer-set-opacity reflection3 50)	 (gimp-layer-set-mode reflection3 LAYER-MODE-OVERLAY ))	   ) 
 
@@ -745,7 +745,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 (cond ((defined? 'gimp-image-set-selected-layers) (gimp-image-set-selected-layers image (vector text-layer)))
 (else (gimp-image-set-active-layer image text-layer))
 )  
-	(set! tint-layer (cond ((= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(set! tint-layer (cond ((not (defined? 'gimp-drawable-filter-new))
 	(car (gimp-layer-new image width height RGBA-IMAGE "Tint" 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))
 	(else (car (gimp-layer-new image "Tint" width height RGBA-IMAGE 100 LAYER-MODE-GRAIN-MERGE-LEGACY)))))
     (gimp-image-insert-layer image tint-layer 0 -1)
@@ -804,7 +804,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-selection-none image)	
 
 ;;;;create the glass effect	
-	(if (= Material 1)	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)  
+	(if (= Material 1)	 (if (not (defined? 'gimp-drawable-filter-new))  
 	(gimp-drawable-curves-spline text-layer 0 18 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
 			(gimp-drawable-curves-spline text-layer 0 #(0 1 0.11764 0 0.25490 1 0.37254 0 0.49019 1 0.62745 0 0.74509 1 0.87058 0 1 1));max
 
