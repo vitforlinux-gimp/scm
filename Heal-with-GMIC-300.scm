@@ -127,7 +127,7 @@
   
  ; (gimp-layer-resize-to-image-size in-layer) ; RESIZE LEVEL AUTOMATICALLY FOR NEWBIES
               (if (= ext-type 0)                                                  
-  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) In-layer (vector in-layer)) 1 0
+  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) in-layer (vector in-layer)) 1 0
 					(string-append
 						"-v - " ; To have a silent output. Remove it to display errors from the G'MIC interpreter on stderr.
 						"-fx_inpaint_pde 75,1,20,"(number->string r)","(number->string g)","(number->string b)",255,"(number->string dilation)
@@ -137,7 +137,7 @@
 				)       
 		)
 		(if (= ext-type 1)                                                  
-  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) In-layer (vector in-layer)) 1 0
+  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) in-layer (vector in-layer)) 1 0
 					(string-append
 						"-v - " ; To have a silent output. Remove it to display errors from the G'MIC interpreter on stderr.
 						"-fx_inpaint_matchpatch 0,9,10,5,1,"(number->string r)","(number->string g)","(number->string b)",255,"(number->string dilation)",0"
@@ -147,7 +147,7 @@
 				)       
 		)
 		(if (= ext-type 2)                                                  
-  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) In-layer (vector in-layer)) 1 0
+  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) in-layer (vector in-layer)) 1 0
 					(string-append
 						"-v - " ; To have a silent output. Remove it to display errors from the G'MIC interpreter on stderr.
 						"-fx_inpaint_morpho "(number->string r)","(number->string g)","(number->string b)",255,"(number->string dilation)
@@ -157,7 +157,7 @@
 				)       
 		)
 				(if (= ext-type 3)                                                  
-  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) In-layer (vector in-layer)) 1 0
+  				(plug-in-gmic-qt 1 img (if (not (defined? 'gimp-drawable-filter-new)) in-layer (vector in-layer)) 1 0
 					(string-append
 						"-v - " ; To have a silent output. Remove it to display errors from the G'MIC interpreter on stderr.
 						"-fx_inpaint_patch 7,16,0.1,1.2,0,0.05,10,1,"(number->string r)","(number->string g)","(number->string b)",255,"(number->string dilation)",0"
