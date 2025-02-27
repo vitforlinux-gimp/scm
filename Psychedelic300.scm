@@ -41,22 +41,25 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfbggrad "Full saturation spectrum CCW")
   (define sfbggrad "Full Saturation Spectrum CCW")	)
   
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+ 
+   
+  (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (not (defined? 'gimp-drawable-filter-new))
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-(define (gimp-version-meets? check)
-  (let ((c (map string->number (strbreakup check ".")))
-        (v (map string->number (strbreakup (car (gimp-version)) "."))))
-  (if (> (car v) (car c)) #t
-  (if (< (car c) (car v)) #f
-   (if (> (cadr v) (cadr c)) #t
-   (if (< (cadr v) (cadr c)) #f
-     (if (>= (caddr v) (caddr c)) #t #f)))))))
+
 ;
 ; include layer Procedure
 (define (include-layer image newlayer oldlayer stack)	;stack 0=above 1=below
@@ -84,11 +87,8 @@
 						displace-repititions
 						conserve)
 							   
-	(cond ((not (gimp-version-meets? "2.8.0"))
-    (let ((handler (car (gimp-message-get-handler))))
-	(gimp-message-set-handler 0)	
-	(error "You will need to Install\nGimp Version 2.8\nTo use this script")
-	(gimp-message-set-handler handler)))
+	(cond ((not (= 0 0))
+)
 	(else						   
 	(gimp-image-undo-group-start image)						  
 
@@ -98,7 +98,7 @@
 			(original-width width)
 			(original-height height)
 			(area (* 1000 1000))
-			(paint-layer (car (gimp-layer-new image width height RGBA-IMAGE "Paint-Layer" 100 mode)))
+			(paint-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Paint-Layer" 100 mode)))
 			(alpha (car (gimp-drawable-has-alpha drawable)))
 		    (sel (car (gimp-selection-is-empty image)))
 		    (layer-name (cond ((defined? 'gimp-image-get-item-position) (car (gimp-item-get-name drawable)))
@@ -119,7 +119,7 @@
 	(gimp-context-push)
     (gimp-context-set-paint-method "gimp-paintbrush")
  (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics TRUE))
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+ (if (not (defined? 'gimp-drawable-filter-new))
 	 (gimp-context-set-dynamics "Pressure Opacity")
 	 (gimp-context-set-dynamics-name "Pressure Opacity"))
     (gimp-context-set-foreground '(0 0 0))
@@ -153,12 +153,12 @@
 	(include-layer image paint-layer drawable 0)	;stack 0=above 1=below
 	(gimp-image-select-rectangle image 2 x1 y1 iwidth iheight)
 
-    (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+    (if (not (defined? 'gimp-drawable-filter-new))
     (gimp-context-set-dynamics "Random Color")
     (gimp-context-set-dynamics-name "Random Color"))
 	(gimp-context-set-paint-method "gimp-paintbrush")
 ;	(gimp-context-set-brush "Sparks")
- (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+ (if (not (defined? 'gimp-drawable-filter-new))
 		 (gimp-context-set-brush "Sparks")
 		 (gimp-context-set-brush (car(gimp-brush-get-by-name "Sparks")))	)
 	(gimp-context-set-brush-default-size)
@@ -170,7 +170,7 @@
 	(set! cnt (- cnt 1))
 	)
 	(gimp-selection-none image)
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline paint-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))
 	(gimp-drawable-curves-spline paint-layer 0 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1)))	
 	
@@ -196,7 +196,7 @@
 				FALSE)
 	
     ;(set! drawable (car (gimp-image-get-active-layer image)))
-    	(set! drawable (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+    	(set! drawable (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	         (vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 ;	(gimp-curves-spline drawable 0 10 #(0 0 86 50 128 129 172 207 255 255))	
@@ -208,7 +208,7 @@
 							   FALSE ;keep-selection-in
 							   FALSE) ;conserve
     
-	    	(set! drawable (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	    	(set! drawable (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	         (vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 	
@@ -218,12 +218,12 @@
 				FALSE ;keep-selection-in
 				FALSE) ;conserve
 
-    	(set! drawable (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+    	(set! drawable (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	         (vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 	
 ;;;;create the background layer
-    (set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY))) 
+    (set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY))) 
     (include-layer image bkg-layer drawable 1)	;stack 0=above 1=below
 	(cond ((= bkg-type 0)
 	(technicolor-dream 
@@ -233,7 +233,7 @@
 							   blend-repititions
 							   displace-repititions
 							   FALSE) ;keep-selection
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline bkg-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))
 	(gimp-drawable-curves-spline bkg-layer 0 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	)
 	
@@ -307,11 +307,8 @@
 						displace-repititions
 						conserve)
 	
-    (cond ((not (gimp-version-meets? "2.8.0"))
-    (let ((handler (car (gimp-message-get-handler))))
-	(gimp-message-set-handler 0)	
-	(error "You will need to Install\nGimp Version 2.8\nTo use this script")
-	(gimp-message-set-handler handler)))
+    (cond ((not (= 0 0))
+)
 	(else
 	
   (let* (
@@ -338,7 +335,7 @@
 (gimp-context-set-paint-mode 0)
 	(gimp-context-set-paint-method "gimp-paintbrush")
  (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics TRUE))
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-context-set-dynamics "Pressure Opacity")
 	(gimp-context-set-dynamics-name "Pressure Opacity"))
 	(gimp-context-set-foreground text-color) ;---------------------------------set text color here
@@ -394,7 +391,7 @@
 						FALSE) ;conserve					   
 
 	;(set! text-layer (car (gimp-image-get-active-layer image)))
-	       			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	       			 (if (not (defined? 'gimp-drawable-filter-new))
             (set! text-layer (car (gimp-image-get-active-layer image)))
 	        (set! text-layer (vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 	
@@ -405,7 +402,7 @@
 	(set! height (car (gimp-image-get-height image)))
 
 ;;;;create the background layer
-    (set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY))) 
+    (set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY))) 
     (include-layer image bkg-layer text-layer 1)	;stack 0=above 1=below
 	(cond ((= bkg-type 0)
 	(technicolor-dream 
@@ -415,7 +412,7 @@
 							   blend-repititions
 							   displace-repititions
 							   FALSE) ;keep-selection
-			 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+			 (if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline bkg-layer 0 10 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))
 	(gimp-drawable-curves-spline bkg-layer 0 #(0 0 0.337254901961 0.196078431373 0.5 0.505882352941 0.674509803922 0.811764705882 1 1))	
 )	
@@ -579,8 +576,19 @@
     (gimp-context-set-foreground '(127 127 127))
     (gimp-drawable-fill varBevelLayer FILL-FOREGROUND)
 
+		(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new varBevelLayer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" inAizmuth "elevation" inElevation "depth" inDepth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" (cond ((= inMode 0) FALSE) ((= inMode 1) TRUE)) "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" varBumpmapLayer)
+      (gimp-drawable-merge-filter varBevelLayer filter)
+    ))
+    (else
 	(plug-in-bump-map RUN-NONINTERACTIVE img varBevelLayer varBumpmapLayer inAizmuth inElevation inDepth 0 0 0 0 
-	                  TRUE (cond ((= inMode 0) FALSE) ((= inMode 1) TRUE)) 0)
+	                  TRUE (cond ((= inMode 0) FALSE) ((= inMode 1) TRUE)) 0)))
 	(gimp-layer-set-mode varBevelLayer LAYER-MODE-HARDLIGHT-LEGACY)
 	(gimp-layer-set-opacity varBevelLayer 80)
 	
@@ -618,7 +626,7 @@
 	  (if (= inLocation 1)
 	    (gimp-selection-invert img)
 	  )	
-	  (apply-gauss img varBevelLayer inBlur inBlur)
+	  (apply-gauss2 img varBevelLayer inBlur inBlur)
 	  (gimp-selection-none img) 
 	)
 	
@@ -662,7 +670,7 @@
 
  (let* (
             ;(image-layer (car (gimp-image-get-active-layer image)))
-	    	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	    	(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (car (list (vector-ref (car (gimp-image-get-selected-layers image)) 0)))))
 			(width (car (gimp-image-get-width image)))
@@ -705,7 +713,7 @@
 	(gimp-selection-none image)
 	
 		; creating  map (inner shape)
-		(set! innermap (car (gimp-layer-new  image width height RGB-IMAGE "iMap" 100 LAYER-MODE-NORMAL-LEGACY)))
+		(set! innermap (car (gimp-layer-new-ng  image width height RGB-IMAGE "iMap" 100 LAYER-MODE-NORMAL-LEGACY)))
 		(include-layer image innermap image-layer 1)	;stack 0=above 1=below
 		(gimp-context-set-foreground '(255 255 255))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
@@ -714,11 +722,22 @@
 		(gimp-context-set-foreground '(0 0 0))
 		(gimp-drawable-edit-fill innermap FILL-FOREGROUND)
 		(gimp-selection-none image)
-		(apply-gauss image innermap 6 6)
+		(apply-gauss2 image innermap 6 6)
 
 ;		(gimp-context-set-foreground color)
 ;		(gimp-drawable-edit-fill image-layer FILL-FOREGROUND)
 
+		(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new image-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 32 "depth" 5
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" TRUE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" innermap)
+      (gimp-drawable-merge-filter image-layer filter)
+    ))
+    (else
 		(plug-in-bump-map
 			1
 			image
@@ -733,14 +752,14 @@
 			0
 			1
 			1
-			0)
+			0)))
 	
 		(gimp-image-select-item image 2 selection-channel)
 		(gimp-selection-shrink image 2)
 		(set! image-mask (car (gimp-layer-create-mask image-layer ADD-MASK-SELECTION)))
 		(gimp-layer-add-mask image-layer image-mask)
 		(gimp-selection-none image)
-		(apply-gauss image image-mask 1 1)
+		(apply-gauss2 image image-mask 1 1)
 		(gimp-layer-remove-mask image-layer MASK-APPLY)
 		(gimp-image-remove-layer image innermap)
 
@@ -840,7 +859,7 @@
 
  (let* (
             ;(image-layer (car (gimp-image-get-active-layer image)))
-	(image-layer (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(image-layer (if (not (defined? 'gimp-drawable-filter-new))
              (car (gimp-image-get-active-layer image))
 	        (vector-ref (car (gimp-image-get-selected-layers image)) 0)))
 			(width (car (gimp-image-get-width image)))
@@ -867,7 +886,7 @@
 	(if (= sel TRUE) (set! keep-selection FALSE))
 	(if (= sel TRUE) (gimp-image-select-item image 2 image-layer))
 	
-	(set! img-layer (car (gimp-layer-new image width height RGBA-IMAGE "img-layer" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! img-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "img-layer" 100 LAYER-MODE-NORMAL-LEGACY)))
 	(gimp-image-insert-layer image img-layer 0 -1)
 	(gimp-drawable-fill img-layer  FILL-BACKGROUND)
 	(gimp-drawable-edit-fill img-layer FILL-FOREGROUND)
@@ -875,7 +894,7 @@
 ;;;;create channel
 	(gimp-selection-save image)
 ;	(set! img-channel (car (gimp-image-get-active-drawable image)))	
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (set! img-channel (car (gimp-image-get-active-drawable image)))
   (set! img-channel (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-channel-set-opacity img-channel 100)	
@@ -884,37 +903,50 @@
 	(gimp-item-set-name image-layer "Original Image")
 	
 ;;;;create the background layer    
-	(set! bkg-layer (car (gimp-layer-new image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
+	(set! bkg-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "Background" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image bkg-layer 0 1) 
 
 ;;;;apply the image effects
     (gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
-	(apply-gauss image img-layer 12 12)
-	(plug-in-emboss RUN-NONINTERACTIVE image img-layer 225 84 10 TRUE)	
+	(apply-gauss2 image img-layer 12 12)
+	(cond((not(defined? 'plug-in-emboss))
+	    (gimp-drawable-merge-new-filter img-layer "gegl:emboss" 0 LAYER-MODE-REPLACE 1.0 "azimuth" 225.0 "elevation" 84 "depth" 10 "type" "emboss"))
+	(else (plug-in-emboss RUN-NONINTERACTIVE image img-layer 225 84 10 TRUE)))
 	(gimp-selection-invert image)
 	(gimp-drawable-edit-clear img-layer)
 	(gimp-selection-invert image)
 	;(plug-in-colortoalpha RUN-NONINTERACTIVE image img-layer '(254 254 254));;fefefe QUI
 		(gimp-layer-set-mode img-layer LAYER-MODE-HARDLIGHT )
-	(apply-gauss image img-channel 15 15)
+	(apply-gauss2 image img-channel 15 15)
 	;(plug-in-blur RUN-NONINTERACTIVE image img-layer)
 	(gimp-image-set-active-layer image bkg-layer)
-(plug-in-displace RUN-NONINTERACTIVE image bkg-layer 8 8 TRUE TRUE img-channel img-channel 1)
+	(cond((not(defined? 'plug-in-displace))
+          (let* (
+                 (filter (car (gimp-drawable-filter-new bkg-layer "gegl:displace" ""))))
+            (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                            "amount-x" 8 "amount-y" 8 "abyss-policy" "clamp"
+                                            "sampler-type" "cubic" "displace-mode" "cartesian")
+            (gimp-drawable-filter-set-aux-input filter "aux" img-channel)
+            (gimp-drawable-filter-set-aux-input filter "aux2" img-channel)
+            (gimp-drawable-merge-filter bkg-layer filter)
+          ))
+        (else
+(plug-in-displace RUN-NONINTERACTIVE image bkg-layer 8 8 TRUE TRUE img-channel img-channel 1)))
 (gimp-image-remove-layer image bkg-layer)
 	
 ;;;;create the shadow
 (if (> shadow-size 0)
   (begin
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
     (script-fu-drop-shadow image img-layer shadow-size shadow-size shadow-size '(0 0 0) shadow-opacity FALSE)
     (script-fu-drop-shadow image (vector img-layer) shadow-size shadow-size shadow-size '(0 0 0) shadow-opacity FALSE))
-    (set! tmp-layer (car (gimp-layer-new image width height RGBA-IMAGE "temp" 100 LAYER-MODE-NORMAL-LEGACY)))
+    (set! tmp-layer (car (gimp-layer-new-ng image width height RGBA-IMAGE "temp" 100 LAYER-MODE-NORMAL-LEGACY)))
     (gimp-image-insert-layer image tmp-layer 0 -1)
 	(gimp-image-raise-item image tmp-layer)
     (gimp-image-merge-down image tmp-layer CLIP-TO-IMAGE)
 ;	(set! shadow-layer (car (gimp-image-get-active-drawable image)))
-		 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+		 (if (not (defined? 'gimp-drawable-filter-new))
         (set! shadow-layer (car (gimp-image-get-active-drawable image)))
   (set! shadow-layer (vector-ref (car (gimp-image-get-selected-drawables image)) 0))	)
 	(gimp-image-lower-item image shadow-layer)
@@ -956,7 +988,7 @@
  (let* (
             (width (car (gimp-image-get-width image)))
 			(height (car (gimp-image-get-height image)))
-			(noise (car (gimp-layer-new image width height RGBA-IMAGE "Solid Noise" 100 LAYER-MODE-NORMAL-LEGACY)))
+			(noise (car (gimp-layer-new-ng image width height RGBA-IMAGE "Solid Noise" 100 LAYER-MODE-NORMAL-LEGACY)))
 			(sel (car (gimp-selection-is-empty image)))
 			(saved-selection 0)
 			(cnt blend-repititions)
@@ -973,7 +1005,7 @@
 	(gimp-context-push)
 	(gimp-context-set-paint-method "gimp-paintbrush")
  (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics TRUE))
-	(if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
+	(if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-context-set-dynamics "Pressure Opacity")
 	(gimp-context-set-dynamics-name "Pressure Opacity"))
 	(gimp-context-set-foreground '(0 0 0))
@@ -1006,16 +1038,32 @@
 	) ;endwhile
 (gimp-context-set-paint-mode 0)
 	
-	(cond ((= ver 2.8)                         ;insert or add the new layer
-	(gimp-image-insert-layer image noise 0 1)) ;new 2.8
-	(else (gimp-image-insert-layer image noise 0 1)) ;new 2.6
-	) ;endcond
-	
-	(plug-in-solid-noise 1 image noise FALSE FALSE 1611597286 1 (/ width 100) (/ height 100))
+	;(cond ((= ver 2.8)                         ;insert or add the new layer
+	(gimp-image-insert-layer image noise 0 1);) ;new 2.8
+	;(else (gimp-image-insert-layer image noise 0 1)) ;new 2.6
+	;) ;endcond
+					  (cond((not(defined? 'plug-in-solid-noise))
+					                (gimp-drawable-merge-new-filter noise "gegl:noise-solid" 0 LAYER-MODE-REPLACE 1.0
+							"tileable" FALSE "turbulent" FALSE "seed" 1611597286
+                                                                                                       "detail" 1 "x-size" 4 "y-size" 4
+                                                                                                       "width" width "height" height ))
+												       (else
+	(plug-in-solid-noise 1 image noise FALSE FALSE 1611597286 1 (/ width 100) (/ height 100))))
 	
 	(gimp-image-set-active-layer image layer)
 	(set! cnt displace-repititions)
 	(while (> cnt 0)
+	(cond((not(defined? 'plug-in-displace))
+          (let* (
+                 (filter (car (gimp-drawable-filter-new layer "gegl:displace" ""))))
+            (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                            "amount-x" 0 "amount-y" 50 "abyss-policy" "clamp"
+                                            "sampler-type" "cubic" "displace-mode" "cartesian")
+            (gimp-drawable-filter-set-aux-input filter "aux" noise)
+            (gimp-drawable-filter-set-aux-input filter "aux2" noise)
+            (gimp-drawable-merge-filter layer filter)
+          ))
+        (else
 (plug-in-displace 1 
                   image 
 				  layer ;drawable 
@@ -1026,6 +1074,7 @@
 					  noise ;displace-map-x Displacement map for X or radial direction[drawable] 
 					  noise ;displace-map-y Displacement map for Y or tangent direction[drawable]
 					  2) ;Edge behavior { WRAP (1), SMEAR (2), BLACK (3) }
+					  ))
 	(set! cnt (- cnt 1))
 	) ;endwhile
 	(gimp-image-remove-layer image noise)
