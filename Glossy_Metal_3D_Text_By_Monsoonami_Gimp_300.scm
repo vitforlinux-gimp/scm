@@ -35,7 +35,7 @@
 
 		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sffont "Walkway Bold,")
-  (define sffont "Walkway Bold"	))
+  (define sffont "Walkway Bold Regular"	))
 
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
