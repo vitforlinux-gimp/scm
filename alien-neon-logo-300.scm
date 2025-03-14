@@ -202,7 +202,7 @@
   ""
   SF-TEXT     _"Text"               "Alien\nNeon"
   SF-ADJUSTMENT _"Font size (pixels)" '(150 2 1000 1 10 0 1)
-  SF-FONT       _"Font"               "QTBlimpo"
+  SF-FONT       _"Font"               "QTBlimpo Medium"
   SF-COLOR      _"Glow color"         "green"
   SF-COLOR      _"Background color"   "black"
   SF-ADJUSTMENT _"Width of bands"     '(2 1 60 1 10 0 0)
