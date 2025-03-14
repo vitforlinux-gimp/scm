@@ -245,7 +245,7 @@
   SF-OPTION	"Justification"		'("Centre" "Left" "Right")
   SF-ADJUSTMENT	"Letter Spacing (pixels)"	'(0 -100 100 1 10 0 0)
   SF-ADJUSTMENT	"Line Spacing (pixels)"	'(0 -100 100 1 10 0 0)
-  SF-FONT	"Font"			"QTArnieB"
+  SF-FONT	"Font"			"QTArnieB Medium"
   SF-ADJUSTMENT	"Font size (pixels)"	'(180 6 1000 1 1 0 0)
   SF-ADJUSTMENT	"Expand / Shrink the Font if needed"	'(3 -20 20 1 1 0 0)
   SF-OPTION	"Image Shape"		'("Rectangular" "Ellipse" "Circular")
