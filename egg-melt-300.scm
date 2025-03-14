@@ -8,12 +8,6 @@
 
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTVagaRound Bold")
-  (define sffont "QTVagaRound-Bold"))
-  
-
-
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -182,7 +176,7 @@
             "October 10, 2023"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "Egg\nMelt"   ;a string variable
-            SF-FONT        "Font"          sffont    ;a font variable
+            SF-FONT        "Font"          "QTVagaRound Bold"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 152 0)     ;color variable
 	     	     SF-COLOR       "Color2"         '(255 255 255)    ;color variable
