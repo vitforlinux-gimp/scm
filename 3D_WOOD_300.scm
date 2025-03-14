@@ -79,6 +79,7 @@
                                       bkg-color
 									  gradient
 									  conserve)
+								  
   (let* (
          (image (car (gimp-image-new 256 256 RGB)))         
          (border (/ font-size 4))
@@ -306,7 +307,7 @@
   SF-TOGGLE     "Modify Text"   FALSE
   SF-ADJUSTMENT "Modify Adj" '(0 -50 50 1 5 0 0)
   SF-COLOR      "Text color"         '(255 104 0) ;'(187 104 0)azimuth
-  SF-FONT       "Font"               "QTHelvet-Black" 
+  SF-FONT       "Font"               "QTHelvet-Black Black" 
   SF-ADJUSTMENT "Font size (pixels)" '(150 6 500 1 1 0 0)
   SF-ADJUSTMENT "3D Height" '(20 0 50 1 5 0 0)
   SF-OPTION "Texture" '("Wood" "use Pattern" "None")
