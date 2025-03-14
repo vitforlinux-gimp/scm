@@ -225,7 +225,7 @@
   SF-DRAWABLE   "drawable"   0
   SF-TEXT       "Text"    "Comix Text Bubble"
   SF-COLOR      "Text color"         '(0 0 0)
-  SF-FONT       "Font"               "QTMagicMarker"
+  SF-FONT       "Font"               "QTMagicMarker Medium"
   SF-ADJUSTMENT "Font size (pixels)" '(50 10 500 1 1 0 1)
   SF-ADJUSTMENT "Additional Width (pixels)" '(0 0 1000 1 10 0 1)
   SF-ADJUSTMENT "Additional Height(pixels)" '(0 0 1000 1 10 0 1)
