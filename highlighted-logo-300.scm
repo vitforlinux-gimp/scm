@@ -2,10 +2,6 @@
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTVagaRound Bold")
-  (define sffont "QTVagaRound-Bold"))
-  
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -40,7 +36,7 @@
             "October 27, 1997"                          ;date created
             ""                              ;image type that the script works on
             SF-TEXT      "Text"          "HighLighted\nLogo"   ;a string variable
-            SF-FONT        "Font"          sffont    ;a font variable
+            SF-FONT        "Font"          "QTVagaRound Bold"    ;a font variable
             SF-ADJUSTMENT  "Font size"     '(150 1 1000 1 10 0 0)
 	     SF-COLOR       "Color"         '(255 0 0)     ;color variable
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
