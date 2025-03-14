@@ -62,10 +62,6 @@
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTBasker Bold")
-  (define sffont "QTBasker-Bold"))
-
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
 				(gimp-selection-translate img x y)
@@ -80,7 +76,7 @@
 
 
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
-(define list-gradname-dir '("None" "Crown Molding" "Deep Sea" "Flare Rays Size 1" "Four Bars" "Full Saturation Spectrum CW" "Golden" "Greens" "Incandescent" "Metallic Something" "Pastels" "Purples" "Rounded Edge" "Three Bars Sin" ))
+(define list-gradname-dir '("None" "Crown Molding" "Deep Sea" "Flare Rays Size 1" "Four Bars" "Full Saturation Spectrum CW" "Golden" "Greens" "Incandescent" "Metallic Something" "Pastels" "Purples" "Rounded Edge" "Three Bars Sin" "Sunrise" ))
 ;
 ;; Start Define RGB to HSV functions by GnuTux
 
@@ -307,7 +303,7 @@
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   	SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
-  SF-FONT       "Font"               sffont
+  SF-FONT       "Font"               "QTBasker Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(150 6 500 1 1 0 0)
     SF-OPTION "Metal Type" '("None" "Colorized" "Gold" "Silver" "Copper" "Bronze" "Brass" "Chrome" "Gold Shined")
   SF-COLOR      "Colorize"         "White"
@@ -491,8 +487,15 @@
 			 (if (not (defined? 'gimp-drawable-filter-new))
 	(gimp-drawable-curves-spline chrome 0 12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 	(gimp-drawable-curves-spline chrome 0 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1)))
-	(if (= shined 1) ;(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE))
-	(gimp-drawable-levels-stretch chrome))
+	(if (= shined 1)
+		 (cond((not(defined? 'plug-in-alienmap2))
+		 		     (gimp-drawable-merge-new-filter chrome "gegl:alien-map" 0 LAYER-MODE-REPLACE 1.0
+"color-model" "RGB" "cpn-1-frequency" 1 "cpn-2-frequency" 1 "cpn-3-frequency" 1 "cpn-1-phaseshift" 0 "cpn-2-phaseshift" 0 "cpn-3-phaseshift" 0 "cpn-1-keep" TRUE "cpn-2-keep" TRUE "cpn-3-keep" TRUE)
+		)
+		(else
+(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE)))
+	;(gimp-drawable-levels-stretch chrome)
+	)
 	(gimp-image-remove-layer image bkg-layer)
 	
 	(set! chrome-copy (car (gimp-layer-copy chrome TRUE)))
@@ -518,6 +521,7 @@
 (if ( = gradmap 11)(begin (set! gradname210 "Purples") (set! gradname299 "Purples") ))
 (if ( = gradmap 12)(begin (set! gradname210 "Rounded edge") (set! gradname299 "Rounded Edge") ))
 (if ( = gradmap 13)(begin (set! gradname210 "Three bars sin") (set! gradname299 "Three Bars Sin") ))
+(if ( = gradmap 14)(begin (set! gradname210 "Sunrise") (set! gradname299 "Sunrise") ))
 
 
 (if (> gradmap 0)
