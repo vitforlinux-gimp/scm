@@ -1630,7 +1630,7 @@
 	"Denis Bodor"
 	"03/31/2005"
 	""
-	SF-FONT			"Font Name"				"QTBlimpo"
+	SF-FONT			"Font Name"				"QTBlimpo Medium"
 		SF-ADJUSTMENT	"Font size (pixels)"	'(150 2 1000 1 10 0 1)
 	SF-TEXT		"Enter your text"		"Plastic Fun"
 	SF-OPTION "Justify" '("Centered" "Left" "Right")
