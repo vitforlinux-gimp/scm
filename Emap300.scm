@@ -37,10 +37,6 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTFloraline Bold")
-  (define sffont "QTFloraline-Bold"))
-  
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -222,7 +218,7 @@
   "June 2011"
   ""
   SF-TEXT     "Text"                  "Emap"
-  SF-FONT       "Font"               sffont
+  SF-FONT       "Font"               "QTFloraline Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(250 6 500 1 1 0 1)
   		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 0)
