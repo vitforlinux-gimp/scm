@@ -200,7 +200,7 @@
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
   SF-ADJUSTMENT _"Outline"          '(0 0 40 1 10 0 0)
-  SF-FONT       "Font"               "QTDoghausHeavy"
+  SF-FONT       "Font"               "QTDoghausHeavy Heavy"
   SF-ADJUSTMENT "Font size (pixels)" '(350 6 500 1 1 0 1)
   SF-COLOR      "Tint color"         '(107 57 0)
   SF-COLOR      "Motle color"         '(82 43 0)
