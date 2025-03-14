@@ -442,7 +442,7 @@
   SF-ADJUSTMENT "Letter Spacing" '(5 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Expand the Font if needed" '(3 0 12 1 1 0 1)
-  SF-FONT       "Font"               "QTHoboken"
+  SF-FONT       "Font"               "QTHoboken Medium"
   SF-ADJUSTMENT "Font size (pixels)" '(200 6 500 1 1 0 1)
   SF-COLOR		"Text Fill Color"			'(66 66 66)
   SF-GRADIENT   "Text Paint Splatter Gradient" "Tropical Colors"
