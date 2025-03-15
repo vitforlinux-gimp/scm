@@ -10,10 +10,6 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTBookmann Bold")
-  (define sffont "QTBookmann-Bold"))
-  
   		(define (apply-gauss2 img drawable x y)
        (cond ((not(defined? 'plug-in-gauss))
            (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
@@ -285,7 +281,7 @@ height
 ""
 SF-TEXT"Text" "GIMP 3.0"
 SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
-SF-FONT "Font" sffont
+SF-FONT "Font" "QTBookmann Bold"
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
