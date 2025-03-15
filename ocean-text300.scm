@@ -43,10 +43,6 @@
 	(plug-in-gauss 1 img drawable x y 0)
 )))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTHelvetCnd-Black Heavy")
-  (define sffont "QTHelvetCnd-Black"))
-  
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -207,7 +203,7 @@
     ""
     SF-STRING     "Text"               "Ocean Text"
     SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 0 0 1)
-    SF-FONT       "Font"               sffont
+    SF-FONT       "Font"               "QTHelvetCnd-Black Black"
       SF-OPTION "Gradient Type" '("Default" "Manual")
       SF-GRADIENT   _"Gradient"           "Horizon 2"
       		    SF-TOGGLE "Gradient Reverse" FALSE
