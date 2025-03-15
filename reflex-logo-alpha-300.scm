@@ -24,11 +24,6 @@
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTBodiniPoster Italic")
-  (define sffont "QTBodiniPoster-Italic"))
-
-
 (define (apply-reflex-300-logo image drawable grad-type gradient reverse displace merge)
  
 	(let* (
@@ -370,7 +365,7 @@
         ""
         SF-TEXT     _"Text"               "Reflex"
         SF-ADJUSTMENT _"Font size (pixels)" '(200 2 1000 1 10 0 1)
-        SF-FONT       _"Font"               sffont
+        SF-FONT       _"Font"               "QTBodiniPoster Italic"
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
