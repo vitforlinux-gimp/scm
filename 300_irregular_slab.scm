@@ -106,7 +106,7 @@
     "April 28, 1998"
     ""
     SF-TEXT      "Text String" "Dr.Dee"
-    SF-FONT        "Font" "QTCaligulatype"
+    SF-FONT        "Font" "QTCaligulatype Medium"
     SF-ADJUSTMENT _"Font Size(px)"   '(120 2 1000 1 2 0 1)
     SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
     SF-ADJUSTMENT  "Letter Spacing"        '(0 -100 100 1 5 0 0)
