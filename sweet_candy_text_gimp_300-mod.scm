@@ -55,10 +55,6 @@
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 (cond ((not (defined? 'gimp-text-get-extents-fontname)) (define (gimp-text-get-extents-fontname efn1 efn2 PIXELS efn3) (gimp-text-get-extents-font efn1 efn2 efn3))))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTBookmann Bold")
-  (define sffont "QTBookmann-Bold"))
-  
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -743,14 +739,14 @@
 	""
 	SF-COLOR "Couleur du fond / Background color " '(255 255 255)
 	SF-TEXT "Texte / Text " "Sweet Candy"
-	SF-FONT "Police / Font " sffont ;"URW Bookman Semi-Bold Italic" ; Serif Bold Italic
+	SF-FONT "Police / Font " "QTBookmann Bold" ;"URW Bookman Semi-Bold Italic" ; Serif Bold Italic
 	SF-ADJUSTMENT "Taille Police / Font Size [pixels] " '(300 12 480 1 10 0 1) 
 			                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 1)
                     SF-ADJUSTMENT _"Line Spacing"          '(-5 -300 300 1 10 0 1)
 	SF-ADJUSTMENT "Flou Texte / Text Blur [%] " '(12 1 20 1 10 0 1) 
 	SF-ADJUSTMENT "Inclinaison Bandes / Stripes Angle [degres] " '(30 -180 180 1 10 0 0) 
-	SF-ADJUSTMENT "Espacement Bandes / Stripes Spacing [1/1000] " '(40 10 100 1 10 0 0) 
+	SF-ADJUSTMENT "Espacement Bandes / Stripes Spacing [1/1000] " '(20 10 100 1 10 0 0) 
 	SF-COLOR "Couleur 1 Bandes / Stripes color 1 " '(255 255 255)
 	SF-COLOR "Couleur 2 Bandes / Stripes color 2 " '(255 0 0)
 	SF-ADJUSTMENT "Nettete Bandes / Stripes Sharpness " '(1 0 50 1 10 0 0) 
