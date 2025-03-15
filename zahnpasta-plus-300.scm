@@ -166,13 +166,13 @@
                     ""
                     SF-TEXT     "Text"               "Zahnpasta\nPlus!"
                     SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 1)
-                    SF-FONT       "Font"               "QTKooper"
+                    SF-FONT       "Font"               "QTKooper Medium"
 		      SF-OPTION "Justify" '("Centered" "Left" "Right")
 		                          SF-BRUSH      "Brush"            sfbrush
 SF-ADJUSTMENT "Brush Max Size" '(50 1 1000 1 5 0 0)		
                     SF-COLOR      "Text color"         '(255 0 0)
 		    		    SF-OPTION "Outline type" '("None - use brush panel" "Single Color" "Random from Gradient" "Dynamics Random" "Confetti")
-		    SF-COLOR      "Outline Color"   '(54 255 0)
+		    SF-COLOR      "Outline Color"   '(170 0 0)
                     SF-COLOR      "Background Color"   '(0 0 0))
 
 (script-fu-menu-register "script-fu-zahnpasta-plus-300-logo"
