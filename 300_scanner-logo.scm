@@ -28,10 +28,6 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTAncientOlive Bold")
-  (define sffont "QTAncientOlive-Bold"))
-  
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -108,7 +104,7 @@
 		    ""
 		    SF-STRING   "Text String"      "Scanner Logo"
 		    SF-ADJUSTMENT "Font Size (pixels)" '(100 2 1000 1 10 0 1)
-		    SF-FONT     "Font"             sffont
+		    SF-FONT     "Font"             "QTAncientOlive Bold"
 		    SF-COLOR    "Text Color"       '(66 3 122)
                     SF-TOGGLE   "Use Gradient"     TRUE
                     SF-GRADIENT "Gradient"         "Tropical Colors"
