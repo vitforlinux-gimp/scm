@@ -376,7 +376,7 @@
 	""
 	SF-TEXT		_"Text"			"Rain Drop"
 	SF-ADJUSTMENT		_"Font size (px)"	'(150 2 1000 1 10 0 1)
-	SF-FONT			_"Font"			"QTSlogantype"
+	SF-FONT			_"Font"			"QTSlogantype Medium"
 	SF-OPTION "Justify" '("Centered" "Left" "Right") 
 	SF-COLOR		_"Font Color"		'(0 127 255)
 	SF-PATTERN		_"Background Pattern"		"Pine?"
