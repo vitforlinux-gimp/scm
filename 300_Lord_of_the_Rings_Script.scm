@@ -395,7 +395,7 @@ SF-ADJUSTMENT "Opacity"        '(80 0 100 1 10 0 0)
 		    ""
 	SF-TEXT   "Text String"		"Lord of the Rings"
 	SF-ADJUSTMENT "Font Size (pixels)"	'(120 2 1000 1 10 0 1)
-	SF-FONT     "Font"			"QTBodini"
+	SF-FONT     "Font"			"QTBodini Medium"
 	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 	SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 	SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
