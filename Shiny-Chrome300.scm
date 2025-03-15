@@ -49,11 +49,6 @@
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTBookmann Bold")
-  (define sffont "QTBookmann-Bold"))
-
-
 (define list-blend-dir '("Left to Right" "Top to Bottom" "Diagonal to centre" "Diagonal from centre"))
 
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
@@ -189,7 +184,7 @@
   SF-OPTION "Justify" '("Centered" "Left" "Right")
   SF-ADJUSTMENT "Letter Spacing" '(0 -100 100 1 5 0 0)
   SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
-  SF-FONT       "Font"               sffont
+  SF-FONT       "Font"               "QTBookmann Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(175 6 500 1 1 0 1)
   SF-TOGGLE     "Shadow"   TRUE
   SF-OPTION "Background Type" '("None" "Color" "Pattern" "Gradient" "Active Gradient")
@@ -304,8 +299,13 @@
 	(gimp-drawable-curves-spline chrome 0  12 #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1))
 	(gimp-drawable-curves-spline chrome HISTOGRAM-VALUE #(0 0.34902 0.266667 0.882353 0.494118 0.376471 0.65098 0.886275 0.87451 0.152941 1 1) )	)))
 
-	;(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE)
-(gimp-drawable-levels-stretch chrome)
+		 (cond((not(defined? 'plug-in-alienmap2))
+		 		     (gimp-drawable-merge-new-filter chrome "gegl:alien-map" 0 LAYER-MODE-REPLACE 1.0
+"color-model" "HSL" "cpn-1-frequency" 1 "cpn-2-frequency" 1 "cpn-3-frequency" 1 "cpn-1-phaseshift" 0 "cpn-2-phaseshift" 0 "cpn-3-phaseshift" 0 "cpn-1-keep" FALSE "cpn-2-keep" TRUE "cpn-3-keep" FALSE)
+		)
+		(else
+	(plug-in-alienmap2 1 image chrome 1 0 1 0 1 0 0 TRUE TRUE TRUE)))
+;(gimp-drawable-levels-stretch chrome)
 	(gimp-image-remove-layer image bkg-layer)
 	
 	(set! chrome-copy (car (gimp-layer-copy chrome TRUE)))
