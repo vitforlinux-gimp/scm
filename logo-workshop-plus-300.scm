@@ -66,10 +66,7 @@
 		 (if (not (defined? 'gimp-drawable-filter-new))
         (define sfrepeat '("None"  "Sawtooth"  "Triangular"  "Truncate"))
   (define sfrepeat '("None" "Truncate" "Sawtooth" "Triangular" ))	)
-  
-  		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "LobsterTwo Bold")
-  (define sffont "LobsterTwo-Bold"))
+
 ;Material start
 		(define (material-wksp-gradient fond image gradient gradient-type direction repeat reverse fond-color)  			(begin
 		        (define width (car (gimp-drawable-get-width fond)))
@@ -956,7 +953,7 @@
                     ""
                     SF-TEXT     _"Text"                 "Logo Workshop\nPlus\n300"
                     SF-ADJUSTMENT _"Font size (pixels)"   '(220 2 1000 1 10 0 0)
-                    SF-FONT       _"Font"                 sffont
+                    SF-FONT       _"Font"                 "LobsterTwo Bold"
 		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 0)
                     SF-ADJUSTMENT _"Line Spacing"          '(-5 -300 300 1 10 0 0)
