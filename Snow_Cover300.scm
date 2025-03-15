@@ -49,10 +49,6 @@
 	(plug-in-gauss 1 img drawable x y 0)
 )))
  
- 		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTChanceryType Bold")
-  (define sffont "QTChanceryType-Bold"))
-  
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -383,7 +379,7 @@
   ""
   SF-TEXT       "Text"    "SEASONS\nGREETINGS"
   SF-COLOR      "Text color"         '(255 0 0)
-  SF-FONT       "Font"               sffont
+  SF-FONT       "Font"               "QTChanceryType Bold"
   SF-ADJUSTMENT "Font size (pixels)" '(250 6 500 1 1 0 1)
   		                        SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 				    SF-ADJUSTMENT _"Letter Spacing"        '(0 -50 50 1 5 0 1)
