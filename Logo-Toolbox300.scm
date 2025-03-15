@@ -101,10 +101,6 @@
 ; Fix code for gimp 2.10 working in 2.99.16
 (cond ((not (defined? 'gimp-image-set-active-layer)) (define (gimp-image-set-active-layer image drawable) (gimp-image-set-selected-layers image (vector drawable)))))
 
-  		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "LobsterTwo Bold")
-  (define sffont "LobsterTwo-Bold"))
-
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
 				(gimp-selection-translate img x y)
@@ -1159,7 +1155,7 @@
                     "05-2013"
                     ""
                     SF-TEXT       _"Text"                  "Logo\nToolBox"
-                    SF-FONT       _"Font"                  sffont
+                    SF-FONT       _"Font"                  "LobsterTwo Bold"
 					SF-ADJUSTMENT _"Font size (pixels)"    '(220 10 1000 1 10 0 1) 
 				    SF-OPTION     _"Direction"             '("From left to right"  "From right to left" "Vertical, right to left (mixed orientation)" "Vertical, right to left (upright orientation)" "Vertical, left to right (mixed orientation)" "Vertical, left to right (upright orientation)")		
                     SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
