@@ -32,11 +32,7 @@
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
- 
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTSchoolCentury Bold")
-  (define sffont "QTSchoolCentury-Bold"))
-  
+
 (define (script-fu-imigre300-gunya2 text text-color frame-color font font-size frame-size strength)
   (let* (
         (img (car (gimp-image-new 256 256 RGB)))
@@ -155,7 +151,7 @@
   SF-TEXT     _"Text"               "Imigre 3.0"
   SF-COLOR      _"Text color"         "red"
   SF-COLOR      _"Frame color"        '(0 34 255)
-  SF-FONT       _"Font"               sffont
+  SF-FONT       _"Font"               "QTSchoolCentury Bold"
   SF-ADJUSTMENT _"Font size (pixels)" '(100 2 1000 1 10 0 1)
   SF-ADJUSTMENT _"Frame size"         '(2 1 20 1 5 0 1)
   SF-ADJUSTMENT _"Strength effect "         '(3 1 20 1 5 0 1)
