@@ -1,3 +1,5 @@
+#!/usr/bin/env gimp-script-fu-interpreter-3.0
+
 ;Modernized with ModernizeMatic7 for Gimp 2.10.22 by vitforlinux.wordpress.com - dont remove
 
 ; Plastic or Glass  rel 0.04
@@ -55,10 +57,6 @@
 		(gimp-drawable-edit-fill fond FILL-TRANSPARENT)
 		(gimp-selection-none img)
 		))
-
-		 (if (not (defined? 'gimp-drawable-filter-new))
-        (define sffont "QTVagaRound Bold")
-  (define sffont "QTVagaRound-Bold"))
 
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
@@ -502,7 +500,7 @@
   SF-PATTERN		"Text Pattern"				"Burlwood"
       SF-ADJUSTMENT "Pattern Scale %" '(100 1 1000 1 50 0 0)
       SF-TOGGLE     "Seamless"   FALSE
-  SF-FONT       "Font"            sffont 
+  SF-FONT       "Font"            "QTVagaRound Bold" 
   SF-ADJUSTMENT "Font size (pixels)" '(150 100 500 1 1 0 1)
 SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill") 
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 150 1 5 0 1)
