@@ -47,34 +47,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define (script-fu-blood-logo300 inText inFont inFontSize justify letter-spacing line-spacing inBorder inDrip FillColor BorderColor BackgroundColor)
+(define (script-fu-blood-logo300 inText inFont inFontSize justify letter-spacing line-spacing inBorder inDrip FillColor BorderColor BackgroundColor conserve)
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
-		(define (apply-gauss img drawable x y)(begin (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)
-      (plug-in-gauss  1  img drawable x y 0)
- (plug-in-gauss  1  img drawable (* x 0.32) (* y 0.32) 0)  )))
+  		(define (apply-gauss2 img drawable x y)
+       (cond ((not(defined? 'plug-in-gauss))
+           (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
+                                    "std-dev-x" (* x 0.32) "std-dev-y" (* y 0.32) "filter" "auto"))
+       (else
+	(plug-in-gauss 1 img drawable x y 0)
+)))
+ 
+   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(if (not (defined? 'gimp-drawable-filter-new))
+(gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
+(gimp-layer-new ln1 ln5 ln2 ln3 ln4 ln6 ln7)))
 
 
-(if (<> (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
-(define (prog1 form1 . form2)
-  (let ((a form1))
-    (if (not (null? form2))
-      form2
-    )
-    a
-  )
-)
-)
+
     (define oldFore (car(gimp-context-get-foreground)) )
     (define oldBack (car(gimp-context-get-background)) )
 
     (define theImage (car(gimp-image-new 100 100 RGB)) )
-    (define textLayer (car(gimp-layer-new theImage 10 10 RGBA-IMAGE _"Text Layer" 100 LAYER-MODE-NORMAL-LEGACY)) )
-    (define bloodLayer (car(gimp-layer-new theImage 10 10 RGBA-IMAGE _"Blood Layer" 100 LAYER-MODE-NORMAL-LEGACY)) )
-    (define backLayer(car(gimp-layer-new theImage 10 10 RGBA-IMAGE _"Background" 100 LAYER-MODE-NORMAL-LEGACY)) )
+    (define textLayer (car(gimp-layer-new-ng theImage 10 10 RGBA-IMAGE _"Text Layer" 100 LAYER-MODE-NORMAL-LEGACY)) )
+    (define bloodLayer (car(gimp-layer-new-ng theImage 10 10 RGBA-IMAGE _"Blood Layer" 100 LAYER-MODE-NORMAL-LEGACY)) )
+    (define backLayer (car(gimp-layer-new-ng theImage 10 10 RGBA-IMAGE _"Background" 100 LAYER-MODE-NORMAL-LEGACY)) )
     
    	(gimp-context-push)
 	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
@@ -87,7 +87,7 @@
     (gimp-drawable-edit-clear textLayer)
     (gimp-drawable-edit-clear bloodLayer)
     (gimp-selection-none theImage)
-    	 (if (= (string->number (substring (car(gimp-version)) 0 3)) 2.10)	
+    	 (if (not (defined? 'gimp-drawable-filter-new))	
 (define theText (car (gimp-text-fontname theImage textLayer 0 0 inText 0 TRUE inFontSize PIXELS  inFont   )))
         (define theText (car (gimp-text-font theImage textLayer 0 0 inText 0 TRUE inFontSize  inFont   ))))
     (gimp-text-layer-set-justification theText justify)
@@ -115,7 +115,16 @@
     (gimp-selection-none theImage)
 
     (gimp-layer-scale bloodLayer theWidth (/ theHeight 8) TRUE)
-    (define (smear n) (if (> n 0) (prog1 (plug-in-spread TRUE theImage bloodLayer 0 1) (smear (- n 1)))))
+    (define (smear n) 
+    					  (cond((not(defined? 'plug-in-spread))(if (> n 0)
+					                (gimp-drawable-merge-new-filter bloodLayer "gegl:wind" 0 LAYER-MODE-REPLACE 1.0
+                                                                                                        "style" "blast" "direction" "bottom" "edge" "leading" "threshold" 10 "strength" n "seed" 10) 
+						(gimp-drawable-merge-new-filter bloodLayer "gegl:noise-spread" 0 LAYER-MODE-REPLACE 1.0
+                                                                                                        "amount-x" 0 "amount-y" 2 "seed" 10)
+
+												))	
+												       (else
+    (if (> n 0) (begin (plug-in-spread TRUE theImage bloodLayer 0 1) (smear (- n 1)))))))
     (smear inDrip)
     (gimp-layer-scale bloodLayer theWidth theHeight TRUE)
 
@@ -124,17 +133,18 @@
     (gimp-drawable-edit-fill bloodLayer FILL-BACKGROUND)
     (gimp-selection-none theImage)
 
-    (apply-gauss theImage bloodLayer 4 4)
-    (plug-in-threshold-alpha TRUE theImage bloodLayer 127)
-     (apply-gauss theImage bloodLayer 3 3)
+    (apply-gauss2 theImage bloodLayer 4 4)
+   ; (plug-in-threshold-alpha TRUE theImage bloodLayer 127)
+   (gimp-drawable-threshold bloodLayer 0 0.2 0.7)
+     (apply-gauss2 theImage bloodLayer 3 3)
 
     (gimp-image-select-item theImage 0 bloodLayer)
     (gimp-context-set-foreground BorderColor)
     (gimp-drawable-edit-bucket-fill bloodLayer FILL-FOREGROUND 0 100)
     (gimp-selection-none theImage)
-    (apply-gauss theImage bloodLayer 1 1)
+    (apply-gauss2 theImage bloodLayer 1 1)
 
-    (define oneLayer (car(gimp-image-flatten theImage)) )
+   (if (= conserve 0) (define oneLayer (car(gimp-image-flatten theImage)) ))
    ; (plug-in-autocrop TRUE theImage oneLayer)
 
     (gimp-context-set-foreground oldFore)
@@ -155,16 +165,17 @@
     "2007, Scott Mosteller"
     ""
    SF-TEXT     _"Text"               "Dracula!"
-   SF-FONT       _"Font"               "QTFraktur"
+   SF-FONT       _"Font"               "QTFraktur Medium"
    SF-ADJUSTMENT _"Font Size (pixels)" '(150 2 1000 1 10 0 1)
    	SF-OPTION "Justify" '("Left" "Right" "Centered")
 	SF-ADJUSTMENT "Letter Spacing" '(-5 -100 100 1 5 0 0)
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
    SF-ADJUSTMENT _"Border Size"    '(7 1 99 1 1 0 1)
-   SF-ADJUSTMENT _"Drip Size"    '(12 0 99 1 1 0 1)
+   SF-ADJUSTMENT _"Drip Size"    '(2 0 2 1 1 0 1)
    SF-COLOR		"Fill Color"			'(255 255 255)
    SF-COLOR		"Border Color"			'(255 0 0)
    SF-COLOR		"Background"			'(0 0 0)
+   SF-TOGGLE     "Keep the Layers"           FALSE
 )
 
 (script-fu-menu-register "script-fu-blood-logo300"
