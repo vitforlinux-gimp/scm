@@ -47,7 +47,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(define (script-fu-blood-logo300 inText inFont inFontSize justify letter-spacing line-spacing inBorder inDrip FillColor BorderColor BackgroundColor conserve)
+(define (script-fu-blood-logo300 inText inFont inFontSize justify letter-spacing line-spacing Buffer inBorder inDrip FillColor BorderColor BgType BackgroundColor conserve)
 
 ; Fix code for gimp 2.99.6 working in 2.10
 (cond ((not (defined? 'gimp-drawable-get-width)) (define gimp-drawable-get-width gimp-drawable-width)))
@@ -68,8 +68,8 @@
 
 
 
-    (define oldFore (car(gimp-context-get-foreground)) )
-    (define oldBack (car(gimp-context-get-background)) )
+  ;  (define oldFore (car(gimp-context-get-foreground)) )
+  ;  (define oldBack (car(gimp-context-get-background)) )
 
     (define theImage (car(gimp-image-new 100 100 RGB)) )
     (define textLayer (car(gimp-layer-new-ng theImage 10 10 RGBA-IMAGE _"Text Layer" 100 LAYER-MODE-NORMAL-LEGACY)) )
@@ -88,9 +88,12 @@
     (gimp-drawable-edit-clear bloodLayer)
     (gimp-selection-none theImage)
     	 (if (not (defined? 'gimp-drawable-filter-new))	
-(define theText (car (gimp-text-fontname theImage textLayer 0 0 inText 0 TRUE inFontSize PIXELS  inFont   )))
-        (define theText (car (gimp-text-font theImage textLayer 0 0 inText 0 TRUE inFontSize  inFont   ))))
-    (gimp-text-layer-set-justification theText justify)
+(define theText (car (gimp-text-fontname theImage textLayer 0 0 inText Buffer TRUE inFontSize PIXELS  inFont   )))
+        (define theText (car (gimp-text-font theImage textLayer 0 0 inText Buffer TRUE inFontSize  inFont   ))))
+    (gimp-text-layer-set-justification theText (cond ((= justify 0) 2)
+						       ((= justify 1) 0)
+						       ((= justify 2) 1)
+						       ((= justify 3) 3)))
     	(gimp-text-layer-set-letter-spacing theText letter-spacing)
 	(gimp-text-layer-set-line-spacing theText line-spacing)
     (define theBuffer (+ inBorder inDrip inDrip))
@@ -104,7 +107,7 @@
     (gimp-floating-sel-anchor theText)
 
     (gimp-selection-all theImage)
-    (gimp-drawable-edit-fill backLayer FILL-BACKGROUND)
+    (if (= BgType 0)(gimp-drawable-edit-fill backLayer FILL-BACKGROUND))
     (gimp-selection-none theImage)
 
   (gimp-context-set-background BorderColor )
@@ -118,7 +121,9 @@
     (define (smear n) 
     					  (cond((not(defined? 'plug-in-spread))(if (> n 0)
 					                (gimp-drawable-merge-new-filter bloodLayer "gegl:wind" 0 LAYER-MODE-REPLACE 1.0
-                                                                                                        "style" "blast" "direction" "bottom" "edge" "leading" "threshold" 10 "strength" n "seed" 10) 
+                                                                                                        "style" "blast" "direction" "bottom" "edge" "leading" "threshold" 10 "strength" (+ 1 (/ n 5))"seed" 10)
+ (gimp-drawable-merge-new-filter bloodLayer "gegl:wind" 0 LAYER-MODE-REPLACE 1.0
+                                                                                                        "style" "blast" "direction" "bottom" "edge" "leading" "threshold" 10 "strength" (+ 1 (/ n 10))"seed" 20) 													
 						(gimp-drawable-merge-new-filter bloodLayer "gegl:noise-spread" 0 LAYER-MODE-REPLACE 1.0
                                                                                                         "amount-x" 0 "amount-y" 2 "seed" 10)
 
@@ -135,7 +140,7 @@
 
     (apply-gauss2 theImage bloodLayer 4 4)
    ; (plug-in-threshold-alpha TRUE theImage bloodLayer 127)
-   (gimp-drawable-threshold bloodLayer 0 0.2 0.7)
+   ;(gimp-drawable-threshold bloodLayer 0 0.2 0.7)
      (apply-gauss2 theImage bloodLayer 3 3)
 
     (gimp-image-select-item theImage 0 bloodLayer)
@@ -147,8 +152,8 @@
    (if (= conserve 0) (define oneLayer (car(gimp-image-flatten theImage)) ))
    ; (plug-in-autocrop TRUE theImage oneLayer)
 
-    (gimp-context-set-foreground oldFore)
-    (gimp-context-set-background oldBack)
+    ;(gimp-context-set-foreground oldFore)
+    ;(gimp-context-set-background oldBack)
 (gimp-context-pop)
     (gimp-display-new theImage)
 )
@@ -167,13 +172,15 @@
    SF-TEXT     _"Text"               "Dracula!"
    SF-FONT       _"Font"               "QTFraktur Medium"
    SF-ADJUSTMENT _"Font Size (pixels)" '(150 2 1000 1 10 0 1)
-   	SF-OPTION "Justify" '("Left" "Right" "Centered")
+   	SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right") 
 	SF-ADJUSTMENT "Letter Spacing" '(-5 -100 100 1 5 0 0)
 	SF-ADJUSTMENT "Line Spacing" '(0 -100 100 1 5 0 0)
-   SF-ADJUSTMENT _"Border Size"    '(7 1 99 1 1 0 1)
-   SF-ADJUSTMENT _"Drip Size"    '(2 0 2 1 1 0 1)
+	SF-ADJUSTMENT _"Buffer"    '(10 0 99 1 1 0 0)
+   SF-ADJUSTMENT _"Border Size"    '(7 1 99 1 1 0 0)
+   SF-ADJUSTMENT _"Drip Size"    '(5 0 99 1 1 0 0)
    SF-COLOR		"Fill Color"			'(255 255 255)
    SF-COLOR		"Border Color"			'(255 0 0)
+   SF-OPTION     _"Background Fill"    '("Color" "Transparent") 
    SF-COLOR		"Background"			'(0 0 0)
    SF-TOGGLE     "Keep the Layers"           FALSE
 )
