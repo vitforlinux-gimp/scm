@@ -172,10 +172,16 @@
 		)
 
 	;; Start undo group.
+   	(gimp-context-push)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
+	;(gimp-layer-set-mode 0)
 	(gimp-image-undo-group-start img)		
 		
 
-	
+			      (if  (defined? 'gimp-context-enable-dynamics) (gimp-context-enable-dynamics FALSE))
+		 (if (not (defined? 'gimp-drawable-filter-new))
+(gimp-context-set-dynamics "Pressure Opacity")
+(gimp-context-set-dynamics-name "Pressure Opacity"))
 
 		
 ; calque fond *******************************************************************************		
@@ -724,7 +730,8 @@
 	(gimp-display-new img)
 
 	;; End undo group.
-	(gimp-image-undo-group-end img)	
+	(gimp-image-undo-group-end img)
+	(gimp-context-pop)
 
 	)
 		

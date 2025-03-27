@@ -80,7 +80,9 @@
 		
 		
 	(gimp-context-push)
+	(gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY )
     (gimp-image-undo-group-start image)
+    
 	(gimp-context-set-foreground '(0 0 0))
 	(gimp-context-set-background '(255 255 255))
 	(gimp-layer-add-alpha image-layer)
