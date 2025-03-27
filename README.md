@@ -1,7 +1,7 @@
 # Various SCM scripts for Gimp updated to at least version 2.10, some to 3.0
 Various SCM scripts for Gimp updated to at least version 2.10, some to 3.0 (300 in file name).
 
-Attention the filters are for 2.10 or latest 2.99.19, need fresh install, old releases are left in the repo for study purposes.
+Attention the filters are for 2.10 or 3.0, need fresh install, old releases are left in the repo for study purposes.
 
 If you use versions of Gimp equal to or higher than 2.99 the code for previous Gimp versions must be updated.
 
