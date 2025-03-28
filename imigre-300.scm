@@ -27,7 +27,7 @@
        (else
 	(plug-in-gauss 1 img drawable x y 0)
 )))
-
+;(gimp-message "30 logo")
   (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -54,7 +54,7 @@
 
     (gimp-context-push)
     (gimp-context-set-paint-mode LAYER-MODE-NORMAL-LEGACY)
-
+;(gimp-message "57 logo")
     (gimp-image-undo-disable img)
     (gimp-image-undo-disable distortion-img)
     (gimp-image-resize img width height 0 0)
@@ -74,6 +74,7 @@
     (gimp-context-set-background frame-color)
     (gimp-drawable-edit-fill dist-frame-layer FILL-BACKGROUND)
     (gimp-selection-none img)
+;(gimp-message "77 logo")
     ;; now make the distortion data
     (gimp-context-set-background '(255 255 255))
     (gimp-drawable-edit-fill distortion-layer FILL-BACKGROUND)
@@ -84,9 +85,13 @@
     (plug-in-noisify RUN-NONINTERACTIVE distortion-img distortion-layer FALSE prob prob prob 0.0)))
     (apply-gauss2 distortion-img distortion-layer radius strength strength)
     ;(plug-in-c-astretch RUN-NONINTERACTIVE distortion-img distortion-layer)
-    (gimp-drawable-levels-stretch distortion-img)
+;(gimp-message "88 logo")
+   ; (gimp-drawable-levels-stretch distortion-img)
+;(gimp-message "90 logo")
     (apply-gauss2 distortion-img distortion-layer radius strength strength)
+;(gimp-message "92 logo")
     ;; OK, apply it to dist-text-layer
+;(gimp-message "94 logo")
     	(cond((not(defined? 'plug-in-displace))
           (let* (
                  (filter (car (gimp-drawable-filter-new dist-text-layer "gegl:displace" ""))))
@@ -100,6 +105,7 @@
         (else
     (plug-in-displace RUN-NONINTERACTIVE img dist-text-layer radius radius 1 1
                       distortion-layer distortion-layer 1)))
+;(gimp-message "108 logo")
     ;; make the distortion data once again fro the frame
     (gimp-drawable-edit-fill distortion-layer FILL-BACKGROUND)
     				    (cond((not(defined? 'plug-in-noisify))
@@ -107,11 +113,15 @@
 "pct-random" 50 "repeat" 1 "seed" 0 ))		    
 	(else
     (plug-in-noisify RUN-NONINTERACTIVE distortion-img distortion-layer FALSE prob prob prob 0.0)))
+;(gimp-message "116 logo")
     (apply-gauss2 distortion-img distortion-layer radius strength strength)
     ;(plug-in-c-astretch RUN-NONINTERACTIVE distortion-img distortion-layer)
-    (gimp-drawable-levels-stretch distortion-img)
+;(gimp-message "119 logo")
+  ;  (gimp-drawable-levels-stretch distortion-img)
+;(gimp-message "121 logo")
     (apply-gauss2 distortion-img distortion-layer radius strength strength)
     ;; then, apply it to dist-frame-layer
+;(gimp-message "124 logo")
     	(cond((not(defined? 'plug-in-displace))
           (let* (
                  (filter (car (gimp-drawable-filter-new dist-frame-layer "gegl:displace" ""))))
