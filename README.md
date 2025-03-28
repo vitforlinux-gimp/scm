@@ -5,7 +5,7 @@ Attention the filters are for 2.10 or 3.0, need fresh install, old releases are 
 
 If you use versions of Gimp equal to or higher than 2.99 the code for previous Gimp versions must be updated.
 
-The scripts in this repo try to support Gimp 2.10 and possibly the latest 3.0
+The scripts in this repo try to support Gimp 2.10 and possibly the latest 3.0 (300 in file name).
 
 In many scripts the fonts have been replaced with fonts under the OFL or GPL license. The downloader can be found here:
 https://github.com/vitforlinux-gimp/font-downloader... There is also a collection of GPL or OFL fonts in .zip in the releases.
