@@ -32,6 +32,10 @@
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
 
+; Gimp 2.8 compatibility:
+(cond ((not (defined? 'LAYER-MODE-NORMAL-LEGACY)) (define LAYER-MODE-NORMAL-LEGACY NORMAL-MODE)))
+(cond ((not (defined? 'LAYER-MODE-SCREEN-LEGACY)) (define LAYER-MODE-SCREEN-LEGACY SCREEN-MODE)))
+
 		(define  (apply-drop-shadow img fond x y blur color opacity number) (begin
 				(gimp-image-select-item img 2 fond)
 				(gimp-selection-translate img x y)
@@ -43,7 +47,7 @@
 				(gimp-context-set-opacity 100)
 				(gimp-selection-none img)
 			))
-			
+
 (define (gimp-layer-new-ng ln1 ln2 ln3 ln4 ln5 ln6 ln7)
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-layer-new ln1 ln2 ln3 ln4 ln5 ln6 ln7)
@@ -85,12 +89,29 @@
     (script-fu-util-image-resize-from-layer img logo-layer)
     (script-fu-util-image-add-layers img grow-me bg-layer)
     (gimp-item-set-name grow-me "Grow-me")
-    (gimp-item-transform-translate grow-me posx posy)
+    (if (defined? 'gimp-item-transform-translate)
+      (begin  ; New Gimp > 2.8 API:
+        ; New Gimp > 2.8 API:
+        (gimp-item-transform-translate grow-me posx posy)
+      )
+      (begin  ; Old Gimp <= 2.8 API:
+        (gimp-layer-translate grow-me posx posy)
+      )
+    )
 
     (gimp-context-set-background bg-color)
     (gimp-selection-all img)
     ;(gimp-drawable-edit-bucket-fill bg-layer FILL-BACKGROUND  100 0 )
-    (gimp-drawable-edit-fill bg-layer FILL-BACKGROUND)	
+
+    (if (defined? 'gimp-drawable-edit-fill)
+      (begin  ; New Gimp > 2.8 API:
+        ; New Gimp > 2.8 API:
+        (gimp-drawable-edit-fill bg-layer FILL-BACKGROUND)
+      )
+      (begin  ; Old Gimp <= 2.8 API:
+        (gimp-edit-bucket-fill bg-layer BG-BUCKET-FILL NORMAL-MODE 100 0 FALSE 0 0)
+      )
+    )
 
     (gimp-selection-none img)
 
@@ -103,19 +124,34 @@
     (if (= use-pattern-text TRUE)
       (begin
         (gimp-context-set-pattern pattern-text)
-       ; (gimp-drawable-edit-bucket-fill logo-layer BUCKET-FILL-PATTERN  100 0 )
-           (gimp-drawable-edit-fill logo-layer FILL-PATTERN)
+        (if (defined? 'gimp-drawable-edit-fill)
+          (begin  ; New Gimp > 2.8 API:
+            ; New Gimp > 2.8 API:
+            (gimp-drawable-edit-fill logo-layer FILL-PATTERN)
+          )
+          (begin  ; Old Gimp <= 2.8 API:
+            (gimp-drawable-edit-bucket-fill logo-layer BUCKET-FILL-PATTERN  100 0 )
+          )
+        )
       )
     )
 
     (if (= use-pattern-text FALSE)
       (begin
         (gimp-context-set-gradient blend-gradient-text)
-
-       ; (gimp-edit-blend logo-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-LINEAR 100 0 REPEAT-NONE blend-gradient-text-reverse FALSE 0 0 TRUE 0 0 0 (+ height 5))
-			(gimp-context-set-gradient-reverse blend-gradient-text-reverse)
-		      (gimp-drawable-edit-gradient-fill logo-layer GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ height 5)) ; Fill with gradient
-
+        (if (defined? 'gimp-drawable-edit-gradient-fill)
+          (begin  ; New Gimp > 2.8 API:
+             (gimp-context-set-gradient-reverse blend-gradient-text-reverse)
+             (gimp-drawable-edit-gradient-fill logo-layer GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ height 5)) ; Fill with gradient
+          )
+          (begin  ; Old Gimp <= 2.8 API:
+            (gimp-edit-blend logo-layer CUSTOM-MODE NORMAL-MODE
+                                        GRADIENT-LINEAR 100 0 REPEAT-NONE
+                                        blend-gradient-text-reverse
+                                        FALSE 0 0 TRUE
+                                        0 0 0 (+ height 5))
+          )
+        )
       )
     )
 
@@ -143,9 +179,19 @@
       (begin
         (gimp-context-set-gradient blend-gradient-outline)
 
-        ;(gimp-edit-blend grow-me BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-LINEAR 100 0 REPEAT-NONE blend-gradient-outline-reverse FALSE 0 0 TRUE 0 0 0 (+ height 5))
-				(gimp-context-set-gradient-reverse blend-gradient-outline-reverse)
-		      (gimp-drawable-edit-gradient-fill grow-me GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ height 5)) ; Fill with gradient
+        (if (defined? 'gimp-drawable-edit-gradient-fill)
+          (begin  ; New Gimp > 2.8 API:
+             (gimp-context-set-gradient-reverse blend-gradient-outline-reverse)
+             (gimp-drawable-edit-gradient-fill grow-me GRADIENT-LINEAR 0 0 1 0 0 0 0 0 (+ height 5)) ; Fill with gradient
+          )
+          (begin  ; Old Gimp <= 2.8 API:
+            (gimp-edit-blend grow-me CUSTOM-MODE NORMAL-MODE
+                                     GRADIENT-LINEAR 100 0 REPEAT-NONE
+                                     blend-gradient-outline-reverse
+                                     FALSE 0 0 TRUE
+                                     0 0 0 (+ height 5))
+          )
+        )
       )
     )
 
@@ -182,7 +228,7 @@
     (if (= shadow-toggle TRUE)
       (begin
         (gimp-image-select-item img CHANNEL-OP-REPLACE logo-layer)
-	  (if (not (defined? 'gimp-drawable-filter-new)) 
+	  (if (not (defined? 'gimp-drawable-filter-new))
         (set! dont-drop-me (car (script-fu-drop-shadow img logo-layer
                                                        s-offset-x s-offset-y
                                                        15 '(0 0 0) 80 TRUE)))
@@ -336,7 +382,7 @@
   SF-FONT       _"Font"                     "QTEraType Medium"
   SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
   SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
-  SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)  
+  SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
   SF-GRADIENT   _"Blend gradient (text) Shadows 2"    "Shadows 2"
   SF-TOGGLE     _"Text gradient reverse"    FALSE
   SF-GRADIENT   _"Blend gradient (outline) Shadows 2" "Shadows 2"
