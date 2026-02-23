@@ -339,12 +339,13 @@
 	(gimp-layer-resize-to-image-size stroke-layer)	 ; Name the stroke layer
          (gimp-selection-feather img feather-amt)   ; Feather the selection
 
-         (if (= effect-style 5) 					; Double stroke 
+         (if (= effect-style 5) ; Double stroke 
              (begin          
                 (gimp-selection-shrink img effect-depth)
                 (gimp-selection-invert img)                             ; Invert the selction
                 (gimp-drawable-edit-clear stroke-layer)                          ; Clear stroke layer
-                (gimp-selection-invert img)                             ; Invert the selction
+                (gimp-selection-invert img)                           ; Invert the selction
+		(gimp-layer-set-opacity fill-layer 20)
 				      (gimp-layer-resize-to-image-size stroke-layer)
 
               )
@@ -445,17 +446,32 @@
 ;
 ; Apply additional effects directly to fill style
 ;
-    (cond ((= effect-style 6)
+    (cond ((= effect-style 6); cubism
+    	 (cond ((not(defined? 'plug-in-cubism))
+	             (gimp-drawable-merge-new-filter fill-layer "gegl:cubism" 0 LAYER-MODE-REPLACE 1.0
+		     "tile-size" 15 "tile-saturation" effect-depth "bg-color" '(0 0 0)))
+		     (else
             (plug-in-cubism 1 img fill-layer effect-depth 3 0)               ; Add cubism effect
-          )         
-          ((= effect-style 7)
+          )))         
+          ((= effect-style 7); oilify
+	   (cond((not(defined? 'plug-in-oilify))
+    (gimp-drawable-merge-new-filter fill-layer "gegl:oilify" 0 LAYER-MODE-REPLACE 1.0
+    "mask-radius" effect-depth"use-inten" FALSE) )
+(else  
                (plug-in-oilify 1 img fill-layer effect-depth 0)              ; Add olify effect
-          )
-          ((= effect-style 8)
+          )))
+
+          ((= effect-style 8); plasma
           (gimp-selection-none img)
           (gimp-layer-set-lock-alpha fill-layer TRUE)
+	  	  		        (define width (car (gimp-drawable-get-width fill-layer)))
+        (define height (car (gimp-drawable-get-height fill-layer)))
+	  	  				    (cond((not(defined? 'plug-in-plasma))
+		 		     (gimp-drawable-merge-new-filter fill-layer "gegl:plasma" 0 LAYER-MODE-REPLACE 1.0
+"turbulence" 1.0 "x" 0 "y" 0 "width" width "height" height "seed" (random 999999999) ))		    
+	(else
              (plug-in-plasma 1 img fill-layer (random 999999999) effect-depth) ; Add plasma
-          )
+          )))
 	  ((= effect-style 9) ;Glitter
 	 (cond ((not(defined? 'plug-in-rgb-noise))
 	             (gimp-drawable-merge-new-filter fill-layer "gegl:noise-rgb" 0 LAYER-MODE-REPLACE 1.0
@@ -482,7 +498,7 @@
     (if (> bevel-amt 0) 
       (begin
          (script-fu-add-bevel img fill-layer bevel-amt 0 0)         ; Bevel fill layer
-         (if (= effect-style 4)                                     ; Effect case test
+         (if (= effect-style 4)    ; Effect case test
             (begin                                                  ; Double bevel
               (gimp-selection-shrink img stroke-width)              ; Shrink by stroke width
               (script-fu-add-bevel img fill-layer bevel-amt 0 0)    ; Bevel fill layer again
@@ -509,6 +525,17 @@
 ;
 ; Call bump map procedure (pattern bump)
 ;
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new effect-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 55 "depth" effect-depth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" TRUE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter effect-layer filter)
+    ))
+    (else
         (plug-in-bump-map 
                      1              ; Interactive (0), non-interactive (1)
                      img            ; Input image
@@ -524,7 +551,7 @@
                      TRUE           ; Compensate for darkening
                      FALSE          ; Invert bumpmap
                     0)        ; Type of map (0=linear, 1=spherical, 2=sinusoidal)
-      )
+      )))
     ) ; endif
 ;
 ; Create Gloss Effect Layer 
@@ -550,7 +577,7 @@
 ; Create Glass Effect Layer 
 ;
 ;
-   (if (and(> effect-depth 0)(= effect-style 3)) 
+   (if (and(> effect-depth 0)(= effect-style 3)) ; translucent
       (begin
 
            (set! bump-layer (car (gimp-layer-new-from-drawable logo-layer img))) ; New effect Layer
@@ -564,16 +591,34 @@
            (gimp-image-insert-layer img effect-layer 0 -1) ; Add it to image
            (gimp-item-set-name effect-layer "Glass")                              ; Name effect layer
 
-           (plug-in-bump-map 1 img effect-layer bump-layer 135 45 (+ effect-depth 0) 0 0 0 0 0 0 0) ; Bump it
-
+	(cond((not(defined? 'plug-in-bump-map))
+	    (let* ((filter (car (gimp-drawable-filter-new fill-layer "gegl:bump-map" ""))))
+      (gimp-drawable-filter-configure filter LAYER-MODE-REPLACE 1.0
+                                      "azimuth" 135 "elevation" 45 "depth" effect-depth
+                                      "offset-x" 0 "offset-y" 0 "waterlevel" 0.0 "ambient" 0
+                                      "compensate" FALSE "invert" FALSE "type" "linear"
+                                      "tiled" FALSE)
+      (gimp-drawable-filter-set-aux-input filter "aux" bump-layer)
+      (gimp-drawable-merge-filter effect-layer filter)
+    ))
+    (else
+	  (plug-in-bump-map 1 img effect-layer bump-layer 135 45 (+ effect-depth 0) 0 0 0 0 0 0 0) ; Bump it
+))
            (gimp-image-set-active-layer img effect-layer)                    ; Ensure this layer active
            (gimp-selection-shrink img (- effect-depth 1))                    ; Shrink selection
            (gimp-selection-feather img feather-amt)                          ; feather it
-           (gimp-drawable-curves-spline effect-layer 4 4 (get-glass-trans-curve 64))  ; Modify alpha channel curves
-
+	   (if (not (defined? 'gimp-drawable-filter-new))
+	   (gimp-drawable-curves-spline effect-layer 4 4 (get-glass-trans-curve 64))
+           (gimp-drawable-curves-spline effect-layer 4  (get-glass-trans-curve 64))  ; Modify alpha channel curves
+)
            (gimp-selection-none img)					; Clear Selection
            (gimp-drawable-hue-saturation effect-layer 0 0 0 -100 0)                ; Desaturate to clear glass 
            (gimp-drawable-invert effect-layer FALSE)                                   ; Invert colors
+	   (if (and(> effect-depth 0)(= effect-style 3)) (begin
+	   (gimp-drawable-fill fill-layer FILL-TRANSPARENT)
+	   (gimp-drawable-fill logo-layer FILL-TRANSPARENT)))
+	  ; (gimp-drawable-fill text-layer FILL-TRANSPARENT)
+	   
            (gimp-image-remove-layer img bump-layer)                     ; Delete the bump layer
 ;           (plug-in-sample-colorize 1 img effect-layer logo-layer TRUE TRUE TRUE TRUE  0 255 1 0 255) 
 ;           (gimp-image-remove-layer img bump-layer)                     ; Dump The Bump 
@@ -589,10 +634,10 @@
 ;
 (define (get-glass-trans-curve parm)
   (let* ((curve-value (cons-array 4 'byte)))
-   (aset curve-value 0 0)
-   (aset curve-value 1 0)
-   (aset curve-value 2 255)
-   (aset curve-value 3 parm)
+   (vector-set! curve-value 0 0)
+   (vector-set! curve-value 1 0)
+   (vector-set! curve-value 2 1)
+   (vector-set! curve-value 3 (/ parm  255))
    curve-value     
    )
 ) ; return
@@ -880,6 +925,8 @@
  ))
 
       (gimp-layer-resize-to-image-size bg-layer)
+      
+
 
   (gimp-image-undo-disable img)                ; Disallow undo 
   ;(gimp-image-resize-to-layers img)
@@ -890,7 +937,8 @@
 ; Call the logo effect procedure 
 ;
   (apply-logo-workshop-plus-300 img logo-layer fill-style logo-color logo-pattern logo-gradient logo-grad-type logo-grad-dir logo-grad-rep logo-grad-rvs bevel-amt stroke-type stroke-color stroke-pattern stroke-gradient stroke-grad-type stroke-grad-dir stroke-grad-rep stroke-grad-rvs stroke-width shadow-color shadowx shadowy shadow-opacity effect-style effect-pattern effect-depth alpha2logo)
-(gimp-selection-all img)   		   
+(gimp-selection-all img)  
+ 		   
 		   (cond ((= back-type 0)
             (gimp-context-set-foreground back-color)            ; Set logo color
             ;(gimp-drawable-edit-bucket-fill bg-layer 0  0 0)  ; Fill with color
@@ -928,7 +976,8 @@
     		(gimp-selection-none img)
 ))
     (gimp-image-remove-layer img logo-layer)        ; Delete the logo layer (stroke color dup in this case)
-    (gimp-image-set-active-layer img text-layer)    ; Make text layer active 
+   (gimp-image-remove-layer img text-layer)
+   ; (gimp-image-set-active-layer img text-layer)    ; Make text layer active 
     
     
 
