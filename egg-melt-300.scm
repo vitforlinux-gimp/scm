@@ -186,7 +186,7 @@ SF-ADJUSTMENT  "Line Spacing"          '(0 -300 300 1 10 0 0)
 SF-ADJUSTMENT _"Shrink / Grow Text"          '(0 -20 20 1 10 0 0)
 SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
                                                         ;a spin-button
-								SF-TOGGLE   "Text deformation"     FALSE
+								SF-TOGGLE   "Text deformation"     TRUE
            	     SF-COLOR       "BG Color"         '(255 0 0)     ;color variable
 	     SF-COLOR       "BG Color 2"         '(255 255 255)     ;color variable
 
