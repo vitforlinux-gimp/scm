@@ -9,7 +9,7 @@
 (cond ((not (defined? 'gimp-drawable-get-height)) (define gimp-drawable-get-height gimp-drawable-height)))
 
 (cond ((not (defined? 'gimp-text-fontname)) (define (gimp-text-fontname fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 PIXELS fn9) (gimp-text-font fn1 fn2 fn3 fn4 fn5 fn6 fn7 fn8 fn9))))
-
+ 
   		(define (apply-gauss2 img drawable x y)
        (cond ((not(defined? 'plug-in-gauss))
            (gimp-drawable-merge-new-filter drawable "gegl:gaussian-blur" 0 LAYER-MODE-REPLACE 1.0
@@ -79,7 +79,7 @@ tspc
     (gimp-image-select-rectangle image 0 0 0 1 1) ; plasma fix
 				    (cond((not(defined? 'plug-in-plasma))
 		 		     (gimp-drawable-merge-new-filter logo-layer "gegl:plasma" 0 LAYER-MODE-REPLACE 1.0
-"turbulence" 1 "x" 1 "y" 1 "width" width "height" height "seed" random ))		    
+"turbulence" 7 "x" 1 "y" 1 "width" width "height" height "seed" random ))		    
 	(else
 (plug-in-plasma 1 image logo-layer random 7))) ; plasma drawing
     (gimp-image-select-rectangle image 1 0 0 1 1) ; end plasma fix
@@ -90,8 +90,8 @@ tspc
     (plug-in-oilify 1 image logo-layer 5 1)))
 (gimp-context-set-background fg-color) ; set background color to black
 (cond((not(defined? 'plug-in-mosaic))
-    (gimp-drawable-merge-new-filter logo-layer "gegl:mosaic" 0 LAYER-MODE-REPLACE 1.0
-    "tile-type" "hexagons" "tile-size" tsize "tile-height" 4 "tile-neatness" 0.65 "color-variation" 0.2 "color-averaging" TRUE "tile-surface" sf "tile-allow-split" TRUE "tile-spacing" tspc "joints-color" fg-color "light-color" '(1 1 1) "light-dir" 135 "antialiasing" TRUE "seed" 0) 
+    (gimp-drawable-merge-new-filter logo-layer "gegl:mosaic" 0 LAYER-MODE-NORMAL 1.0
+    "tile-type" "hexagons" "tile-size" tsize "tile-height" 4 "tile-neatness" 0.65 "color-variation" 0.2 "color-averaging" TRUE "tile-surface" sf "tile-allow-split" FALSE "tile-spacing" tspc "joints-color" fg-color "light-color" '(1 1 1) "light-dir" 135 "antialiasing" TRUE "seed" 0) 
     )
 (else
 (plug-in-mosaic 1 image logo-layer ; mosaic drawing
@@ -115,7 +115,7 @@ sf
 (if (not (defined? 'gimp-drawable-filter-new))
 (gimp-drawable-curves-spline logo-layer HISTOGRAM-VALUE 8 v_point)
 (gimp-drawable-curves-spline logo-layer HISTOGRAM-VALUE v_point))
-
+(gimp-drawable-hue-saturation logo-layer 0 0 0 99 0)
 (gimp-selection-none image)
 
 ; draw outline
@@ -279,22 +279,22 @@ height
 "copyright 2006, RETOUCH-SCRIPT" ;copyright notice
 "Nov 01, 2006" ;date created
 ""
-SF-TEXT"Text" "GIMP 3.0"
+SF-TEXT"Text" "Stained\nGlass"
 SF-ADJUSTMENT "Font size (pixels)" '(150 2 1000 1 10 0 0)
 SF-FONT "Font" "QTBookmann Bold"
 	    SF-OPTION     _"Text Justification"    '("Centered" "Left" "Right" "Fill")
 SF-ADJUSTMENT  "Letter Spacing"        '(0 -50 50 1 5 0 0)
 SF-ADJUSTMENT  "Line Spacing"          '(-5 -300 300 1 10 0 0)
 SF-ADJUSTMENT "Tile size" '(20 5 100 1 10 0 0)
-SF-ADJUSTMENT "Tile spacing" '(1 1 100 1 10 0 0)
-SF-ADJUSTMENT "Random seed" '(1000 0 2000 5 10 0 0)
+SF-ADJUSTMENT "Tile spacing" '(2 1 100 1 10 0 0)
+SF-ADJUSTMENT "Random seed" '(0 0 2000 5 10 0 0)
 SF-ADJUSTMENT "Shadow blur" '(3 0 30 1 10 0 0)
 SF-ADJUSTMENT "Shadow offset" '(1 0 30 1 10 0 0)
 SF-TOGGLE "Surface relief" FALSE
 SF-COLOR "Rim color" '(255 255 255)
 SF-COLOR "Background color" '(255 255 255)
 SF-ADJUSTMENT  "Buffer amount" '(20 0 100 1 10 1 0)
-SF-ADJUSTMENT "Line Thickness :-)  " '(5 1 100 1 10 0 0)
+SF-ADJUSTMENT "Line Thickness :-)  " '(10 1 100 1 10 0 0)
 SF-TOGGLE "Stained Background" FALSE
 SF-TOGGLE "Flatten layers" FALSE
 
