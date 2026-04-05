@@ -142,6 +142,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
            SF-COLOR       "Background Color"         '(0 0 0)     ;color variable
             SF-ADJUSTMENT  "Buffer amount" '(65 0 100 1 10 1 0)
                                                         ;a slider
+							SF-TOGGLE   "Merge Layers"     TRUE
   )
   (script-fu-menu-register "script-fu-space-300" "<Image>/File/Create/Text")
   
@@ -157,7 +158,8 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 					grow-text
 					outline
 					bgColor
-					inBufferAmount)
+					inBufferAmount
+					conserve)
     (let*
       (
         ; define our local variables
@@ -296,7 +298,7 @@ SF-ADJUSTMENT _"Outline"          '(0 0 20 1 10 0 0)
 	(gimp-layer-resize-to-image-size theText)
 	(apply-gauss2 theImage theText 2 2)
 
-
+ (if (= conserve TRUE) (gimp-image-flatten theImage))
 	(gimp-context-pop)
       (gimp-display-new theImage)
       (list theImage theLayer theText)
