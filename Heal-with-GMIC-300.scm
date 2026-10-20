@@ -192,7 +192,7 @@
 
 ;
 ; Clean up
-
+(gimp-layer-add-alpha in-layer  )
 (if (= dont-remove-sel 0)
 
 (gimp-selection-none img)
